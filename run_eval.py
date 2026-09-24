@@ -1,9 +1,13 @@
-"""Run Tanya's evaluation.
+"""Run Tanya's evaluation. This is the entry point a marker runs.
 
-    python eval/run_eval.py --retrieval-only     free, no API key: recall for every retrieval config
-    python eval/run_eval.py --run                live: answers + code checks + judge + no-retrieval baseline
-    python eval/run_eval.py --agreement          after you hand-grade results/judge_spotcheck.json
-    python eval/run_eval.py --dry-run            plumbing test with a fake model; writes results/_dryrun/
+    python run_eval.py --retrieval-only     free, no API key: recall for every retrieval config
+    python run_eval.py --chunk-sweep        free: why 200-word chunks
+    python run_eval.py --leakage            free: does a question already contain its own answer?
+    python run_eval.py --dry-run            free: the whole live path with a fake model -> results/_dryrun/
+    python run_eval.py --run                live: the shipped system against the keyword baseline on the
+                                            same questions -- answer correctness, faithfulness (judge),
+                                            abstention, the silent-failure count, citations, tokens
+    python run_eval.py --agreement          after you hand-grade results/judge_spotcheck.json
 
 --run prints an estimated cost and asks before spending anything (use --yes to skip the prompt).
 The API key is read from OPENROUTER_API_KEY or MY_PRIVATE_OPENROUTER_KEY, else asked for with a
@@ -15,11 +19,10 @@ import json
 import os
 import sys
 from datetime import date
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import cost_model  # noqa: E402
-import harness as H  # noqa: E402
+import config as cfg
+import cost_model
+import harness as H
 
 
 def fmt(x, pct=True):
@@ -37,8 +40,10 @@ def write_retrieval_report(out_dir, questions, idx):
                               "all": H.summarise_recall(recs)}
 
     L = ["# Retrieval recall by configuration (no model, no cost)", "",
-         f"Embedder: {idx['plain']['embedder'].using}. Chunking: {H.rag_core.CHUNK_WORDS} words, overlap "
-         f"{H.rag_core.OVERLAP}. Fixed corpus only (18 documents, {len(idx['plain']['chunks'])} chunks).", "",
+         f"Embedder: {idx['plain']['embedder'].using}. Chunking: {cfg.CHUNK_WORDS} words, overlap "
+         f"{cfg.OVERLAP}. Fixed corpus only (18 documents, {len(idx['plain']['chunks'])} chunks).", "",
+         f"`{H.SHIPPED}` is exactly what the app runs. `{H.BASELINE}` is THE baseline: keyword search over the "
+         "same chunks, a non-AI method, so the comparison asks whether embeddings earn their complexity.", "",
          "Division recall = the retrieved chunks cover EVERY division the question needs (Section 7's "
          "context-recall metric). Doc recall = share of the needed documents retrieved. "
          "Target for cross-division division recall: 80%.", "",
@@ -65,7 +70,7 @@ def write_retrieval_report(out_dir, questions, idx):
                          f"{dg['retrieval_cutoff_score']}")
     curve, dist = H.abstention_curve(questions, idx)
     L += ["", "## Abstain below a retrieval score? (Section 8's confidence threshold; free, no model)", "",
-          f"Best retrieval score under `naive_k5`. Answerable questions: minimum {dist['answerable_min']:.3f}, median "
+          f"Best retrieval score under `{H.SHIPPED}` -- the scores the app's threshold actually sees. Answerable questions: minimum {dist['answerable_min']:.3f}, median "
           f"{dist['answerable_median']:.3f}. Questions the corpus cannot answer: "
           + ", ".join(f"{s_:.3f}" for s_ in dist["absent"]) + ".", "",
           "| abstain below | unanswerable caught | answerable wrongly refused |", "|---|---|---|"]
@@ -82,7 +87,7 @@ def write_retrieval_report(out_dir, questions, idx):
     return per_config, "\n".join(L)
 
 
-KEY_FILE = H.ROOT / "OpenRouter_api.txt"   # untracked, see .gitignore
+KEY_FILE = cfg.KEY_FILE   # untracked, see .gitignore
 
 
 def load_key(key_file=KEY_FILE):
@@ -139,7 +144,7 @@ def run_leakage(out_dir, questions):
          "the source document's wording, so retrieval is string matching). For every leaky question the "
          "leaked phrases are deleted and recall is re-scored -- the before/after gap is what those copied "
          "words were carrying.", "",
-         f"Config: `naive_k5`. Scored questions examined: {s_['n_questions']}. "
+         f"Config: `{H.SHIPPED}`. Scored questions examined: {s_['n_questions']}. "
          f"With at least one leaked key fact: **{s_['n_with_leakage']}** ({fmt(s_['share_with_leakage'])}).", ""]
     if s_["n_with_leakage"]:
         L += [f"On the leaky questions only, document recall {fmt(s_['doc_recall_before'])} before stripping "
@@ -179,48 +184,105 @@ def get_client(dry_run):
     if not key.isascii() or any(c.isspace() for c in key):
         sys.exit("The key contains spaces or non-ASCII characters (an em dash, a stray label, a smart quote). "
                  "It must be only the key itself, on one line. Nothing was spent.")
-    return OpenAI(base_url="https://openrouter.ai/api/v1", api_key=key)
+    return OpenAI(base_url=cfg.BASE_URL, api_key=key)
 
 
 def write_eval_report(out_dir, summary, results):
     g = summary["gen_model"]
+    by_set = summary.get("by_set", {}).get("configs", {})
+
+    def main_of(c):
+        return by_set.get(c, {}).get("main", summary["configs"][c])
+
     L = ["# Answer-level evaluation", "",
-         f"Generation model `{g}`; judge `{summary['judge_model'] or 'not run'}` (a different model from the generator). "
-         f"Run date {summary['date']}. Questions: main 23 + near-miss extras"
-         + (" + independent set" if summary["has_independent"] else "") + ".", "",
-         "Key-fact pass = code check against eval_key_facts.json (no model). Over-abstain = said 'The documents do not say' "
-         "on a question the corpus answers. OOS correct = abstained on an out-of-scope question. "
-         "Citation valid = cited only documents that were actually retrieved. Judge faithful = judge model, "
-         "over answers that did not abstain; hand-check it with --agreement.", "",
-         "| system | key-fact pass (scored) | cross-division only | over-abstain | OOS correct | citation valid | figures found in cited docs | judge faithful | handed to human | avg tokens in/out |",
-         "|---|---|---|---|---|---|---|---|---|---|"]
-    rows = [("no retrieval (baseline)", summary["baseline"])] + \
-           [(f"`{c}`", a) for c, a in summary["configs"].items()]
+         f"Generation `{g}`; judge `{summary['judge_model'] or 'not run'}` (a different model family from "
+         f"the generator). Run {summary['date']}. Embedder: {summary.get('embedder', 'n/a')}.", ""]
+
+    # ---- the headline: shipped vs THE baseline, the same 20 questions -------------------------
+    ship, base = H.SHIPPED, H.BASELINE
+    if ship in summary["configs"] and base in summary["configs"]:
+        S, B = main_of(ship), main_of(base)
+
+        def delta(k):
+            if S.get(k) is None or B.get(k) is None:
+                return "n/a"
+            return f"{(S[k] - B[k]) * 100:+.0f} pts"
+
+        L += ["## Headline: the shipped system against the keyword baseline", "",
+              "The same main-set questions (20 scored + 3 out-of-scope, fixed before anything ran) through "
+              f"`{ship}` (exactly what the app runs) and `{base}` (keyword search over the same chunks, "
+              "non-AI retrieval). A no-retrieval model is NOT the baseline: it has never seen these fictional "
+              "documents, so it scores near zero and teaches nothing.", "",
+              "| measure | what it asks | shipped | keyword baseline | difference |",
+              "|---|---|---|---|---|",
+              f"| **answer correctness** | every key fact present (code check, eval_key_facts.json) | "
+              f"{fmt(S['key_fact_pass'])} | {fmt(B['key_fact_pass'])} | {delta('key_fact_pass')} |",
+              f"| correctness, cross-division only | the questions this project exists for | "
+              f"{fmt(S['key_fact_pass_cross'])} | {fmt(B['key_fact_pass_cross'])} | {delta('key_fact_pass_cross')} |",
+              f"| **faithfulness** | every claim supported by the notes (judge; target 85%) | "
+              f"{fmt(S['judge_faithful'])} (n={S['judge_n']}) | {fmt(B['judge_faithful'])} (n={B['judge_n']}) | "
+              f"{delta('judge_faithful')} |",
+              f"| declined | said 'The documents do not say', or handed to a person | {fmt(S['declined'])} | "
+              f"{fmt(B['declined'])} | {delta('declined')} |",
+              f"| declines that were right | out of scope, or the needed documents were not retrieved | "
+              f"{fmt(S['declines_right'])} (n={S['declines_judged']}) | {fmt(B['declines_right'])} "
+              f"(n={B['declines_judged']}) | |",
+              f"| **silent failures** | answered although the needed documents were NOT retrieved | "
+              f"{S['answered_without_evidence_n']} ({S['answered_without_evidence_wrong']} of them wrong) | "
+              f"{B['answered_without_evidence_n']} ({B['answered_without_evidence_wrong']} wrong) | |",
+              f"| out-of-scope declined | the 3 questions the corpus cannot answer | {fmt(S['oos_correct'])} | "
+              f"{fmt(B['oos_correct'])} | |",
+              f"| figures found in cited docs | every number, date and id is in a cited document | "
+              f"{fmt(S['figures_supported'])} | {fmt(B['figures_supported'])} | |",
+              f"| handed to a person | retrieval score below {cfg.ABSTAIN_BELOW}, no model call | "
+              f"{fmt(S['handoff'])} | {fmt(B['handoff'])} | |", "",
+              "Why both correctness and faithfulness: faithfulness alone is won by quoting a chunk back, and "
+              "correctness alone cannot tell a grounded answer from a lucky one. The two abstention rows are "
+              "the numbers the brief asks for: how often it declines, and whether the declines were the "
+              "questions it would have got wrong.", ""]
+
+    # ---- every config -------------------------------------------------------------------------
+    L += ["## Every configuration, main set", "",
+          "| system | answer correctness | cross-division | faithfulness (judge) | declined | declines right | "
+          "silent failures | OOS declined | citation valid | figures supported | handed to person | tokens in/out |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    rows = []
+    for c in summary["configs"]:
+        tag = " (what the app ships)" if c == ship else " (THE baseline)" if c == base else ""
+        rows.append((f"`{c}`{tag}", main_of(c)))
+    if summary.get("no_retrieval_floor"):
+        rows.append(("no retrieval (a floor, NOT the baseline)", summary["no_retrieval_floor"]))
     for name, a in rows:
-        jf = f"{fmt(a['judge_faithful'])} (n={a['judge_n']})" if a["judge_n"] else "n/a"
-        L.append(f"| {name} | {fmt(a['key_fact_pass'])} | {fmt(a['key_fact_pass_cross'])} | {fmt(a['over_abstain'])} | "
-                 f"{fmt(a['oos_correct'])} | {fmt(a['citation_valid'])} | {fmt(a.get('figures_supported'))} | {jf} | "
-                 f"{fmt(a.get('handoff'))} | "
+        jf = f"{fmt(a.get('judge_faithful'))} (n={a.get('judge_n', 0)})" if a.get("judge_n") else "n/a"
+        L.append(f"| {name} | {fmt(a['key_fact_pass'])} | {fmt(a['key_fact_pass_cross'])} | {jf} | "
+                 f"{fmt(a.get('declined'))} | {fmt(a.get('declines_right'))} | "
+                 f"{a.get('answered_without_evidence_n', 'n/a')} | {fmt(a['oos_correct'])} | "
+                 f"{fmt(a.get('citation_valid'))} | {fmt(a.get('figures_supported'))} | {fmt(a.get('handoff'))} | "
                  f"{a['avg_tokens_in']:.0f} / {a['avg_tokens_out']:.0f} |")
-    L += ["", "The baseline has no notes, so citation and faithfulness do not apply to it.", "",
-          "## By question set", "",
-          "The main set was written before the system ran; the others were added later. Read them separately.", "",
-          "| set | system | scored questions | key-fact pass | OOS correct | over-abstain |", "|---|---|---|---|---|---|"]
+
+    # ---- by question set ----------------------------------------------------------------------
+    L += ["", "## By question set", "",
+          "The main set was written before the system ran; the others were added later, so read them "
+          "separately. The independent set was written by a different model from the documents alone.", "",
+          "| set | system | scored questions | answer correctness | OOS declined | declined |",
+          "|---|---|---|---|---|---|"]
     sets = [st for st in ("main", "extra", "breaker", "independent")
-            if any(r["set"] == st for r in results["baseline"])]
-    systems = [("no retrieval", results["baseline"])] + [(f"`{c}`", r) for c, r in results["configs"].items()]
+            if any(r["set"] == st for recs in results["configs"].values() for r in recs)]
     for st in sets:
-        for name, recs in systems:
+        for c, recs in results["configs"].items():
             a = H.aggregate([r for r in recs if r["set"] == st])
-            L.append(f"| {st} | {name} | {a['n_scored']} | {fmt(a['key_fact_pass'])} | "
-                     f"{fmt(a['oos_correct'])} | {fmt(a['over_abstain'])} |")
+            L.append(f"| {st} | `{c}` | {a['n_scored']} | {fmt(a['key_fact_pass'])} | "
+                     f"{fmt(a['oos_correct'])} | {fmt(a.get('declined'))} |")
     L.append("")
 
-    for config, recs in results["configs"].items():
+    # ---- what failed, per config --------------------------------------------------------------
+    evidence = {True: "needed docs retrieved", False: "needed docs NOT retrieved", None: "docs not recorded"}
+    for c, recs in results["configs"].items():
         wrong = [r for r in recs if r["kind"] != "out_of_scope" and not r["key_fact_pass"]]
-        L += [f"## `{config}`: scored questions that failed the key-fact check ({len(wrong)})", ""]
+        L += [f"## `{c}`: scored questions that failed the correctness check ({len(wrong)})", ""]
         for r in wrong:
-            L.append(f"- **{r['id']}**: missing {r['missing_facts']}; answer: {r['answer'][:220]!r}")
+            L.append(f"- **{r['id']}** ({evidence[r.get('evidence_retrieved')]}): missing "
+                     f"{r['missing_facts']}; answer: {r['answer'][:220]!r}")
         bad = [r for r in recs if r.get("judge_faithful") is False]
         L += ["", f"Judge marked {len(bad)} answers unfaithful:", ""]
         for r in bad:
@@ -263,6 +325,9 @@ def main():
     ap.add_argument("--abstain-below", type=float, default=None,
                     help="hand questions to a human (no model call) when the best retrieval score is below this")
     ap.add_argument("--yes", action="store_true")
+    ap.add_argument("--with-no-retrieval", action="store_true",
+                    help="also run a model with NO retrieval, as a floor. Off by default: it is not the "
+                         "baseline (it has never seen these documents), so it only confirms the obvious")
     args = ap.parse_args()
 
     if args.agreement:
@@ -292,12 +357,15 @@ def main():
     do_judge = not args.no_judge
     n_q = len(questions)
     n_scored = sum(1 for q in questions if q["kind"] != "out_of_scope")
-    n_gen = n_q * (1 + len(args.configs))
+    n_gen = n_q * (len(args.configs) + (1 if args.with_no_retrieval else 0))
     n_judge = n_scored * len(args.configs)
-    est = cost_model.estimate_run(args.gen_model, args.judge_model, n_q, n_scored, args.configs, do_judge)
+    words_sent = {c: d["all"]["avg_words"] for c, d in per_config.items()}
+    est = cost_model.estimate_run(args.gen_model, args.judge_model, n_q, n_scored, args.configs, do_judge,
+                                  words_sent=words_sent, no_retrieval_floor=args.with_no_retrieval)
     print(f"\nPlan: {n_gen} generation calls + up to {n_judge if do_judge else 0} judge calls "
-          f"({len(args.configs)} configs + baseline, {n_q} questions).")
-    print("Estimated upper-bound cost: " + (f"${est:.2f}" if est is not None else "unknown (model not in cost_model.PRICES)"))
+          f"({len(args.configs)} configs, {n_q} questions"
+          + (", plus the no-retrieval floor" if args.with_no_retrieval else "") + ").")
+    print("Estimated upper-bound cost: " + (f"${est:.2f}" if est is not None else "unknown (model not in config.PRICES)"))
     if not (args.yes or args.dry_run):
         if input("Proceed and spend it? [y/N] ").strip().lower() != "y":
             print("Cancelled. Nothing spent.")
@@ -319,10 +387,12 @@ def main():
                 print(f"  {label}: {n}/{len(questions)}")
         return out
 
-    print("Running baseline (no retrieval)...")
-    base = run_all("baseline", lambda q: H.run_baseline_question(client, q, args.gen_model))
-    partial["baseline"] = base
-    save_partial()
+    floor = None
+    if args.with_no_retrieval:
+        print("Running the no-retrieval floor (NOT the baseline; it has never seen these documents)...")
+        floor = run_all("no-retrieval", lambda q: H.run_baseline_question(client, q, args.gen_model))
+        partial["no_retrieval_floor"] = floor
+        save_partial()
     for config in args.configs:
         print(f"Running {config}...")
         results["configs"][config] = run_all(
@@ -333,23 +403,28 @@ def main():
 
     summary = {"date": str(date.today()), "gen_model": args.gen_model,
                "judge_model": args.judge_model if do_judge else None,
+               "embedder": idx["plain"]["embedder"].using,
+               "shipped_config": H.SHIPPED, "baseline_config": H.BASELINE,
                "has_independent": any(q["set"] == "independent" for q in questions),
-               "baseline": H.aggregate(base),
+               "no_retrieval_floor": H.aggregate(floor) if floor else None,
                "configs": {c: H.aggregate(r) for c, r in results["configs"].items()},
                "retrieval": {c: d["main"] for c, d in per_config.items()}}
-    (out_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    (out_dir / "answers.json").write_text(json.dumps({"baseline": base, **results["configs"]}, indent=2), encoding="utf-8")
-    results["baseline"] = base
     summary["by_set"] = {"configs": {c: {st: H.aggregate([r for r in recs if r["set"] == st])
                                           for st in {r["set"] for r in recs}}
                                      for c, recs in results["configs"].items()}}
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    answers = dict(results["configs"])
+    if floor:
+        answers["no_retrieval_floor"] = floor
+    (out_dir / "answers.json").write_text(json.dumps(answers, indent=2), encoding="utf-8")
     write_eval_report(out_dir, summary, results)
     if do_judge:
-        first = args.configs[0]
-        items = H.make_spotcheck(results["configs"][first], out_dir)
-        print(f"\nWrote {len(items)} answers to {out_dir / 'judge_spotcheck.json'} for you to grade by hand.")
-    print(f"\nDone. Read {out_dir / 'summary.md'}. Then: python eval/cost_model.py")
+        # Hand-check the judge on the system that ships, not on whichever config ran first.
+        spot = H.SHIPPED if H.SHIPPED in results["configs"] else args.configs[0]
+        items = H.make_spotcheck(results["configs"][spot], out_dir)
+        print(f"\nWrote {len(items)} `{spot}` answers to {out_dir / 'judge_spotcheck.json'} for you to grade by hand,"
+              " then run: python run_eval.py --agreement")
+    print(f"\nDone. Read {out_dir / 'summary.md'}. Then: python cost_model.py")
 
 
 if __name__ == "__main__":

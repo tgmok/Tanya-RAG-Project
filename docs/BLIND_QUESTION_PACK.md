@@ -21,7 +21,7 @@ For each, give the answer you found and 1-3 short exact phrases from the documen
 ]}
 ```
 
-Each inner list in `groups` is one required fact; list alternative wordings inside it. Save the JSON as `eval/independent_questions.json`, then run `python eval/self_test.py` (it checks every fact appears in the cited documents) and `python eval/run_eval.py --run`.
+Each inner list in `groups` is one required fact; list alternative wordings inside it. Save the JSON as `data/independent_questions.json`, then run `python self_test.py` (it checks every fact appears in the cited documents) and `python run_eval.py --run`.
 
 ---
 

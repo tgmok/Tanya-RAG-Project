@@ -2,7 +2,7 @@
 
 Does the question already contain the answer it is graded on? Two kinds are checked: **question-side** (a key fact the answer is scored on is already stated in the question, so `key_fact_check` could pass on the asker's words) and **retrieval-side** (the question repeats the source document's wording, so retrieval is string matching). For every leaky question the leaked phrases are deleted and recall is re-scored -- the before/after gap is what those copied words were carrying.
 
-Config: `naive_k5`. Scored questions examined: 31. With at least one leaked key fact: **5** (16%).
+Config: `shipped`. Scored questions examined: 31. With at least one leaked key fact: **5** (16%).
 
 On the leaky questions only, document recall 100% before stripping -> 90% after; division recall 100% -> 100%.
 Across all scored questions, document recall 92% -> 91%.

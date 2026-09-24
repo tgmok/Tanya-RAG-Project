@@ -1,25 +1,22 @@
 """Tanya -- Streamlit demo UI.
 
-Run from the tanya-rag-project root:
-    streamlit run webapp/app.py
+Run from the repository root:
+    streamlit run app.py
 
-This app is ADDITIVE. It reads the fixed evaluation corpus (data/fnb, data/cnc,
-data/jewellery) read-only, and writes uploaded documents only to
-data/uploads/<division>/. It never touches eval_questions.json,
-data_dictionary.json, check_my_data.py, or Tanya_RAG_Notebook.ipynb. See
-docs/SYSTEM_FLOW.md for the full data flow and docs/REVERT.md for how to remove
-this app entirely and go back to the pre-UI state.
+It reads the fixed evaluation corpus (data/fnb, data/cnc, data/jewellery) read-only and writes
+uploaded documents only to data/uploads/<division>/, which git and the evaluation both ignore,
+so nothing done in the app can move a reported number. See docs/SYSTEM_FLOW.md for the data flow.
 """
 import sys
-import time
 from pathlib import Path
 
-import numpy as np
 import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).parent))
-import rag_core
+import config
 import doc_parser
+import guardrails
+import rag_core
 
 st.set_page_config(page_title="Tanya · TGMOK Holdings", page_icon="\U0001F4C4", layout="wide")
 
@@ -48,13 +45,7 @@ def init_state():
 
 
 def rebuild_index():
-    docs = rag_core.load_corpus()
-    chunks = rag_core.build_chunks(docs)
-    # Embed title-prefixed text (see rag_core.embed_text) -- retrieval matching only, the
-    # chunk text actually shown to the model and cited is unaffected.
-    embed_texts = [rag_core.embed_text(c) for c in chunks]
-    embedder = rag_core.Embedder(embed_texts)
-    matrix = embedder.embed(embed_texts)
+    docs, chunks, matrix, embedder = rag_core.build_index()
     st.session_state.docs = docs
     st.session_state.chunks = chunks
     st.session_state.matrix = matrix
@@ -69,10 +60,10 @@ def add_tokens(tokens):
 def budget_ok():
     """Guardrail: stop loudly and refuse further model calls once the session cap is hit,
     rather than spending without limit. Returns False (and shows the stop) if over budget."""
-    if rag_core.session_tokens_exceeded(st.session_state.tokens_in, st.session_state.tokens_out):
+    if guardrails.session_tokens_exceeded(st.session_state.tokens_in, st.session_state.tokens_out):
         st.error(
             f"Session token cap reached ({st.session_state.tokens_in + st.session_state.tokens_out:,} "
-            f"/ {rag_core.MAX_SESSION_TOKENS:,} tokens). No further model calls this session -- "
+            f"/ {config.MAX_SESSION_TOKENS:,} tokens). No further model calls this session -- "
             "reload the page to reset. This is a guardrail against unbounded spend (OWASP LLM10), "
             "not a cost estimate; at gpt-4o-mini prices the cap itself costs under $0.05."
         )
@@ -115,21 +106,20 @@ with st.sidebar:
     st.metric("Uploaded documents", upload_count)
     st.caption(st.session_state.embedder.using)
     st.caption(f"Tokens this session: {st.session_state.tokens_in} in / "
-               f"{st.session_state.tokens_out} out (cap {rag_core.MAX_SESSION_TOKENS:,})")
+               f"{st.session_state.tokens_out} out (cap {config.MAX_SESSION_TOKENS:,})")
     if st.button("Rebuild index"):
         rebuild_index()
         st.rerun()
     abstain_below = st.slider(
-        "Abstain below retrieval score", 0.0, 0.8, float(rag_core.ABSTAIN_BELOW), 0.01,
+        "Abstain below retrieval score", 0.0, 0.8, float(config.ABSTAIN_BELOW), 0.01,
         help="If the best-matching note scores below this, Tanya does not answer and passes the question to "
              "a human. Retrieval score is a weak signal here (see results/retrieval_recall.md), so this is a "
              "backstop, not a guarantee.")
 
     st.divider()
     st.caption(
-        "This UI is additive: uploads go to `data/uploads/`, separate from the "
-        "fixed, hand-verified evaluation corpus used for grading. See "
-        "`docs/REVERT.md` to remove this app entirely."
+        "Uploads go to `data/uploads/`, separate from the fixed, hand-verified corpus the "
+        "evaluation uses, so nothing done here can move a reported number."
     )
 
 
@@ -172,7 +162,7 @@ if uploaded_file is not None and st.session_state.pending_upload is None:
             st.warning("No extractable text found in this file (it may be a scanned "
                        "image PDF with no text layer).")
         else:
-            flags = rag_core.scan_for_injection(text)
+            flags = guardrails.scan_for_injection(text)
             if flags:
                 st.warning(
                     "This document contains a phrase commonly seen in prompt-injection attempts, "
@@ -219,7 +209,7 @@ if st.session_state.pending_upload is not None:
     st.markdown("**Confirm which division(s) this belongs to** (edit if Tanya got it wrong):")
     cols = st.columns(3)
     chosen = []
-    for i, division in enumerate(rag_core.DIVISIONS):
+    for i, division in enumerate(config.DIVISIONS):
         with cols[i]:
             if st.checkbox(division, value=(division in suggested), key=f"div_{division}"):
                 chosen.append(division)
@@ -242,7 +232,7 @@ if st.session_state.pending_upload is not None:
         new_doc_ids = [f"upload-{division}-{safe_stem}" for division in chosen]
         saved_text = rag_core.format_upload_content(pu["text"], chosen)
         for division in chosen:
-            target_dir = rag_core.UPLOADS_DIR / division
+            target_dir = config.UPLOADS_DIR / division
             target_dir.mkdir(parents=True, exist_ok=True)
             (target_dir / f"{safe_stem}.md").write_text(saved_text, encoding="utf-8")
 
@@ -260,20 +250,20 @@ if st.session_state.pending_upload is not None:
         st.markdown("### Cross-division impact snapshot")
         st.info(snapshot)
         docs_by_id = {d["doc_id"]: d["text"] for d in st.session_state.docs}
-        unsupported = rag_core.unsupported_figures(snapshot, docs_by_id)
+        unsupported = guardrails.unsupported_figures(snapshot, docs_by_id)
         if unsupported:
             st.warning("Not found in the cited documents: " + ", ".join(unsupported)
                        + ". Check these against the source before relying on this snapshot.")
-        elif unsupported is None and not rag_core.is_abstention(snapshot):
+        elif unsupported is None and not guardrails.is_abstention(snapshot):
             st.warning("This snapshot cites no existing document, so its figures could not be checked "
                        "against the corpus (it may only be describing the new upload itself).")
         with st.expander("Notes this snapshot drew on"):
             for h in hits:
-                st.markdown(f"- **{h['doc_id']}** ({h['division']}, score {h['score']:.3f}): "
+                st.markdown(f"- **{h['doc_id']}** · {h.get('title', '')} ({h['division']}, score {h['score']:.3f}): "
                             f"{h['text'][:200]}...")
         st.caption(
             "This snapshot is a demo aid for a human to read and judge -- it is not "
-            "added to eval_questions.json as a scored case, since there is no "
+            "added to data/eval_questions.json as a scored case, since there is no "
             "pre-verified ground truth for a document uploaded live."
         )
         st.session_state.pending_upload = None
@@ -295,7 +285,7 @@ for turn in st.session_state.chat_history:
         if turn["role"] == "assistant" and turn.get("hits"):
             with st.expander("Retrieved notes"):
                 for h in turn["hits"]:
-                    st.markdown(f"- **{h['doc_id']}** ({h['division']}, score "
+                    st.markdown(f"- **{h['doc_id']}** · {h.get('title', '')} ({h['division']}, score "
                                 f"{h['score']:.3f}): {h['text'][:200]}...")
 
 question = st.chat_input("Ask about any division, or a cross-division question...")
@@ -315,7 +305,7 @@ if question:
             st.markdown(answer)
             with st.expander("Retrieved notes"):
                 for h in hits:
-                    st.markdown(f"- **{h['doc_id']}** ({h['division']}, score "
+                    st.markdown(f"- **{h['doc_id']}** · {h.get('title', '')} ({h['division']}, score "
                                 f"{h['score']:.3f}): {h['text'][:200]}...")
         elif not budget_ok():
             answer, hits = None, []
@@ -329,15 +319,15 @@ if question:
                 add_tokens(tokens)
             st.markdown(answer)
             docs_by_id = {d["doc_id"]: d["text"] for d in st.session_state.docs}
-            unsupported = rag_core.unsupported_figures(answer, docs_by_id)
+            unsupported = guardrails.unsupported_figures(answer, docs_by_id)
             if unsupported:
                 st.warning("Not found in the cited documents: " + ", ".join(unsupported)
                            + ". Check these against the source before relying on this answer.")
-            elif unsupported is None and not rag_core.is_abstention(answer):
+            elif unsupported is None and not guardrails.is_abstention(answer):
                 st.warning("This answer cites no document, so its figures could not be checked.")
             with st.expander("Retrieved notes"):
                 for h in hits:
-                    st.markdown(f"- **{h['doc_id']}** ({h['division']}, score "
+                    st.markdown(f"- **{h['doc_id']}** · {h.get('title', '')} ({h['division']}, score "
                                 f"{h['score']:.3f}): {h['text'][:200]}...")
 
         if answer is not None:

@@ -1,14 +1,14 @@
 # The faithfulness-judge prompt
 
-This is the exact text `eval/harness.py` sends to the judge model, with `{question}`,
+This is the exact text `harness.py` sends to the judge model, with `{question}`,
 `{notes}` and `{answer}` substituted. The harness reads its prompt from the first fenced
 block below, so this file cannot drift from what actually runs. The judge is a described
 instrument, not an opinion: the judge model is named in every results file, it is never
 the model that produced the answer, and its verdicts are spot-checked by hand
-(`python eval/run_eval.py --agreement`).
+(`python run_eval.py --agreement`).
 
 What it does NOT check: whether the answer is correct. That is the code-level key-fact
-check against `eval_key_facts.json`. A faithful answer can still be wrong or incomplete.
+check against `data/eval_key_facts.json`. A faithful answer can still be wrong or incomplete.
 
 ---
 

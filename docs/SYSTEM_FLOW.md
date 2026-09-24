@@ -1,75 +1,86 @@
 # Tanya · system flow
 
-How the Streamlit demo (`webapp/app.py`) routes a request, and how TGMOK Holdings'
-three divisions are connected in the underlying corpus.
+How the app (`app.py`) routes a request, where each built guardrail (`guardrails.py`) sits on
+that path, and how TGMOK Holdings' three divisions are connected in the underlying corpus.
 
 ## Request flow
 
-Two entry points converge on the same retrieval-and-answer path. Uploading a
-document is optional -- a user can go straight to asking a question.
+Two entry points converge on the same retrieval-and-answer path. Uploading a document is
+optional -- a user can go straight to asking a question. Every rounded box marked **G** is code,
+not prompt, and is exercised against named cases by `python run_guardrails.py`
+(`results/guardrails.md`).
 
 ```mermaid
 flowchart TD
     START([User opens Tanya]) --> CHOICE{Upload a document,<br/>or ask directly?}
 
-    CHOICE -->|upload PDF/DOCX/TXT| EXTRACT["extract_text()<br/>pypdf / python-docx"]
-    EXTRACT --> CLASSIFY["classify_document()<br/>LLM call -> divisions + reasoning + summary"]
-    CLASSIFY --> PARSEOK{Valid JSON<br/>returned?}
-    PARSEOK -->|no, even after retry| MANUAL["User picks division(s)<br/>manually via checkboxes"]
-    PARSEOK -->|yes| SUGGEST["Suggested division(s)<br/>pre-checked for user to confirm/edit"]
-    MANUAL --> CONFIRM{User confirms}
+    CHOICE -->|upload PDF/DOCX/TXT| EXTRACT["doc_parser.extract_text()<br/>pypdf / python-docx, no model"]
+    EXTRACT --> SCAN(["G2 scan_for_injection()<br/>OWASP LLM01"])
+    SCAN -->|phrase matched| MANUAL["Person picks division(s) by hand;<br/>matched phrases shown"]
+    SCAN -->|clean| CAP1(["G1 session token cap<br/>OWASP LLM10"])
+    CAP1 --> CLASSIFY["rag_core.classify_document()<br/>LLM call: divisions + reasoning + summary"]
+    CLASSIFY --> PARSEOK{Valid JSON,<br/>even after one retry?}
+    PARSEOK -->|no| MANUAL
+    PARSEOK -->|yes| SUGGEST["Suggested division(s)<br/>pre-checked for the person to confirm/edit"]
+    MANUAL --> CONFIRM{"Person confirms<br/>(nothing is written before this)"}
     SUGGEST --> CONFIRM
     CONFIRM -->|cancel| CHOICE
-    CONFIRM -->|confirm| FILE["Write .md into<br/>data/uploads/&lt;division&gt;/"]
-    FILE --> REBUILD["rebuild_index()<br/>re-chunk + re-embed corpus"]
-    REBUILD --> SNAPSHOT["generate_impact_snapshot()<br/>retrieve from OTHER divisions using<br/>the new doc's own text as the query"]
-    SNAPSHOT --> SHOW["Show snapshot + cited notes<br/>(a demo aid for a human to judge --<br/>not a scored eval case)"]
+    CONFIRM -->|confirm| FILE["format_upload_content() adds 'Filed under: ...';<br/>write .md into data/uploads/&lt;division&gt;/"]
+    FILE --> REBUILD["rag_core.build_index()<br/>re-chunk + re-embed"]
+    REBUILD --> SNAPSHOT["generate_impact_snapshot()<br/>retrieve from OTHER divisions using<br/>the new document's own text as the query"]
+    SNAPSHOT --> FIG1(["G5 unsupported_figures()<br/>OWASP LLM09"])
+    FIG1 --> SHOW["Brief + cited notes + a warning if any figure<br/>is not in a cited document (read by a person,<br/>not a scored case)"]
     SHOW --> CHAT
 
-    CHOICE -->|ask directly| CHAT["Chat box: user types a question"]
-    CHAT --> RETRIEVE["retrieve()<br/>embed question, top-k chunks<br/>across the current corpus"]
-    RETRIEVE --> GROUNDED["generate() with the GROUNDED prompt<br/>answer ONLY from retrieved notes"]
+    CHOICE -->|ask directly| CHAT["Chat box: a question"]
+    CHAT --> RETRIEVE["rag_core.retrieve()<br/>top-5, title-prefixed embedding,<br/>over the current corpus"]
+    RETRIEVE --> HAND(["G3 best score below 0.45?"])
+    HAND -->|yes| PERSON["'The documents do not say.' +<br/>handed to a person -- NO model call"]
+    HAND -->|no| CAP2(["G1 session token cap"])
+    CAP2 --> GROUNDED["generate() with the GROUNDED prompt:<br/>answer ONLY from the numbered notes"]
     GROUNDED --> ABSTAIN{Notes contain<br/>the answer?}
     ABSTAIN -->|no| DECLINE["'The documents do not say.'"]
-    ABSTAIN -->|yes| CITE["Answer + 'Cited: &lt;doc_id, ...&gt;'"]
+    ABSTAIN -->|yes| CITE["Answer + 'Cited: fnb-01, cnc-01'<br/>(real ids, never bracket numbers)"]
+    CITE --> FIG2(["G5 unsupported_figures()"])
+    FIG2 --> CHAT
     DECLINE --> CHAT
-    CITE --> CHAT
+    PERSON --> CHAT
 ```
 
 ## Why the upload path never touches the graded corpus
 
-`data/fnb/`, `data/cnc/`, `data/jewellery/` are the fixed, hand-verified corpus
-that `eval_questions.json`'s 23 questions were written against, per the
-watch-outs' "fix the ground truth before you run anything." A live upload has no
-pre-verified answer, so it's filed into a separate `data/uploads/<division>/`
-tree instead -- the retrieval index includes it once confirmed, but it never
-becomes a new scored eval case.
+`data/fnb/`, `data/cnc/`, `data/jewellery/` are the fixed, hand-verified corpus that
+`data/eval_questions.json`'s 23 questions were written against, per the watch-outs' "fix the
+ground truth before you run anything." A live upload has no pre-verified answer, so it is filed
+into a separate `data/uploads/<division>/` tree instead -- the app's index includes it once a
+person confirms it, but git ignores that folder and the evaluation never reads it, so nothing
+done in the app can move a reported number.
 
 ## How the three divisions are connected
 
 The fixed corpus was built around three deliberate cross-division "hooks" (see
-`generation_prompts.md`), each split across two or more divisions' documents so
-that a single-division answer is necessarily incomplete:
+`data/generation_prompts.md`), each split across two or more divisions' documents so that a
+single-division answer is necessarily incomplete:
 
 ```mermaid
 flowchart LR
     subgraph FNB["F&B · Contract Manufacturing"]
-        FNB1["packaging_change_sop.md"]
-        FNB2["client_contract_summary.md<br/>(Aurora Beverages rush order)"]
-        FNB4["maintenance_log.md"]
-        FNB6["financial_summary_q3.md"]
+        FNB1["fnb-01 packaging_change_sop"]
+        FNB2["fnb-02 client_contract_summary<br/>(Aurora Beverages rush order)"]
+        FNB4["fnb-04 maintenance_log"]
+        FNB6["fnb-06 financial_summary_q3"]
     end
 
     subgraph CNC["CNC · Precision Machine Parts"]
-        CNC1["tooling_spec_bottle_cap.md"]
-        CNC2["capacity_planning_report.md"]
-        CNC4["material_procurement_policy.md"]
-        CNC6["client_order_backlog.md"]
+        CNC1["cnc-01 tooling_spec_bottle_cap"]
+        CNC2["cnc-02 capacity_planning_report"]
+        CNC4["cnc-04 material_procurement_policy"]
+        CNC6["cnc-06 client_order_backlog"]
     end
 
     subgraph JWL["Jewellery · Manufacturing & Retail"]
-        JWL1["finance_intercompany_loan_report.md"]
-        JWL2["gold_pricing_policy.md"]
+        JWL1["jwl-01 finance_intercompany_loan_report"]
+        JWL2["jwl-02 gold_pricing_policy"]
     end
 
     FNB1 -- "H1: packaging change<br/>requires new tooling" --> CNC1
@@ -84,7 +95,8 @@ flowchart LR
     JWL2 -. "custom stamping die<br/>sourced from CNC (non-hook)" .-> CNC6
 ```
 
-A question that only retrieves from one division in a hook pair will always be
-incomplete -- this is exactly what Section 7's context-recall metric measures,
-and what the notebook's naive-vs-filtered "break it" comparison demonstrates
-directly (see `Tanya_RAG_Notebook.ipynb`, section 9).
+A question that only retrieves from one division in a hook pair will always be incomplete --
+this is what Section 7's context-recall metric measures. The shipped retrieval covers every
+needed division on all 11 cross-division questions, but still misses a needed *document* on 4 of
+31 scored questions; three of those are the same CNC tooling spec, `cnc-01`, diagnosed in the
+notebook's "break it" section (`results/retrieval_recall.md` lists every miss).

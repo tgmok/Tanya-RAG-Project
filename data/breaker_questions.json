@@ -1,5 +1,5 @@
 {
-  "_notes": "Break-it questions, the kinds from the A1 Part 2 starter that the main set does not cover: vocabulary mismatch (the question uses words the documents never use), distractor (the topic appears in many documents but only one holds the answer, and another holds a similar-looking number), absent-but-plausible (sounds answerable, is not). Written by the project author before running; reported as their own set. Facts were checked against the documents by eval/self_test.py.",
+  "_notes": "Break-it questions, the kinds from the A1 Part 2 starter that the main set does not cover: vocabulary mismatch (the question uses words the documents never use), distractor (the topic appears in many documents but only one holds the answer, and another holds a similar-looking number), absent-but-plausible (sounds answerable, is not). Written by the project author before running; reported as their own set. Facts were checked against the documents by self_test.py.",
   "questions": [
     {
       "id": "VM1",

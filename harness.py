@@ -8,40 +8,44 @@ Layers, cheapest first:
   3. Model judge (different model family from the generator): faithfulness to the notes.
      Prompt is read from docs/JUDGE_PROMPT.md. Spot-checked by hand.
 
-Reuses webapp/rag_core.py for chunking, embedding, retrieval and generation so the
-numbers describe the same pipeline the app runs. Reads only the FIXED corpus in data/
-(never data/uploads/), so uploads cannot move the evaluation.
+Reuses rag_core.py for chunking, embedding, retrieval and generation, and guardrails.py for the
+code checks, so the numbers describe the same pipeline the app runs. The `shipped` config is
+exactly the app (top-5, title-prefixed embedding, human hand-off below config.ABSTAIN_BELOW);
+`tfidf_k5` is THE baseline it is measured against: keyword search over the same chunks, a
+non-AI method, rather than a model with no retrieval at all (which has never seen these
+fictional documents, scores near zero, and so teaches nothing). Reads only the FIXED corpus in
+data/ (never data/uploads/), so uploads cannot move the evaluation.
 """
 import json
 import random
 import re
-import sys
 import time
 import types
 from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ROOT / "webapp"))
+import config as cfg   # imported as cfg: many functions below take a parameter named `config`
+import guardrails
+import rag_core
+from config import DATA_DIR, DOC_ID_TO_DIVISION, DOC_ID_TO_PATH, RESULTS_DIR, ROOT
 
-import rag_core  # noqa: E402
-from check_my_data import DOC_ID_TO_DIVISION, DOC_ID_TO_PATH  # noqa: E402
-
-DATA_DIR = ROOT / "data"
-RESULTS_DIR = ROOT / "results"
-GEN_MODEL_DEFAULT = "openai/gpt-4o-mini"
-JUDGE_MODEL_DEFAULT = "google/gemini-2.5-flash"
+GEN_MODEL_DEFAULT = cfg.GEN_MODEL
+JUDGE_MODEL_DEFAULT = cfg.JUDGE_MODEL
 
 CONFIGS = {
+    "shipped": {"kind": "naive", "k": cfg.TOP_K, "titled": cfg.TITLED_EMBEDDING,
+                "abstain_below": cfg.ABSTAIN_BELOW,
+                "label": f"WHAT THE APP SHIPS: top-{cfg.TOP_K}, title-prefixed embedding, "
+                         f"handed to a person below {cfg.ABSTAIN_BELOW}"},
     "naive_k3": {"kind": "naive", "k": 3, "label": "top-3 by similarity (the notebook default)"},
     "naive_k5": {"kind": "naive", "k": 5, "label": "top-5 by similarity"},
     "titled_k5": {"kind": "naive", "k": 5, "titled": True,
                   "label": "top-5, document title prepended to each chunk before embedding"},
     "parent_d3": {"kind": "parent", "k": 5, "docs": 3,
                   "label": "top-5 chunks, then send their 3 best WHOLE documents"},
-    "tfidf_k5": {"kind": "tfidf", "k": 5, "label": "keyword (TF-IDF) top-5: the non-AI baseline"},
+    "tfidf_k5": {"kind": "tfidf", "k": 5,
+                 "label": "THE BASELINE: keyword (TF-IDF) top-5 over the same chunks, non-AI retrieval"},
     "named_div_k5": {"kind": "named", "k": 5,
                      "label": "keyword division classifier first, then top-5 inside the named divisions (Section 8 as written)"},
     "balanced_2x3": {"kind": "balanced", "per_division": 2,
@@ -49,7 +53,10 @@ CONFIGS = {
     "full_context": {"kind": "full",
                      "label": "all 18 documents in every prompt, no retrieval; recall 100% by construction"},
 }
-DEFAULT_RAG_CONFIGS = ["naive_k3", "naive_k5", "titled_k5", "parent_d3", "tfidf_k5", "full_context"]
+SHIPPED = "shipped"
+BASELINE = "tfidf_k5"
+# The live run: the shipped system and THE baseline first, then the alternatives it was chosen over.
+DEFAULT_RAG_CONFIGS = [SHIPPED, BASELINE, "naive_k5", "titled_k5", "naive_k3", "parent_d3", "full_context"]
 
 BASELINE_SYSTEM = "Answer in one or two short sentences."
 GENERIC_DECLINE = ["do not say", "don't have", "do not have", "cannot", "can't", "unable",
@@ -68,9 +75,9 @@ def load_questions(include_extra=True, include_independent=True):
     """Main 23 (eval_questions.json + eval_key_facts.json), plus optional near-miss and
     independently-authored sets. Every question gets: id, kind, question,
     expected_divisions, source_doc_ids, facts (list of groups), why, set."""
-    key_facts = _load_json(ROOT / "eval_key_facts.json")["facts"]
+    key_facts = _load_json(DATA_DIR / "eval_key_facts.json")["facts"]
     out = []
-    for q in _load_json(ROOT / "eval_questions.json")["questions"]:
+    for q in _load_json(DATA_DIR / "eval_questions.json")["questions"]:
         item = dict(q)
         item["set"] = "main"
         if q["kind"] == "out_of_scope":
@@ -81,9 +88,9 @@ def load_questions(include_extra=True, include_independent=True):
             item["why"] = key_facts[q["id"]]["why"]
         out.append(item)
 
-    for name, path, flag in (("extra", ROOT / "eval" / "extra_questions.json", include_extra),
-                             ("breaker", ROOT / "eval" / "breaker_questions.json", include_extra),
-                             ("independent", ROOT / "eval" / "independent_questions.json", include_independent)):
+    for name, path, flag in (("extra", DATA_DIR / "extra_questions.json", include_extra),
+                             ("breaker", DATA_DIR / "breaker_questions.json", include_extra),
+                             ("independent", DATA_DIR / "independent_questions.json", include_independent)):
         if flag and path.exists():
             for q in _load_json(path)["questions"]:
                 item = dict(q)
@@ -108,7 +115,7 @@ def build_index(titled=False, embedder=None, chunk_words=None, overlap=None):
     for doc_id, rel in DOC_ID_TO_PATH.items():
         text = (DATA_DIR / rel).read_text(encoding="utf-8")
         docs[doc_id] = text
-        title = next((ln[2:].strip() for ln in text.splitlines() if ln.startswith("# ")), doc_id)
+        title = rag_core.doc_title({"text": text, "doc_id": doc_id})
         size = chunk_words or rag_core.CHUNK_WORDS
         ov = rag_core.OVERLAP if overlap is None else overlap
         for c in rag_core.chunk(text, size, ov):
@@ -319,10 +326,13 @@ def judge_answer(client, q, hits, answer, judge_model):
 
 def run_rag_question(client, q, config, idx, gen_model, judge_model, do_judge, abstain_below=None):
     hits = retrieve_config(config, q["question"], idx)
-    handoff = (abstain_below is not None and CONFIGS[config]["kind"] in ("naive", "parent", "balanced", "named")
-               and hits and hits[0]["score"] < abstain_below)
+    # The shipped config carries the app's own threshold, whatever --abstain-below says: its row
+    # must describe the app. Every other config uses the command-line threshold (default: none).
+    threshold = CONFIGS[config].get("abstain_below", abstain_below)
+    handoff = (threshold is not None and CONFIGS[config]["kind"] in ("naive", "parent", "balanced", "named")
+               and hits and hits[0]["score"] < threshold)
     if handoff:
-        answer, tok = rag_core.handoff_message(hits[0]["score"], abstain_below), {"in": 0, "out": 0}
+        answer, tok = guardrails.handoff_message(hits[0]["score"], threshold), {"in": 0, "out": 0}
     else:
         context = "\n\n".join(f"[{i+1}] ({h['doc_id']}) {h['text']}" for i, h in enumerate(hits))
         answer, tok = _generate(client, f"NOTES:\n{context}\n\nQUESTION: {q['question']}",
@@ -332,7 +342,12 @@ def run_rag_question(client, q, config, idx, gen_model, judge_model, do_judge, a
            "answer": answer, "abstained": abst, "citation_valid": citation_valid(answer, hits),
            "retrieved": [h["doc_id"] for h in hits], "notes": "\n".join(h["text"] for h in hits),
            "tokens_in": tok["in"], "tokens_out": tok["out"], "handoff": bool(handoff),
-           "figures_unsupported": rag_core.unsupported_figures(answer, idx["plain"]["docs"])}
+           # Were ALL the documents this question needs in front of the model? The evidence side of
+           # "should it have declined?" (see aggregate), and the detector for the silent failure:
+           # answering anyway when they were not.
+           "evidence_retrieved": (set(q["source_doc_ids"]) <= {h["doc_id"] for h in hits}
+                                  if q["kind"] != "out_of_scope" and q.get("source_doc_ids") else None),
+           "figures_unsupported": guardrails.unsupported_figures(answer, idx["plain"]["docs"])}
     if q["kind"] == "out_of_scope":
         rec["pass"] = abst
     else:
@@ -367,8 +382,30 @@ def aggregate(records):
     def rate(rs, fn):
         return (sum(1 for r in rs if fn(r)) / len(rs)) if rs else None
 
+    # Abstention as the TWO numbers the watch-outs (Section 7) ask for: how often it declines,
+    # and whether the questions it declined were ones it would have got wrong. "Would have got
+    # wrong" is judged on evidence, not guessed: a decline is RIGHT when the question is out of
+    # scope, or when retrieval did not put every document the question needs in front of the
+    # model (so any answer would have been unsupported). It is WRONG when the evidence was all
+    # there. Declines where the needed documents are not recorded (some added sets) are left out.
+    declines = [r for r in rag_records if r["abstained"]]
+    judgeable = [r for r in declines if r["kind"] == "out_of_scope" or r.get("evidence_retrieved") is not None]
+    # The silent failure (Section 8): it ANSWERED an answerable question although the documents
+    # that question needs were not retrieved -- the shape of every confident hallucination found.
+    answered_scored = [r for r in scored if "abstained" in r and not r["abstained"]
+                       and r.get("evidence_retrieved") is not None]
+
     n = len(records) or 1
     return {
+        "declined": rate(rag_records, lambda r: r["abstained"]),
+        "n_declined": len(declines),
+        "declines_right": rate(judgeable, lambda r: r["kind"] == "out_of_scope"
+                               or r.get("evidence_retrieved") is False),
+        "declines_judged": len(judgeable),
+        "answered_without_evidence": rate(answered_scored, lambda r: r["evidence_retrieved"] is False),
+        "answered_without_evidence_n": sum(1 for r in answered_scored if r["evidence_retrieved"] is False),
+        "answered_without_evidence_wrong": sum(1 for r in answered_scored
+                                               if r["evidence_retrieved"] is False and not r["key_fact_pass"]),
         "n": len(records), "n_scored": len(scored), "n_oos": len(oos),
         "key_fact_pass": rate(scored, lambda r: r["key_fact_pass"]),
         "key_fact_pass_cross": rate(cross, lambda r: r["key_fact_pass"]),
@@ -477,7 +514,7 @@ class FakeClient:
             usage=types.SimpleNamespace(prompt_tokens=len(text) // 4, completion_tokens=len(out) // 4))
 
 
-def abstention_curve(questions, idx, config="naive_k5", thresholds=(0.40, 0.45, 0.50, 0.55, 0.60)):
+def abstention_curve(questions, idx, config=SHIPPED, thresholds=(0.40, 0.45, 0.50, 0.55, 0.60)):
     """How well does the best retrieval score separate questions the corpus answers from ones it does not?
     Free (no model). NOTE: thresholds are judged on the same questions, so treat as optimistic."""
     answerable, absent = [], []
@@ -501,7 +538,7 @@ def _strip_leaked(question, leaked_alts):
     return re.sub(r"\s{2,}", " ", out).strip()
 
 
-def leakage_check(questions, idx, config="naive_k5"):
+def leakage_check(questions, idx, config=SHIPPED):
     """Watch-outs section 6: "does the input already contain the answer? Strip it, and report
     the score before and after." Free (no model).
 

@@ -1,6 +1,6 @@
 """Offline checks that the evaluation instruments themselves are sound. No model, no API key.
 
-    python eval/self_test.py
+    python self_test.py
 
 An eval whose key facts are wrong grades the system wrongly, so this checks:
   1. every scored question has key facts, and no orphan facts exist
@@ -10,11 +10,11 @@ An eval whose key facts are wrong grades the system wrongly, so this checks:
   4. the checker rejects a plausible wrong answer and abstentions
   5. citation validation and the judge prompt behave
 """
+import json
 import sys
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import harness as H  # noqa: E402
+import guardrails
+import harness as H
 
 failures = []
 
@@ -28,8 +28,7 @@ qs = H.load_questions()
 scored = [q for q in qs if q["kind"] != "out_of_scope"]
 
 main_ids = {q["id"] for q in qs if q["set"] == "main" and q["kind"] != "out_of_scope"}
-import json  # noqa: E402
-kf_ids = set(json.loads((H.ROOT / "eval_key_facts.json").read_text(encoding="utf-8"))["facts"])
+kf_ids = set(json.loads((H.DATA_DIR / "eval_key_facts.json").read_text(encoding="utf-8"))["facts"])
 check(main_ids == kf_ids, f"eval_key_facts.json ids differ from scored main ids: {main_ids ^ kf_ids}")
 
 for q in scored:
@@ -88,13 +87,13 @@ for token in ("{question}", "{notes}", "{answer}", "faithful"):
 # 6. the citation-content check (Section 8 mitigation): figures must appear in the cited documents
 _docs = {"fnb-01": "Cap diameter changed from 28mm to 26mm. Facility $180,000 over 18 months, drawn 2026-06-08.",
          "cnc-01": "Tolerance 0.02mm. Order C-4471 delayed 4 business days."}
-_uf = H.rag_core.unsupported_figures
+_uf = guardrails.unsupported_figures
 check(_uf("It was $180,000 over 18 months. Cited: fnb-01", _docs) == [], "supported figures were flagged")
 check(_uf("It was $250,000 over 18 months. Cited: fnb-01", _docs) == ["$250,000"], "an invented amount was not caught")
 check(_uf("Order C-4471, changed on 2026-06-09. Cited: cnc-01, fnb-01", _docs) == ["2026-06-09"], "a wrong date was not caught")
 check(_uf("The documents do not say.", _docs) is None, "an abstention should not be verified")
 check(_uf("It was $180,000.", _docs) is None, "an answer with no citation should be unverifiable, not passed")
-check("do not say" in H.rag_core.handoff_message(0.31, 0.45).lower(), "the human hand-off must contain the abstention phrase")
+check("do not say" in guardrails.handoff_message(0.31, 0.45).lower(), "the human hand-off must contain the abstention phrase")
 
 # 7. the keyword division classifier (Section 8 as written)
 check(set(H.named_divisions("How did the jewellery division fund F&B?")) == {"fnb", "jewellery"}, "classifier missed a named division")

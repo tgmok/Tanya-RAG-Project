@@ -1,5 +1,5 @@
 {
-  "_notes": "Near-miss questions, reported as a separate group from the main 20+3. A near-miss has a plausible-but-wrong premise: a system that pattern-matches on the storyline instead of reading the notes will get it wrong. Written by the project author (not independent) before running; the independent set goes in eval/independent_questions.json (see docs/BLIND_QUESTION_PACK.md).",
+  "_notes": "Near-miss questions, reported as a separate group from the main 20+3. A near-miss has a plausible-but-wrong premise: a system that pattern-matches on the storyline instead of reading the notes will get it wrong. Written by the project author (not independent) before running; the independent set goes in data/independent_questions.json (see docs/BLIND_QUESTION_PACK.md).",
   "questions": [
     {
       "id": "NM1",

@@ -1,4 +1,1052 @@
 {
+  "shipped": {
+    "main": {
+      "n_scored": 20,
+      "n_cross": 11,
+      "division_recall_cross": 1.0,
+      "division_recall_all": 1.0,
+      "avg_doc_recall": 0.8833333333333332,
+      "avg_chunks": 5.0,
+      "avg_words": 836.8
+    },
+    "all": {
+      "n_scored": 31,
+      "n_cross": 12,
+      "division_recall_cross": 1.0,
+      "division_recall_all": 1.0,
+      "avg_doc_recall": 0.9247311827956989,
+      "avg_chunks": 5.0,
+      "avg_words": 806.2903225806451
+    },
+    "records": [
+      {
+        "id": "CD1",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 0.5,
+        "n_chunks": 5,
+        "words_sent": 884,
+        "retrieved": [
+          [
+            "fnb-01",
+            0.66
+          ],
+          [
+            "fnb-01",
+            0.603
+          ],
+          [
+            "cnc-04",
+            0.502
+          ],
+          [
+            "cnc-02",
+            0.492
+          ],
+          [
+            "cnc-06",
+            0.477
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-01",
+            "best_chunk_rank": 8,
+            "best_chunk_score": 0.432,
+            "retrieval_cutoff_score": 0.477
+          }
+        ]
+      },
+      {
+        "id": "CD2",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 0.5,
+        "n_chunks": 5,
+        "words_sent": 866,
+        "retrieved": [
+          [
+            "fnb-01",
+            0.581
+          ],
+          [
+            "cnc-02",
+            0.545
+          ],
+          [
+            "fnb-04",
+            0.506
+          ],
+          [
+            "fnb-01",
+            0.485
+          ],
+          [
+            "fnb-02",
+            0.466
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-01",
+            "best_chunk_rank": 7,
+            "best_chunk_score": 0.433,
+            "retrieval_cutoff_score": 0.466
+          }
+        ]
+      },
+      {
+        "id": "CD3",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 0.6666666666666666,
+        "n_chunks": 5,
+        "words_sent": 873,
+        "retrieved": [
+          [
+            "cnc-04",
+            0.514
+          ],
+          [
+            "fnb-01",
+            0.502
+          ],
+          [
+            "cnc-02",
+            0.479
+          ],
+          [
+            "jwl-06",
+            0.464
+          ],
+          [
+            "jwl-05",
+            0.447
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-01",
+            "best_chunk_rank": 12,
+            "best_chunk_score": 0.345,
+            "retrieval_cutoff_score": 0.447
+          }
+        ]
+      },
+      {
+        "id": "CD4",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 884,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.578
+          ],
+          [
+            "cnc-06",
+            0.547
+          ],
+          [
+            "cnc-04",
+            0.448
+          ],
+          [
+            "fnb-01",
+            0.388
+          ],
+          [
+            "fnb-02",
+            0.367
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD5",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 856,
+        "retrieved": [
+          [
+            "fnb-04",
+            0.625
+          ],
+          [
+            "cnc-02",
+            0.545
+          ],
+          [
+            "fnb-01",
+            0.528
+          ],
+          [
+            "cnc-01",
+            0.469
+          ],
+          [
+            "fnb-06",
+            0.461
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD6",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 884,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.547
+          ],
+          [
+            "cnc-06",
+            0.502
+          ],
+          [
+            "fnb-01",
+            0.487
+          ],
+          [
+            "cnc-04",
+            0.457
+          ],
+          [
+            "fnb-02",
+            0.455
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD7",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 884,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.579
+          ],
+          [
+            "fnb-02",
+            0.508
+          ],
+          [
+            "cnc-06",
+            0.465
+          ],
+          [
+            "cnc-04",
+            0.443
+          ],
+          [
+            "fnb-01",
+            0.432
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD8",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 860,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.652
+          ],
+          [
+            "fnb-04",
+            0.448
+          ],
+          [
+            "fnb-01",
+            0.418
+          ],
+          [
+            "jwl-01",
+            0.397
+          ],
+          [
+            "fnb-01",
+            0.361
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD9",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 900,
+        "retrieved": [
+          [
+            "cnc-04",
+            0.371
+          ],
+          [
+            "cnc-02",
+            0.337
+          ],
+          [
+            "fnb-01",
+            0.298
+          ],
+          [
+            "jwl-01",
+            0.295
+          ],
+          [
+            "fnb-01",
+            0.262
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S9",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 793,
+        "retrieved": [
+          [
+            "jwl-04",
+            0.685
+          ],
+          [
+            "jwl-03",
+            0.561
+          ],
+          [
+            "jwl-05",
+            0.506
+          ],
+          [
+            "jwl-06",
+            0.453
+          ],
+          [
+            "jwl-02",
+            0.381
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD11",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 802,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.613
+          ],
+          [
+            "jwl-04",
+            0.501
+          ],
+          [
+            "jwl-02",
+            0.489
+          ],
+          [
+            "cnc-04",
+            0.471
+          ],
+          [
+            "jwl-05",
+            0.436
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD12",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 0.0,
+        "n_chunks": 5,
+        "words_sent": 908,
+        "retrieved": [
+          [
+            "cnc-04",
+            0.537
+          ],
+          [
+            "jwl-01",
+            0.425
+          ],
+          [
+            "cnc-03",
+            0.413
+          ],
+          [
+            "cnc-02",
+            0.412
+          ],
+          [
+            "fnb-01",
+            0.41
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-06",
+            "best_chunk_rank": 7,
+            "best_chunk_score": 0.403,
+            "retrieval_cutoff_score": 0.41
+          },
+          {
+            "missing_doc": "jwl-02",
+            "best_chunk_rank": 20,
+            "best_chunk_score": 0.22,
+            "retrieval_cutoff_score": 0.41
+          }
+        ]
+      },
+      {
+        "id": "S1",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 903,
+        "retrieved": [
+          [
+            "fnb-05",
+            0.469
+          ],
+          [
+            "cnc-05",
+            0.309
+          ],
+          [
+            "fnb-02",
+            0.289
+          ],
+          [
+            "fnb-03",
+            0.254
+          ],
+          [
+            "cnc-06",
+            0.23
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S2",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 809,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.544
+          ],
+          [
+            "jwl-01",
+            0.487
+          ],
+          [
+            "jwl-01",
+            0.452
+          ],
+          [
+            "jwl-03",
+            0.333
+          ],
+          [
+            "fnb-03",
+            0.3
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S3",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 836,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.63
+          ],
+          [
+            "cnc-02",
+            0.511
+          ],
+          [
+            "cnc-06",
+            0.455
+          ],
+          [
+            "fnb-01",
+            0.445
+          ],
+          [
+            "cnc-04",
+            0.44
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S4",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 824,
+        "retrieved": [
+          [
+            "cnc-03",
+            0.761
+          ],
+          [
+            "cnc-05",
+            0.517
+          ],
+          [
+            "fnb-04",
+            0.485
+          ],
+          [
+            "cnc-01",
+            0.464
+          ],
+          [
+            "cnc-02",
+            0.451
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S5",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 733,
+        "retrieved": [
+          [
+            "jwl-02",
+            0.522
+          ],
+          [
+            "jwl-06",
+            0.42
+          ],
+          [
+            "jwl-05",
+            0.413
+          ],
+          [
+            "jwl-01",
+            0.353
+          ],
+          [
+            "jwl-01",
+            0.352
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S6",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 727,
+        "retrieved": [
+          [
+            "jwl-03",
+            0.627
+          ],
+          [
+            "jwl-01",
+            0.37
+          ],
+          [
+            "jwl-04",
+            0.346
+          ],
+          [
+            "jwl-01",
+            0.338
+          ],
+          [
+            "jwl-05",
+            0.328
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S7",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 679,
+        "retrieved": [
+          [
+            "jwl-05",
+            0.604
+          ],
+          [
+            "jwl-06",
+            0.429
+          ],
+          [
+            "jwl-03",
+            0.42
+          ],
+          [
+            "jwl-04",
+            0.402
+          ],
+          [
+            "jwl-01",
+            0.333
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S8",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 831,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.595
+          ],
+          [
+            "fnb-05",
+            0.394
+          ],
+          [
+            "cnc-05",
+            0.366
+          ],
+          [
+            "fnb-01",
+            0.362
+          ],
+          [
+            "fnb-06",
+            0.352
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "NM1",
+        "kind": "near_miss",
+        "set": "extra",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 719,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.612
+          ],
+          [
+            "fnb-02",
+            0.607
+          ],
+          [
+            "fnb-01",
+            0.591
+          ],
+          [
+            "cnc-01",
+            0.565
+          ],
+          [
+            "fnb-04",
+            0.508
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "NM2",
+        "kind": "near_miss",
+        "set": "extra",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 723,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.668
+          ],
+          [
+            "jwl-01",
+            0.469
+          ],
+          [
+            "fnb-04",
+            0.392
+          ],
+          [
+            "fnb-01",
+            0.375
+          ],
+          [
+            "jwl-01",
+            0.374
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "VM1",
+        "kind": "vocabulary_mismatch",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 791,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.562
+          ],
+          [
+            "fnb-02",
+            0.486
+          ],
+          [
+            "fnb-06",
+            0.484
+          ],
+          [
+            "fnb-04",
+            0.455
+          ],
+          [
+            "cnc-02",
+            0.412
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "VM2",
+        "kind": "vocabulary_mismatch",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 793,
+        "retrieved": [
+          [
+            "jwl-05",
+            0.503
+          ],
+          [
+            "jwl-02",
+            0.489
+          ],
+          [
+            "jwl-03",
+            0.417
+          ],
+          [
+            "jwl-06",
+            0.417
+          ],
+          [
+            "jwl-04",
+            0.334
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "DIS1",
+        "kind": "distractor",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 794,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.542
+          ],
+          [
+            "fnb-04",
+            0.509
+          ],
+          [
+            "fnb-01",
+            0.418
+          ],
+          [
+            "fnb-01",
+            0.374
+          ],
+          [
+            "cnc-03",
+            0.349
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "DIS2",
+        "kind": "distractor",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 775,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.511
+          ],
+          [
+            "fnb-04",
+            0.477
+          ],
+          [
+            "cnc-03",
+            0.463
+          ],
+          [
+            "cnc-01",
+            0.417
+          ],
+          [
+            "fnb-01",
+            0.339
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND1",
+        "kind": "cross_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 719,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.667
+          ],
+          [
+            "fnb-01",
+            0.607
+          ],
+          [
+            "fnb-02",
+            0.603
+          ],
+          [
+            "fnb-04",
+            0.597
+          ],
+          [
+            "fnb-02",
+            0.549
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND2",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 755,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.727
+          ],
+          [
+            "cnc-02",
+            0.696
+          ],
+          [
+            "fnb-02",
+            0.646
+          ],
+          [
+            "fnb-01",
+            0.503
+          ],
+          [
+            "cnc-06",
+            0.439
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND3",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 708,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.629
+          ],
+          [
+            "jwl-01",
+            0.601
+          ],
+          [
+            "fnb-02",
+            0.563
+          ],
+          [
+            "fnb-02",
+            0.492
+          ],
+          [
+            "jwl-01",
+            0.411
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND4",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 715,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.523
+          ],
+          [
+            "jwl-02",
+            0.471
+          ],
+          [
+            "jwl-05",
+            0.421
+          ],
+          [
+            "fnb-06",
+            0.413
+          ],
+          [
+            "fnb-02",
+            0.389
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND5",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "n_chunks": 5,
+        "words_sent": 767,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.686
+          ],
+          [
+            "fnb-01",
+            0.465
+          ],
+          [
+            "cnc-05",
+            0.446
+          ],
+          [
+            "fnb-05",
+            0.441
+          ],
+          [
+            "cnc-03",
+            0.394
+          ]
+        ],
+        "diagnosis": []
+      }
+    ]
+  },
   "naive_k3": {
     "main": {
       "n_scored": 20,

@@ -1,75 +1,26 @@
-"""Shared retrieval/generation logic for Tanya's Streamlit demo.
+"""The whole retrieval-and-answer pipeline, shared by the app (app.py), the evaluation
+(harness.py) and the regression demo (demo_citation_fix.py), so every reported number describes
+the pipeline the app actually runs.
 
-This module is ADDITIVE to the project: it only READS from data/fnb, data/cnc,
-data/jewellery (the fixed, hand-verified evaluation corpus) and WRITES only to
-data/uploads/<division>/ (a separate folder, kept apart from the graded corpus on
-purpose -- see docs/SYSTEM_FLOW.md). Nothing here modifies eval_questions.json,
-data_dictionary.json, or check_my_data.py.
+    load_corpus -> build_chunks -> build_index (embed) -> retrieve -> answer_question
+    classify_document -> format_upload_content -> generate_impact_snapshot     (uploads)
 
-Mirrors the retrieval/grounding design already built and tested in
-Tanya_RAG_Notebook.ipynb, plus a document classification step whose JSON-robustness
-follows the lessons documented in the 203 project's llm-resume-parse-incident.md:
-request JSON only with an explicit schema, use a generous token budget (reasoning
-models can silently truncate), extract JSON defensively with regex rather than
-trusting the whole response is clean JSON, and normalize near-miss shapes instead of
-failing outright.
+Reads the fixed, hand-verified corpus in data/<division>/ and writes only to data/uploads/,
+which the evaluation never reads. Settings come from config.py; the code-side mitigations
+(citation checks, confidence hand-off, token cap, injection scan) live in guardrails.py.
+
+Upload classification asks for JSON defensively: an explicit schema, a generous token budget
+(reasoning models can silently truncate), regex extraction rather than trusting the whole reply
+to be clean JSON, and normalising near-miss shapes instead of failing outright.
 """
 import json
-import os
 import re
-from pathlib import Path
 
 import numpy as np
 
-PROJECT_ROOT = Path(__file__).parent.parent
-DATA_DIR = PROJECT_ROOT / "data"
-UPLOADS_DIR = DATA_DIR / "uploads"
-DIVISIONS = ["fnb", "cnc", "jewellery"]
-
-CHUNK_WORDS = 200  # measured offline (results/chunk_sweep.md): cross-division recall 82% -> 91%,
-OVERLAP = 50        # doc recall 84% -> 92% vs 60/15, at ~3x the words sent per query (286 -> 821)
-TOP_K = 5   # measured offline: cross-division recall 73% -> 82%, document recall 71% -> 81% vs top-3
-
-# Backstop, not a guarantee: the best retrieval score separates answerable questions from
-# absent-but-plausible ones only weakly (see results/retrieval_recall.md, abstention table).
-ABSTAIN_BELOW = 0.45
-
-# Guardrail, not a cost estimate: stops the session loudly rather than spending without limit
-# (problem statement Section 8; OWASP LLM10:2025 Unbounded Consumption). At gpt-4o-mini prices
-# this is under $0.05 even fully spent -- the point is a hard, visible stop, not the number.
-MAX_SESSION_TOKENS = 100_000
-
-
-def session_tokens_exceeded(tokens_in, tokens_out, cap=MAX_SESSION_TOKENS):
-    return (tokens_in + tokens_out) >= cap
-
-
-# Uploaded documents are untrusted input (OWASP LLM01:2025 Prompt Injection): the classifier
-# below reads the raw upload text with an LLM call, so a phrase aimed at that model rather than
-# at the reader is a real risk. This is a code-side SCAN, not a filter -- it never edits the
-# text or blocks the upload; it routes the document to manual division selection instead of
-# the automatic classifier call, and shows the user exactly what matched. False positives are
-# expected (a real SOP can legitimately contain the word "instructions"); that is the accepted
-# cost of a cheap, auditable check.
-INJECTION_PATTERNS = [
-    r"ignore (?:the )?(?:previous|prior|above|all) instructions",
-    r"disregard (?:the )?(?:previous|prior|above) instructions",
-    r"new instructions\s*:",
-    r"system prompt",
-    r"you are now",
-    r"act as (?:a |an )?(?!auditor\b)",   # "act as an auditor" is fine, other roleplay is flagged
-    r"reveal (?:your|the) (?:prompt|instructions|system message)",
-    r"\bDAN\b",
-]
-_INJECTION_RE = re.compile("|".join(INJECTION_PATTERNS), re.IGNORECASE)
-
-
-def scan_for_injection(text):
-    """Return the distinct matched phrases (as they appear in the text), or [] if none."""
-    return list(dict.fromkeys(m.group(0) for m in _INJECTION_RE.finditer(text or "")))
-
-GEN_MODEL = "openai/gpt-4o-mini"  # what the A1 starters used. gpt-5-mini (named in the problem
-                                  # statement) returned an empty reply in this setup, cause not isolated.
+from config import (ABSTAIN_BELOW, CHUNK_WORDS, DATA_DIR, DIVISIONS, EMBED_MODEL, GEN_MODEL,
+                    OVERLAP, PATH_TO_DOC_ID, ROOT, TITLED_EMBEDDING, TOP_K, UPLOADS_DIR)
+from guardrails import handoff_message
 
 GROUNDED = (
     "Answer using ONLY the numbered notes provided below. Each note reads "
@@ -126,6 +77,10 @@ def load_corpus():
     source is 'fixed' for the graded corpus, 'upload' for anything a user added
     through this app -- kept distinct so the UI can always show which is which.
 
+    Fixed documents get the ids in config.DOC_ID_TO_PATH (fnb-01 ... jwl-06), the same ids the
+    answer key, the evaluation, the notebook and the docs use, so a citation in the app can be
+    checked against results/ without translating between two naming schemes.
+
     An uploaded document filed under multiple divisions is saved once per division
     (see app.py's confirm step) with IDENTICAL text; its doc_id includes the division
     so each copy is unique. Without this, two divisions' copies of the same file would
@@ -137,10 +92,11 @@ def load_corpus():
         fixed_dir = DATA_DIR / division
         if fixed_dir.exists():
             for f in sorted(fixed_dir.glob("*.md")):
+                rel = f.relative_to(DATA_DIR).as_posix()
                 docs.append({
-                    "doc_id": f.stem,
-                    "division": division,
-                    "path": str(f.relative_to(PROJECT_ROOT)),
+                    "doc_id": PATH_TO_DOC_ID.get(rel, f.stem),  # unregistered files keep their
+                    "division": division,                       # stem; data/check_my_data.py flags them
+                    "path": f.relative_to(ROOT).as_posix(),
                     "text": f.read_text(encoding="utf-8"),
                     "source": "fixed",
                 })
@@ -150,7 +106,7 @@ def load_corpus():
                 docs.append({
                     "doc_id": f"upload-{division}-{f.stem}",
                     "division": division,
-                    "path": str(f.relative_to(PROJECT_ROOT)),
+                    "path": f.relative_to(ROOT).as_posix(),
                     "text": f.read_text(encoding="utf-8"),
                     "source": "upload",
                 })
@@ -170,36 +126,54 @@ def chunk(text, size=CHUNK_WORDS, overlap=OVERLAP):
 def build_chunks(docs):
     chunks = []
     for d in docs:
-        # Fixed corpus docs all start with a "# Title" line (hand-authored convention); an
-        # upload usually won't, so this falls back to the doc_id rather than raising -- same
-        # fallback eval/harness.py uses. See embed_text() for why the title matters at all.
-        title = next((ln[2:].strip() for ln in d["text"].splitlines() if ln.startswith("# ")), d["doc_id"])
+        title = doc_title(d)
         for c in chunk(d["text"]):
             chunks.append({"text": c, "doc_id": d["doc_id"], "division": d["division"], "title": title})
     return chunks
 
 
+def doc_title(d):
+    """A document's "# Title" line. Every fixed document has one (hand-authored convention); an
+    upload usually won't, so this falls back to the doc_id rather than raising."""
+    return next((ln[2:].strip() for ln in d["text"].splitlines() if ln.startswith("# ")), d["doc_id"])
+
+
 def embed_text(c):
     """The string actually embedded for retrieval matching -- the chunk's own document title
-    prepended to its text. Measured in results/chunk_sweep.md / retrieval_recall.md: at the
-    200-word chunking adopted in round 7, this ('titled_k5') reaches 100% cross-division /
-    100% doc recall, against 91%/88% for plain chunk text. The text shown to the model and
-    checked for citations (h['text'], the doc content itself) is UNCHANGED by this -- titling
-    only changes what similarity is computed against, not what the model reads or what
-    unsupported_figures() verifies against, so it costs nothing extra in generation tokens."""
-    return f"{c['title']}. {c['text']}"
+    prepended to its text, when config.TITLED_EMBEDDING is on (what the app ships). Measured in
+    results/retrieval_recall.md (`titled_k5` against `naive_k5`): division recall 91% -> 100%,
+    average document recall unchanged at 88% -- titling fixes which DIVISION is covered, not
+    which DOCUMENT. The text shown to the model and checked for citations (h['text']) is
+    unchanged: only what similarity is computed against changes, so it costs no extra
+    generation tokens."""
+    return f"{c['title']}. {c['text']}" if TITLED_EMBEDDING else c["text"]
+
+
+def build_index(docs=None):
+    """chunks, embedding matrix and embedder for a corpus, built the one way the app ships.
+    The app, the regression demo and the evaluation's `shipped` config all go through here, so
+    none of them can quietly embed differently from the others."""
+    docs = load_corpus() if docs is None else docs
+    chunks = build_chunks(docs)
+    texts = [embed_text(c) for c in chunks]
+    embedder = Embedder(texts)
+    return docs, chunks, embedder.embed(texts), embedder
 
 
 class Embedder:
     """Local sentence-transformers embeddings, TF-IDF fallback -- same pattern as
-    the notebook. Built once per Streamlit session and cached in session_state."""
+    the notebook. Built once per Streamlit session and cached in session_state.
+
+    If the fallback fires, `using` says so: the keyword baseline and the main system would then
+    both be TF-IDF, and any comparison between them would be meaningless. Every report prints
+    `using` for that reason."""
 
     def __init__(self, chunk_texts):
         self.using = None
         try:
             from sentence_transformers import SentenceTransformer
-            self._model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-            self.using = "local embeddings (all-MiniLM-L6-v2) -- matches MEANING"
+            self._model = SentenceTransformer(EMBED_MODEL)
+            self.using = f"local embeddings ({EMBED_MODEL.split('/')[-1]}) -- matches MEANING"
         except Exception as e:  # noqa: BLE001 -- intentionally broad, see notebook
             self._model = None
             from sklearn.feature_extraction.text import TfidfVectorizer
@@ -249,63 +223,6 @@ def generate(client, prompt, system=None, model=None, max_new_tokens=500, temper
     return (content or "").strip(), tokens
 
 
-def is_abstention(answer):
-    return "do not say" in (answer or "").lower()
-
-
-def handoff_message(top_score, threshold):
-    return (f"The documents do not say. [Low retrieval confidence: the best match scored {top_score:.2f}, below "
-            f"{threshold:.2f}, so this question is passed to a human reviewer instead of being answered.]")
-
-
-def cited_doc_ids(answer, known_ids):
-    m = re.search(r"cited:\s*(.+)$", answer or "", re.I | re.S)
-    if not m:
-        return set()
-    tail = m.group(1).lower()
-    return {d for d in known_ids if d.lower() in tail}
-
-
-def malformed_citation(answer, known_ids):
-    """True only for the specific bug seen in the screen recordings: a 'Cited:' line that
-    has SOMETHING in it, but nothing that resolves to a real known id -- e.g. a leftover
-    bracket number ("Cited: <1, 4>") or the prompt's own placeholder text ("Cited: <doc_id>").
-    A missing or empty 'Cited:' line is NOT malformed -- that is just an honest answer or
-    abstention that offers no citation, which is fine on its own."""
-    m = re.search(r"cited:\s*(.+)$", answer or "", re.I | re.S)
-    if not m:
-        return False
-    tail = m.group(1).strip()
-    if not tail:
-        return False
-    return not cited_doc_ids(answer, known_ids)
-
-
-_FIGURE = re.compile(r"\d{4}-\d{2}-\d{2}|[A-Z]{1,5}(?:-[A-Z0-9]+)+|\$?\d[\d,]*\.?\d*%?")
-
-
-def unsupported_figures(answer, docs_by_id):
-    """Code check that a cited document really contains the figures in the answer (the Section 8
-    citation-verification mitigation). Returns the numbers, dates and ids in the answer that appear
-    in NONE of the cited documents; [] if all are supported; None if the answer abstains or cites
-    no known document (nothing to verify against)."""
-    if is_abstention(answer):
-        return None
-    cited = cited_doc_ids(answer, docs_by_id)
-    if not cited:
-        return None
-    body = re.split(r"cited:", answer, flags=re.I)[0]
-    source = " ".join(docs_by_id[d] for d in cited).lower().replace(",", "")
-    bad = []
-    for tok in _FIGURE.findall(body):
-        t = tok.lower().replace(",", "").lstrip("$").rstrip(".")
-        if "%" not in t and len(re.sub(r"\D", "", t)) < 2:
-            continue                      # list numbers such as "1." or "2"
-        if t not in source and tok not in bad:
-            bad.append(tok)
-    return bad
-
-
 def answer_question(client, question, chunks, matrix, embedder, k=TOP_K, divisions=None,
                     abstain_below=ABSTAIN_BELOW):
     hits = retrieve(question, chunks, matrix, embedder, k=k, divisions=divisions)
@@ -317,12 +234,12 @@ def answer_question(client, question, chunks, matrix, embedder, k=TOP_K, divisio
 
 
 # ---------------------------------------------------------------------------
-# Document classification -- the 203-lessons-informed JSON extraction
+# Document classification -- defensive JSON extraction
 # ---------------------------------------------------------------------------
 
 def _extract_json_object(text):
-    """Defensive JSON extraction, per the 203 incident report: don't assume the
-    whole response is clean JSON -- strip code fences and pull the first {...}."""
+    """Defensive JSON extraction: don't assume the whole response is clean JSON --
+    strip code fences and pull the first {...}."""
     if not text:
         return None
     text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text.strip(), flags=re.MULTILINE)
@@ -336,8 +253,8 @@ def _extract_json_object(text):
 
 
 def _normalize_classification(obj):
-    """Coerce near-miss shapes instead of failing outright -- same philosophy as
-    203's schema normalization layer (e.g. {"name": "Python"} -> "Python")."""
+    """Coerce near-miss shapes instead of failing outright (e.g. {"division": "fnb"}
+    inside the list -> "fnb", a bare string -> a one-item list)."""
     if obj is None:
         return None
     divisions = obj.get("divisions", [])
@@ -367,8 +284,8 @@ def classify_document(client, text, max_chars=6000):
     )
     result = _normalize_classification(_extract_json_object(raw))
     if result is None or not result["divisions"]:
-        # One retry with a more forceful instruction, per the 203 report's finding
-        # that models sometimes need to be told explicitly not to add prose.
+        # One retry with a more forceful instruction: models sometimes need to be told
+        # explicitly not to add prose around the JSON.
         raw, tokens2 = generate(
             client,
             excerpt,
@@ -410,13 +327,14 @@ def generate_impact_snapshot(client, new_doc_text, new_doc_divisions, new_doc_id
     """Retrieve from divisions OTHER than the ones the new doc was filed under,
     using the new document's own text as the query, then ask the model to
     synthesize a cross-division impact brief. This is a demo aid for a human to
-    read and judge -- it is NOT added to eval_questions.json as a scored case,
+    read and judge -- it is NOT added to data/eval_questions.json as a scored case,
     since there is no pre-verified ground truth for a live-uploaded document.
 
     new_doc_ids: the real doc_id(s) the upload was just saved under (one per division
     in new_doc_divisions -- see app.py). Without a real, citable id here, the model has
     nothing valid to put in its citation for the document it is actually describing, and
-    was observed echoing the prompt's literal placeholder text instead (see docs/ALIGNMENT.md)."""
+    was observed echoing the prompt's literal placeholder text instead ("Cited: <doc_id>", the
+    bug in the screen recordings; regression check: demo_citation_fix.py)."""
     other_divisions = [d for d in DIVISIONS if d not in new_doc_divisions]
     query = new_doc_text[:1500]
     hits = retrieve(query, chunks, matrix, embedder, k=k, divisions=other_divisions or None)

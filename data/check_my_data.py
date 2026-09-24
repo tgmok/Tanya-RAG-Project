@@ -1,43 +1,22 @@
-"""Run this after every change to data/ or eval_questions.json.
+"""Run this after every change to data/ or to the corpus manifest in config.py:
 
-Catches broken data before it silently breaks an eval run. Standard library only.
+    python data/check_my_data.py
+
+Catches broken data before it silently breaks an evaluation run: every registered document
+exists, every document on disk is registered, every question points at real documents in the
+right divisions, the answer key has the promised shape, and every scored question has
+code-checkable key facts. Standard library only.
 """
 import json
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).parent
-DATA_DIR = ROOT / "data"
-DIVISIONS = {"fnb", "cnc", "jewellery"}
-# Deliberately separate from the graded corpus: live uploads and the real-world validation slices.
-NON_CORPUS_DIRS = {"uploads", "validation_real"}
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))   # config.py lives at the root
+from config import DATA_DIR, DIVISIONS, DOC_ID_TO_DIVISION, DOC_ID_TO_PATH  # noqa: E402
 
-DOC_ID_TO_PATH = {
-    "fnb-01": "fnb/packaging_change_sop.md",
-    "fnb-02": "fnb/client_contract_summary.md",
-    "fnb-03": "fnb/quality_control_checklist.md",
-    "fnb-04": "fnb/maintenance_log.md",
-    "fnb-05": "fnb/hygiene_sop.md",
-    "fnb-06": "fnb/financial_summary_q3.md",
-    "cnc-01": "cnc/tooling_spec_bottle_cap.md",
-    "cnc-02": "cnc/capacity_planning_report.md",
-    "cnc-03": "cnc/machine_calibration_log.md",
-    "cnc-04": "cnc/material_procurement_policy.md",
-    "cnc-05": "cnc/safety_sop.md",
-    "cnc-06": "cnc/client_order_backlog.md",
-    "jwl-01": "jewellery/finance_intercompany_loan_report.md",
-    "jwl-02": "jewellery/gold_pricing_policy.md",
-    "jwl-03": "jewellery/inventory_audit_sop.md",
-    "jwl-04": "jewellery/quality_certification_sop.md",
-    "jwl-05": "jewellery/retail_returns_policy.md",
-    "jwl-06": "jewellery/client_quote_template.md",
-}
-
-DOC_ID_TO_DIVISION = {doc_id: doc_id.split("-")[0] for doc_id in DOC_ID_TO_PATH}
-DOC_ID_TO_DIVISION = {
-    doc_id: {"fnb": "fnb", "cnc": "cnc", "jwl": "jewellery"}[doc_id.split("-")[0]]
-    for doc_id in DOC_ID_TO_PATH
-}
+# Deliberately separate from the graded corpus: live uploads, the sample upload used by the
+# regression demo, and the real-world validation slices.
+NON_CORPUS_DIRS = {"uploads", "sample_uploads", "validation_real"}
 
 
 def fail(msg):
@@ -54,24 +33,26 @@ def main():
             ok = fail(f"{doc_id} points at missing file data/{rel_path}") and ok
 
     # 2. Every file on disk must be a known doc id (catches orphaned/renamed files).
-    known_paths = {str(Path(p)) for p in DOC_ID_TO_PATH.values()}
+    known_paths = set(DOC_ID_TO_PATH.values())
     for division_dir in DATA_DIR.iterdir():
         if not division_dir.is_dir():
             continue
         if division_dir.name in NON_CORPUS_DIRS:
             continue
-        if division_dir.name not in DIVISIONS:
+        if division_dir.name.startswith(("__", ".")):   # __pycache__, .ipynb_checkpoints: tool
+            continue                                    # caches, not data (this file lives in data/)
+        if division_dir.name not in set(DIVISIONS):
             ok = fail(f"unexpected directory data/{division_dir.name}") and ok
             continue
         for f in division_dir.glob("*.md"):
-            rel = str(f.relative_to(DATA_DIR))
+            rel = f.relative_to(DATA_DIR).as_posix()
             if rel not in known_paths:
-                ok = fail(f"file data/{rel} is not registered in DOC_ID_TO_PATH") and ok
+                ok = fail(f"file data/{rel} is not registered in config.DOC_ID_TO_PATH") and ok
 
     # 3. eval_questions.json must exist and every source_doc_id must resolve.
-    eval_path = ROOT / "eval_questions.json"
+    eval_path = DATA_DIR / "eval_questions.json"
     if not eval_path.exists():
-        return fail("eval_questions.json is missing")
+        return fail("data/eval_questions.json is missing")
 
     evalset = json.loads(eval_path.read_text(encoding="utf-8"))
     questions = evalset["questions"]
@@ -121,7 +102,7 @@ def main():
         print(f"WARNING: documents never referenced by any eval question: {sorted(unused)}")
 
     # 6. Every scored question has code-checkable key facts (eval_key_facts.json), and no orphans.
-    facts_path = ROOT / "eval_key_facts.json"
+    facts_path = DATA_DIR / "eval_key_facts.json"
     if facts_path.exists():
         key_facts = json.loads(facts_path.read_text(encoding="utf-8"))["facts"]
         scored_ids = {q["id"] for q in questions if q["kind"] != "out_of_scope"}

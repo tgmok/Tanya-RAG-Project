@@ -1,6 +1,6 @@
 # Chunk-size sweep (no model, no cost)
 
-Embedder: local embeddings (all-MiniLM-L6-v2) -- matches MEANING. Fixed corpus, 31 answerable questions from every set; cross-division column uses the main set's 11 cross-division questions. The problem statement's smallest slice used 25 words with 10 overlap; the notebook and app use 60 with 15.
+Embedder: local embeddings (all-MiniLM-L6-v2) -- matches MEANING. Fixed corpus, 31 answerable questions from every set; cross-division column uses the main set's 11 cross-division questions. The problem statement's smallest slice used 25 words with 10 overlap; the notebook and app now use 200 with 50.
 
 | chunk / overlap | chunks | top-k | cross-division recall | avg doc recall | avg words sent |
 |---|---|---|---|---|---|
