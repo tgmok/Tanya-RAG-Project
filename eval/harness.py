@@ -406,16 +406,49 @@ def make_spotcheck(records, out_dir, n=6, seed=7):
 
 
 def agreement(out_dir=RESULTS_DIR):
+    """Compare the judge against hand labels. Section 7 of the watch-outs: a judge is a
+    component of the system, not a source of truth, so it needs precision and recall against
+    labels a person assigned -- not just an agreement percentage, which flatters any judge on
+    a set where most answers are fine.
+
+    The judge exists to CATCH unfaithful answers, so "unfaithful" is the positive class:
+      precision = of the answers the judge flagged, how many a person agreed were unfaithful
+      recall    = of the answers a person called unfaithful, how many the judge flagged
+    A judge that never flags anything scores 0 recall here, however high its agreement.
+    """
     path = out_dir / "judge_spotcheck.json"
     items = json.loads(path.read_text(encoding="utf-8"))
     graded = [i for i in items if isinstance(i.get("human_faithful"), bool)]
     if not graded:
         return None
     agree = sum(1 for i in graded if i["human_faithful"] == i["judge_faithful"])
-    lines = [f"# Judge spot-check: human vs judge", "",
+
+    # positive class = UNFAITHFUL (judge_faithful is False)
+    tp = sum(1 for i in graded if not i["judge_faithful"] and not i["human_faithful"])
+    fp = sum(1 for i in graded if not i["judge_faithful"] and i["human_faithful"])
+    fn = sum(1 for i in graded if i["judge_faithful"] and not i["human_faithful"])
+    tn = sum(1 for i in graded if i["judge_faithful"] and i["human_faithful"])
+    prec = tp / (tp + fp) if (tp + fp) else None
+    rec = tp / (tp + fn) if (tp + fn) else None
+
+    def pct(x):
+        return "n/a" if x is None else f"{x:.0%}"
+
+    lines = ["# Judge spot-check: the judge against hand labels", "",
              f"Graded by hand: {len(graded)} of {len(items)} sampled answers. "
-             f"Agreement: {agree}/{len(graded)} ({agree/len(graded):.0%}).", "",
-             "| id | judge | you | judge's reason |", "|---|---|---|---|"]
+             f"Raw agreement: {agree}/{len(graded)} ({agree/len(graded):.0%}).", "",
+             "Agreement alone flatters a judge on a set where most answers are fine, so what "
+             "matters is whether it catches the bad ones. Positive class = **unfaithful**.", "",
+             "| | person says unfaithful | person says faithful |", "|---|---|---|",
+             f"| **judge says unfaithful** | {tp} (caught) | {fp} (false alarm) |",
+             f"| **judge says faithful** | {fn} (**missed**) | {tn} |", "",
+             f"Precision {pct(prec)}: it flagged {tp + fp}, and {tp} of those were genuinely unfaithful.",
+             f"Recall {pct(rec)}: {tp + fn} answers were genuinely unfaithful, and it caught {tp}.", ""]
+    if (tp + fn) == 0:
+        lines += ["Caveat: no answer in this sample was judged unfaithful by hand, so recall is "
+                  "undefined and this sample says nothing about what the judge misses. Grade more "
+                  "answers, weighted towards ones you suspect, before trusting it.", ""]
+    lines += ["| id | judge | you | judge's reason |", "|---|---|---|---|"]
     for i in graded:
         lines.append(f"| {i['id']} | {i['judge_faithful']} | {i['human_faithful']} | {i['judge_why']} |")
     (out_dir / "judge_agreement.md").write_text("\n".join(lines) + "\n", encoding="utf-8")

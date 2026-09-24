@@ -6,7 +6,7 @@
 | `webapp/app.py` | Streamlit interface: upload, classify, confirm, snapshot, chat |
 | `webapp/doc_parser.py` | PDF and DOCX to text. No model calls. |
 | `eval/harness.py` | question sets, retrieval configurations, code checks, judge call, aggregation, spot-check |
-| `eval/run_eval.py` | the entry point: retrieval report, chunk sweep, live run, agreement |
+| `eval/run_eval.py` | the entry point: retrieval report, chunk sweep, leakage check, live run, agreement |
 | `eval/cost_model.py` | three-layer cost per successful answer, from measured tokens and pass rates |
 | `eval/self_test.py` | checks the instruments: key facts against the documents, the checkers, the citation and classifier logic |
 | `eval/make_docs.py` | regenerates `docs/EVALUATION_SET.md` and the blind-question pack |
@@ -19,7 +19,8 @@
 1. `docs/ALIGNMENT.md` (what was promised and what was built)
 2. `webapp/rag_core.py` (the whole pipeline in one file)
 3. `eval/harness.py`, `retrieve_config` and `run_rag_question` (how each setup is scored)
-4. `results/retrieval_recall.md`, `results/chunk_sweep.md`, then `results/summary.md` after a live run
+4. `results/retrieval_recall.md`, `results/chunk_sweep.md`, `results/leakage.md`, then
+   `results/summary.md` after a live run
 
 ## One run
 
