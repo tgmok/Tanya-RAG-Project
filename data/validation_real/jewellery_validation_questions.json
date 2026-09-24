@@ -1,0 +1,33 @@
+{
+  "_notes": "Hand-checked answer key for the jewellery real-world validation slice (jewellery_retail_transactions.md). Unlike the F&B/CNC slices, these questions test PRICING PLAUSIBILITY against real transaction data, not document faithfulness -- there is no narrative text here for Tanya to retrieve chunks from in the usual RAG sense. Use these as direct lookups/comparisons against the table, not as retrieval questions for the chunk-embed-retrieve pipeline.",
+  "questions": [
+    {
+      "id": "JV1",
+      "kind": "in_scope",
+      "question": "What is the real median price of a gold pendant with a stated gem, and how does TGMOK Holdings' example custom pendant quote compare?",
+      "source_doc_ids": ["jwl-real-03"],
+      "expected_answer_summary": "Real median gold+gem pendant price: $136.85 (n=9,110). TGMOK's custom quote (JWL-Q-3391) totals $2,029.92 -- about 15x the real median, though it includes an $850 one-time die-tooling charge a mass-market pendant wouldn't carry."
+    },
+    {
+      "id": "JV2",
+      "kind": "in_scope",
+      "question": "Which jewellery category has the widest real price range, and what does that suggest about pricing a single 'typical' item?",
+      "source_doc_ids": [],
+      "expected_answer_summary": "Earrings: $30.00 to $34,448.60 (n=23,889) -- the widest range of any category. A single point estimate ('a gold earring costs $X') is not meaningful without specifying gem/complexity, similar to how TGMOK's own pricing policy varies workmanship margin 12-28% by design complexity."
+    },
+    {
+      "id": "JV3",
+      "kind": "in_scope",
+      "question": "Is silver jewellery common in this real dataset, or is gold dominant?",
+      "source_doc_ids": ["jwl-real-08"],
+      "expected_answer_summary": "Gold dominates heavily: 89,082 gold rows vs 1,365 silver and 2 platinum, out of ~90,559 priced rows. TGMOK Holdings' jewellery division is described as gold-focused, which is broadly consistent with this real market's composition (though this dataset is one retailer, not a market-wide claim)."
+    },
+    {
+      "id": "JV-OOS",
+      "kind": "out_of_scope",
+      "question": "What was the average delivery time for jewellery orders in this dataset?",
+      "source_doc_ids": [],
+      "expected_answer_summary": "Not covered -- this dataset has no shipping/delivery/fulfilment fields, only event_time, order/product/category ids, quantity, price, and product attributes (colour, metal, gem). Tanya should say this isn't in the data rather than guessing a delivery time."
+    }
+  ]
+}

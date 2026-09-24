@@ -1,0 +1,17 @@
+# Tested on Windows 11 with Python 3.11 (Anaconda).
+#
+# torch first, CPU build. Versions 2.13 and later crashed at import (WinError 1114) on an AMD Ryzen
+# (Zen4) CPU; 2.2.2 works, and needs numpy below 2:
+#     pip install torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu
+#
+numpy==1.26.4
+sentence-transformers==3.0.1
+transformers==4.44.0
+huggingface_hub==0.24.6
+scikit-learn
+openai
+streamlit
+pypdf
+python-docx
+# only for data/validation_real/build_jewellery_sample.py:
+# pandas

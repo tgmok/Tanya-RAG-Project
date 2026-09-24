@@ -1,0 +1,23 @@
+{
+  "_notes": "Near-miss questions, reported as a separate group from the main 20+3. A near-miss has a plausible-but-wrong premise: a system that pattern-matches on the storyline instead of reading the notes will get it wrong. Written by the project author (not independent) before running; the independent set goes in eval/independent_questions.json (see docs/BLIND_QUESTION_PACK.md).",
+  "questions": [
+    {
+      "id": "NM1",
+      "kind": "near_miss",
+      "question": "Did the June 2026 Aurora Beverages rush order require a change to the bottle cap or neck specification?",
+      "expected_divisions": ["fnb"],
+      "source_doc_ids": ["fnb-02"],
+      "groups": [["volume"], ["no specification", "no spec", "did not", "not require", "no change", "no packaging"]],
+      "why": "Rush order and packaging change are two separate Aurora events. A system that blends them will say tooling was needed."
+    },
+    {
+      "id": "NM2",
+      "kind": "near_miss",
+      "question": "Was the F&B division's second capping head financed by an external bank loan?",
+      "expected_divisions": ["fnb", "jewellery"],
+      "source_doc_ids": ["fnb-06", "jwl-01"],
+      "groups": [["intercompany", "jewellery"], ["not external", "rather than external", "no,", "not an external", "instead of external", "internal"]],
+      "why": "False premise. The notes say the Jewellery division's internal facility funded it, not an external lender."
+    }
+  ]
+}

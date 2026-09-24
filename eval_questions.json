@@ -1,0 +1,198 @@
+{
+  "_notes": "Answer key written by hand, before Tanya is run against it, per the watch-outs' 'fix the ground truth before you run anything.' 20 scored questions (11 cross-division, 9 single-division) plus 3 out-of-scope questions (one per division) to check abstention. 'expected_divisions' lists every division whose documents must be retrieved for a FULLY correct, grounded answer -- this is what the context-recall metric in Section 7 of the problem statement is scored against. 'source_doc_ids' point at data_dictionary.md ids.",
+  "questions": [
+    {
+      "id": "CD1",
+      "kind": "cross_division",
+      "hook": "H1",
+      "question": "What packaging change forced F&B to order new CNC tooling, and what was delivered?",
+      "expected_divisions": ["fnb", "cnc"],
+      "source_doc_ids": ["fnb-01", "cnc-01"],
+      "expected_answer_summary": "Aurora Beverages' bottle neck/cap diameter changed 28mm->26mm (thread pitch change); CNC delivered a new machined capping-head assembly (CNC-WO-0442) within a 48-hour expedited turnaround."
+    },
+    {
+      "id": "CD2",
+      "kind": "cross_division",
+      "hook": "H1",
+      "question": "Was the CNC tooling for the Aurora packaging change installed immediately, and on which asset?",
+      "expected_divisions": ["fnb", "cnc"],
+      "source_doc_ids": ["cnc-01", "fnb-04"],
+      "expected_answer_summary": "Delivered 2026-05-16; installed same day on capping head asset FL2-CAP-01 and calibrated/tested against QC-FNB-002."
+    },
+    {
+      "id": "CD3",
+      "kind": "cross_division",
+      "hook": "H1",
+      "question": "How long did it take from packaging-change request to tooling delivery, and what surcharge applies to that kind of expedite?",
+      "expected_divisions": ["fnb", "cnc"],
+      "source_doc_ids": ["fnb-01", "cnc-01", "cnc-04"],
+      "expected_answer_summary": "Requested 2026-05-14, delivered 2026-05-16 (48-hour expedited window); CNC's material procurement policy notes a 30% surcharge for expedited orders under 10 units."
+    },
+    {
+      "id": "CD4",
+      "kind": "cross_division",
+      "hook": "H3",
+      "question": "Why was external CNC client order C-4471 delayed, and by how many days?",
+      "expected_divisions": ["fnb", "cnc"],
+      "source_doc_ids": ["cnc-02", "fnb-02"],
+      "expected_answer_summary": "Delayed 4 business days because CNC reallocated ~22 machine-hours to expedite F&B's CNC-WO-0458 (second capping head) ahead of the Aurora Beverages rush order; the external client accepted the new date without penalty."
+    },
+    {
+      "id": "CD5",
+      "kind": "cross_division",
+      "hook": "H3",
+      "question": "What second capping head installation followed CNC's June 2026 capacity reprioritisation, and when was it installed?",
+      "expected_divisions": ["fnb", "cnc"],
+      "source_doc_ids": ["cnc-02", "fnb-04"],
+      "expected_answer_summary": "FL2-CAP-02 installed 2026-06-10, using parts from CNC-WO-0458 delivered 2026-06-08 -- six days ahead of the requested date."
+    },
+    {
+      "id": "CD6",
+      "kind": "cross_division",
+      "hook": "H3",
+      "question": "Which specific external CNC order was pushed back due to the F&B rush order, and what product does it involve?",
+      "expected_divisions": ["fnb", "cnc"],
+      "source_doc_ids": ["cnc-02", "fnb-02"],
+      "expected_answer_summary": "Order #C-4471, precision bracket components for a non-TGMOK external client, pushed back 4 business days."
+    },
+    {
+      "id": "CD7",
+      "kind": "cross_division",
+      "hook": "H3",
+      "question": "What did CNC Production Planning recommend to avoid repeat impact on external clients from future F&B rush orders?",
+      "expected_divisions": ["fnb", "cnc"],
+      "source_doc_ids": ["cnc-02", "fnb-02"],
+      "expected_answer_summary": "Recommended F&B Client Services flag rush-order possibilities at contract signing rather than at order placement -- this is the second FY2026 instance of a rush order forcing mid-cycle reprioritisation."
+    },
+    {
+      "id": "CD8",
+      "kind": "cross_division",
+      "hook": "H2",
+      "question": "How did F&B fund its second capping head, and who has authority over facilities of that size?",
+      "expected_divisions": ["fnb", "jewellery"],
+      "source_doc_ids": ["fnb-06", "jwl-01"],
+      "expected_answer_summary": "$180,000 intercompany working-capital facility from the Jewellery division, 18-month repayment at the Group internal transfer rate; approved at divisional level since it is below the $250,000 Group CFO sign-off threshold."
+    },
+    {
+      "id": "CD9",
+      "kind": "cross_division",
+      "hook": "H2",
+      "question": "What intercompany facility supports CNC's raw-material buffer, and what is the buffer for?",
+      "expected_divisions": ["cnc", "jewellery"],
+      "source_doc_ids": ["cnc-04", "jwl-01"],
+      "expected_answer_summary": "A $45,000 facility from the Jewellery division (12-month repayment) funds CNC's rolling 2-week buffer of MS-07 tool steel, kept specifically to absorb expedited internal work orders like F&B's."
+    },
+    {
+      "id": "S9",
+      "kind": "single_division",
+      "question": "What must happen to a piece that fails gold purity certification?",
+      "expected_divisions": ["jewellery"],
+      "source_doc_ids": ["jwl-04"],
+      "expected_answer_summary": "It is quarantined and routed back to Production for investigation; it may not be re-tested and released without a documented cause."
+    },
+    {
+      "id": "CD11",
+      "kind": "cross_division",
+      "question": "Which division manufactures the stamping die for a custom jewellery order, and how is that machining cost billed?",
+      "expected_divisions": ["jewellery", "cnc"],
+      "source_doc_ids": ["jwl-06", "cnc-04"],
+      "expected_answer_summary": "CNC machines the die (billed to the client as a tooling line item, e.g. $850 in quote JWL-Q-3391); CNC's procurement policy bills intercompany material/tooling work at cost plus a 5% handling fee."
+    },
+    {
+      "id": "CD12",
+      "kind": "cross_division",
+      "question": "What component is CNC currently machining for the Jewellery division, and what is it for?",
+      "expected_divisions": ["cnc", "jewellery"],
+      "source_doc_ids": ["cnc-06", "jwl-02"],
+      "expected_answer_summary": "CNC-WO-0470, a custom stamping die, due 2026-07-10 -- jewellery's pricing policy notes custom dies are sourced from CNC rather than an external toolmaker for tooling charges under $10,000."
+    },
+    {
+      "id": "S1",
+      "kind": "single_division",
+      "question": "What must happen if a hygiene non-conformance is found, and does a rush order change this?",
+      "expected_divisions": ["fnb"],
+      "source_doc_ids": ["fnb-05"],
+      "expected_answer_summary": "The affected line halts until QA signs off on corrective action; a rush order does not exempt a line from a required CIP cycle or swab test."
+    },
+    {
+      "id": "S2",
+      "kind": "single_division",
+      "question": "What concentration risk did Group Treasury flag in the F&B Q3 financial summary?",
+      "expected_divisions": ["fnb"],
+      "source_doc_ids": ["fnb-06"],
+      "expected_answer_summary": "Three divisions with materially different cash-flow cycles relying on one internal lending facility (the Jewellery-division-funded facility) is a concentration risk noted in the Q3 review minutes."
+    },
+    {
+      "id": "S3",
+      "kind": "single_division",
+      "question": "Does an urgent internal tooling request waive CNC's lockout-tagout requirement?",
+      "expected_divisions": ["cnc"],
+      "source_doc_ids": ["cnc-05"],
+      "expected_answer_summary": "No -- lockout-tagout (LOTO-01) applies before any unscheduled calibration or maintenance regardless of how urgent the requesting work order is."
+    },
+    {
+      "id": "S4",
+      "kind": "single_division",
+      "question": "What tolerance was required for work order CNC-WO-0442, and was a calibration check done before machining began?",
+      "expected_divisions": ["cnc"],
+      "source_doc_ids": ["cnc-01", "cnc-03"],
+      "expected_answer_summary": "±0.02mm thread-pitch tolerance; an unscheduled calibration check on CNC Mill 3 was completed 2026-05-15, before machining began, passing within tolerance."
+    },
+    {
+      "id": "S5",
+      "kind": "single_division",
+      "question": "How long is a Jewellery division client quote valid, and why is the window that short?",
+      "expected_divisions": ["jewellery"],
+      "source_doc_ids": ["jwl-02"],
+      "expected_answer_summary": "5 business days, because quotes are priced off the daily LBMA AM gold fix, which is volatile day to day."
+    },
+    {
+      "id": "S6",
+      "kind": "single_division",
+      "question": "What custody control applies to accessing raw gold stock in the vault?",
+      "expected_divisions": ["jewellery"],
+      "source_doc_ids": ["jwl-03"],
+      "expected_answer_summary": "Dual custody -- two authorised staff are required to open the vault."
+    },
+    {
+      "id": "S7",
+      "kind": "single_division",
+      "question": "Is a custom jewellery piece eligible for return, and where is that disclosed to the client?",
+      "expected_divisions": ["jewellery"],
+      "source_doc_ids": ["jwl-05", "jwl-06"],
+      "expected_answer_summary": "No -- custom pieces are final sale; this is disclosed in writing to the client at the quotation stage, as shown in quote JWL-Q-3391 (acknowledged 2026-06-25)."
+    },
+    {
+      "id": "S8",
+      "kind": "single_division",
+      "question": "What six checks must pass before an F&B pilot run is cleared for full-line rollout?",
+      "expected_divisions": ["fnb"],
+      "source_doc_ids": ["fnb-03"],
+      "expected_answer_summary": "Fill volume ±1.5%, cap torque 8-12 in-lb, 24-hour seal integrity test (zero leaks), label alignment within 2mm, carton drop test with no breakage, and correct/legible batch code and best-before date."
+    },
+    {
+      "id": "OOS-FNB",
+      "kind": "out_of_scope",
+      "question": "What is F&B's annual revenue target for FY2027?",
+      "expected_divisions": [],
+      "source_doc_ids": [],
+      "expected_answer_summary": "Not covered -- only Q3 FY2026 actuals and Q4 guidance assumptions exist; no FY2027 target is stated anywhere in the corpus. Tanya should abstain or say the documents do not contain this, not invent a number."
+    },
+    {
+      "id": "OOS-CNC",
+      "kind": "out_of_scope",
+      "question": "Does the CNC division hold ISO 9001 certification?",
+      "expected_divisions": [],
+      "source_doc_ids": [],
+      "expected_answer_summary": "Not mentioned anywhere in the corpus. Tanya should abstain rather than infer certification from the calibration/safety SOPs present."
+    },
+    {
+      "id": "OOS-JWL",
+      "kind": "out_of_scope",
+      "question": "What resale value guarantee does the Jewellery division offer on pieces after 5 years?",
+      "expected_divisions": [],
+      "source_doc_ids": [],
+      "expected_answer_summary": "Not covered -- the returns policy only addresses 14-day refund / 30-day exchange / 60-day resizing windows, nothing about a multi-year resale guarantee. Tanya should abstain."
+    }
+  ]
+}

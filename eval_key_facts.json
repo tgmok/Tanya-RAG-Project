@@ -1,0 +1,25 @@
+{
+  "_notes": "Code-checkable key facts per scored question (no model involved). Each question lists GROUPS; every group must be satisfied for the answer to pass, and a group is satisfied if ANY of its alternative strings appears in the answer (case-insensitive, commas removed, so '$180,000' matches '180000'). Facts were derived from expected_answer_summary in eval_questions.json and checked against the source documents by eval/self_test.py. eval_questions.json itself is unchanged. 'why' is a one-line reason the question is in the set.",
+  "facts": {
+    "CD1": {"groups": [["26mm", "26 mm"], ["capping head", "capping-head"]], "why": "H1 across F&B and CNC: the spec change lives in the F&B SOP, the delivered part in the CNC spec."},
+    "CD2": {"groups": [["fl2-cap-01"], ["same day", "2026-05-16", "may 16", "16 may"]], "why": "H1: delivery is in the CNC spec, the install asset is only in the F&B maintenance log."},
+    "CD3": {"groups": [["48", "two days", "2 days"], ["30%", "30 %", "30 percent"]], "why": "H1 plus CNC procurement policy: three documents, two divisions."},
+    "CD4": {"groups": [["4 business days", "4 days", "four business days", "four days"], ["reallocat", "reprioritis", "rush order", "capping"]], "why": "H3: the delay is in CNC, the cause is the F&B rush order. (The question already names C-4471, so the id is not required in the answer.)"},
+    "CD5": {"groups": [["fl2-cap-02"], ["2026-06-10", "june 10", "10 june"]], "why": "H3: CNC reprioritisation in one division, the resulting install date in the other."},
+    "CD6": {"groups": [["c-4471", "4471"], ["bracket"]], "why": "H3 near-duplicate of CD4 with a different key fact, to catch a lucky retrieval."},
+    "CD7": {"groups": [["contract signing", "signing"], ["rush"]], "why": "H3: a recommendation that only makes sense with the F&B rush-order context."},
+    "CD8": {"groups": [["180000", "180,000"], ["250000", "250,000", "cfo"]], "why": "H2: funding is in F&B, the approval authority is in the Jewellery report."},
+    "CD9": {"groups": [["45000", "45,000"], ["tool steel", "ms-07"]], "why": "H2: buffer described in CNC policy, financing in the Jewellery report."},
+    "CD11": {"groups": [["cnc"], ["850", "5%", "5 %", "handling"]], "why": "Non-hook cross-division: quote in Jewellery, billing rule in CNC."},
+    "CD12": {"groups": [["0470"], ["stamping die", "die"]], "why": "Non-hook cross-division: CNC backlog row plus Jewellery sourcing policy."},
+    "S1": {"groups": [["halt"], ["quality assurance", "qa"]], "why": "Single division: a rush order does not waive a sanitation stop."},
+    "S2": {"groups": [["concentration"], ["facility", "lending"]], "why": "Single division: a risk note inside a cross-division topic; tests over-retrieval."},
+    "S3": {"groups": [["lockout", "loto"], ["urgent", "regardless", "waive", "expedited"]], "why": "Single division: safety rule that applies even under production pressure."},
+    "S4": {"groups": [["0.02"], ["2026-05-15", "may 15", "15 may", "calibration"]], "why": "Single division, two CNC documents."},
+    "S5": {"groups": [["5 business", "five business", "5 days", "five days"], ["lbma", "fix", "volatil"]], "why": "Single division: quote validity and its reason."},
+    "S6": {"groups": [["dual"], ["two"]], "why": "Single division: exact control wording."},
+    "S7": {"groups": [["final sale", "not eligible", "no return", "not returnable", "non-returnable"], ["quot"]], "why": "Single division across policy and quote."},
+    "S8": {"groups": [["1.5"], ["torque"], ["drop"]], "why": "Single division: a six-item list; tests completeness."},
+    "S9": {"groups": [["quarantin"], ["production"]], "why": "Single division: what happens to a failed piece."}
+  }
+}

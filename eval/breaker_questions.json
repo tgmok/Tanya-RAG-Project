@@ -1,0 +1,59 @@
+{
+  "_notes": "Break-it questions, the kinds from the A1 Part 2 starter that the main set does not cover: vocabulary mismatch (the question uses words the documents never use), distractor (the topic appears in many documents but only one holds the answer, and another holds a similar-looking number), absent-but-plausible (sounds answerable, is not). Written by the project author before running; reported as their own set. Facts were checked against the documents by eval/self_test.py.",
+  "questions": [
+    {
+      "id": "VM1",
+      "kind": "vocabulary_mismatch",
+      "question": "Who paid for the extra filling-line equipment F&B bought to cope with the Aurora surge?",
+      "expected_divisions": ["fnb"],
+      "source_doc_ids": ["fnb-06"],
+      "groups": [["180000", "180,000"], ["jewellery", "intercompany"]],
+      "why": "The documents say 'funded', 'second capping head' and 'rush order'. The question says 'paid for', 'extra filling-line equipment' and 'surge'."
+    },
+    {
+      "id": "VM2",
+      "kind": "vocabulary_mismatch",
+      "question": "How long before a customer's gold price offer lapses?",
+      "expected_divisions": ["jewellery"],
+      "source_doc_ids": ["jwl-02"],
+      "groups": [["5 business", "five business", "5 days", "five days"]],
+      "why": "The documents say 'quotation' and 'valid for'. The question says 'price offer' and 'lapses'."
+    },
+    {
+      "id": "DIS1",
+      "kind": "distractor",
+      "question": "What surface finish was specified for the new capping head?",
+      "expected_divisions": ["cnc"],
+      "source_doc_ids": ["cnc-01"],
+      "groups": [["0.4"]],
+      "why": "'Capping head' appears in six documents across two divisions; only the CNC tooling spec gives a surface finish."
+    },
+    {
+      "id": "DIS2",
+      "kind": "distractor",
+      "question": "What torque range must a cap meet in a pilot-run inspection?",
+      "expected_divisions": ["fnb"],
+      "source_doc_ids": ["fnb-03"],
+      "groups": [["8-12", "8 to 12", "8–12"]],
+      "why": "The F&B maintenance log also reports a torque figure (10.1 in-lb average). A system that retrieves the log and repeats that figure has answered the wrong question."
+    },
+    {
+      "id": "ABS1",
+      "kind": "out_of_scope",
+      "question": "How often is the capping head lubricated?",
+      "expected_divisions": [],
+      "source_doc_ids": [],
+      "groups": [],
+      "why": "Absent but plausible: the maintenance log records one lubrication check (2026-05-28) but states no interval."
+    },
+    {
+      "id": "ABS2",
+      "kind": "out_of_scope",
+      "question": "What did the CNC-WO-0442 capping head cost?",
+      "expected_divisions": [],
+      "source_doc_ids": [],
+      "groups": [],
+      "why": "Absent but plausible: no document gives its price. The Jewellery quote's $850 is a stamping-die charge, a tempting wrong answer."
+    }
+  ]
+}

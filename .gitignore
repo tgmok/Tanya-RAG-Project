@@ -1,0 +1,23 @@
+# Secrets: never commit
+OpenRouter_api.txt
+.env
+*.key
+
+# Local and generated
+__pycache__/
+.ipynb_checkpoints/
+results/_dryrun/
+results/answers.partial.json
+data/uploads/
+
+# Internal working notes: useful while building, not part of the submission
+docs/ALIGNMENT.md
+
+# Screen recordings: 389 MB, and one file is over GitHub's 100 MB limit. The demo video is a
+# separate hand-in (NTULearn), not a repository artefact.
+screen_recordings/
+*.mp4
+
+# Editor/IDE local state
+.vscode/
+.claude/

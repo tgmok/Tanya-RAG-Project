@@ -1,0 +1,33 @@
+{
+  "_notes": "Hand-checked answer key for the Section 6 real-world validation slice (NYC restaurant inspections, nyc_inspections.md). Kept separate from eval_questions.json since these records are real, not part of TGMOK Holdings' fictional corpus, and were not designed with cross-division hooks.",
+  "questions": [
+    {
+      "id": "V1",
+      "kind": "in_scope",
+      "question": "What critical violation was found at Sweet Spot's inspection, and what grade/score resulted?",
+      "source_doc_ids": ["nyc-01"],
+      "expected_answer_summary": "Code 06C, critical: food/supplies/equipment not protected from a contamination source (including condiments not in single-service containers). Grade A, score 13."
+    },
+    {
+      "id": "V2",
+      "kind": "in_scope",
+      "question": "Which establishment was cited for inadequate lighting, and was that violation critical?",
+      "source_doc_ids": ["nyc-06"],
+      "expected_answer_summary": "Zhengxin Chicken Steak (Queens), code 10C, Not Critical. Grade N, score 44."
+    },
+    {
+      "id": "V3",
+      "kind": "in_scope",
+      "question": "Was Van Leeuwen Ice Cream's violation about pest control or about staff certification?",
+      "source_doc_ids": ["nyc-03"],
+      "expected_answer_summary": "Staff certification -- code 04A, Food Protection Certificate (FPC) not held by the manager or supervisor of food operations. Not a pest-control violation."
+    },
+    {
+      "id": "V-OOS",
+      "kind": "out_of_scope",
+      "question": "What was the inspection result for a restaurant located in Brooklyn?",
+      "source_doc_ids": [],
+      "expected_answer_summary": "Not covered -- all 8 sampled records are in Manhattan or Queens; none are in Brooklyn. Tanya should abstain rather than guess or misattribute a borough."
+    }
+  ]
+}

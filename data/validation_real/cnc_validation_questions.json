@@ -1,0 +1,33 @@
+{
+  "_notes": "Hand-checked answer key for the CNC real-world validation slice (cnc_industrial_safety.md). Kept separate from eval_questions.json for the same reason as the F&B slice: real, unrelated records with no cross-division hooks.",
+  "questions": [
+    {
+      "id": "CV1",
+      "kind": "in_scope",
+      "question": "What caused the burn injury to the shift supervisor in the corridor?",
+      "source_doc_ids": ["cnc-real-06"],
+      "expected_answer_summary": "Overheating of two bars in row 5 of cell 7 produced a spark that was projected and struck the supervisor, causing a first-degree burn to the neck."
+    },
+    {
+      "id": "CV2",
+      "kind": "in_scope",
+      "question": "What happened when the operator was manually displacing the zinc sheet, and which body part was affected?",
+      "source_doc_ids": ["cnc-real-07"],
+      "expected_answer_summary": "The blade detached suddenly from the cathode, bending and grazing the collaborator's hand -- classified under the Manual Tools critical risk category."
+    },
+    {
+      "id": "CV3",
+      "kind": "in_scope",
+      "question": "Was the confined-space incident caused by a person entering a space, or by something falling on them?",
+      "source_doc_ids": ["cnc-real-05"],
+      "expected_answer_summary": "Something falling on them -- while cleaning a shutter with an air lance, the employee was struck by product that had accumulated above the conveyor/trailer, not by entering an enclosed space themselves."
+    },
+    {
+      "id": "CV-OOS",
+      "kind": "out_of_scope",
+      "question": "Were any of these incidents fatal (Accident Level V)?",
+      "source_doc_ids": [],
+      "expected_answer_summary": "Not covered by this slice -- all 8 sampled records are Accident Level I (the lowest severity band); none reach fatal severity. Tanya should say the sampled records don't include this, not extrapolate to the full dataset."
+    }
+  ]
+}

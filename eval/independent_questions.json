@@ -1,0 +1,65 @@
+{
+  "_notes": "Provenance. IND1-IND5: written verbatim by ChatGPT from docs/BLIND_QUESTION_PACK.md ONLY (the project owner confirms it saw nothing else from the project); the question wording is unedited. IND6: written by the project owner in the first draft, before any results. Added afterwards by Claude from the documents: source_doc_ids, expected_divisions, key-fact groups, and the 'kind' label. ChatGPT labelled IND2 and IND3 cross-division; both are answerable from a single document, so they are labelled single_division here (chatgpt_label records the original). Claude wrote the corpus, so the key facts are not independent even though the questions are.",
+  "questions": [
+    {
+      "id": "IND1",
+      "kind": "cross_division",
+      "chatgpt_label": "cross-division",
+      "question": "Why did Aurora Beverages’ change from a 28mm to a 26mm bottle neck require involvement from both the F&B and CNC divisions, and which CNC work order was used for the new tooling?",
+      "expected_divisions": ["fnb", "cnc"],
+      "source_doc_ids": ["fnb-01", "cnc-01"],
+      "groups": [["thread pitch", "thread", "cannot be re-machined", "could not be adapted", "new tooling", "replacement tooling"], ["0442"]],
+      "why": "The reason is in the F&B procedure; the work order number is only in the CNC tooling spec. Close to CD1, which top-3 retrieval misses."
+    },
+    {
+      "id": "IND2",
+      "kind": "single_division",
+      "chatgpt_label": "cross-division",
+      "question": "How did the Aurora Beverages June 2026 rush order affect CNC’s production schedule, and what happened to external Order C-4471 as a result?",
+      "expected_divisions": ["cnc"],
+      "source_doc_ids": ["cnc-02"],
+      "groups": [["reallocat", "reprioritis", "22 machine", "22 hours", "22 hrs"], ["4 business days", "4 days", "four business days", "four days"]],
+      "why": "The whole answer is in the CNC capacity report, so it does not test cross-division synthesis. Contains the order id C-4471, which makes keyword retrieval easy."
+    },
+    {
+      "id": "IND3",
+      "kind": "single_division",
+      "chatgpt_label": "cross-division",
+      "question": "How did the Jewellery division financially support the F&B division’s expansion for the Aurora rush order, including the amount financed and repayment period?",
+      "expected_divisions": ["jewellery"],
+      "source_doc_ids": ["jwl-01"],
+      "groups": [["180000", "180,000"], ["18 months", "18-month", "eighteen months", "18 month"], ["intercompany", "working-capital", "working capital", "facility"]],
+      "why": "The Jewellery treasury report states the mechanism, amount and term. fnb-06 states the amount and term too, so either document would answer it."
+    },
+    {
+      "id": "IND4",
+      "kind": "single_division",
+      "chatgpt_label": "single division - Jewellery",
+      "question": "What pricing components were included in custom commission JWL-Q-3391, and what was the final quoted total?",
+      "expected_divisions": ["jewellery"],
+      "source_doc_ids": ["jwl-06"],
+      "groups": [["2029.92"], ["912.4"], ["workmanship", "200.73"], ["overhead", "66.79"], ["850"]],
+      "why": "A five-item list plus a total from one quote; tests completeness. Contains the job id JWL-Q-3391."
+    },
+    {
+      "id": "IND5",
+      "kind": "single_division",
+      "chatgpt_label": "single division - F&B",
+      "question": "What six checks must be completed during a 500-unit pilot run under QC-FNB-002 before the batch can be cleared for full-line rollout?",
+      "expected_divisions": ["fnb"],
+      "source_doc_ids": ["fnb-03"],
+      "groups": [["fill volume", "1.5"], ["torque", "8-12", "8 to 12"], ["seal", "24 hours", "24-hour", "leak"], ["label", "2mm", "2 mm"], ["drop", "carton"], ["batch code", "best-before", "best before"]],
+      "why": "A six-item list from one checklist; every item must appear. Same document as main S8. Contains the document id QC-FNB-002."
+    },
+    {
+      "id": "IND6",
+      "kind": "out_of_scope",
+      "chatgpt_label": "n/a (written by the project owner)",
+      "question": "Which is the most costly division?",
+      "expected_divisions": [],
+      "source_doc_ids": [],
+      "groups": [],
+      "why": "Absent but plausible: the documents give revenue and financing figures but no cost by division, so the right answer is that the documents do not say."
+    }
+  ]
+}
