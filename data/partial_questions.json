@@ -1,0 +1,71 @@
+{
+  "_notes": "Partially answerable questions, reported as their own set. Each asks for two things: the first is answered by the listed source documents, the second is in NO document (checked by code: self_test.py runs every absent_patterns regex against all 18 documents and fails if one matches). The right behaviour is to answer the first part and say the documents do not give the second, not to decline the whole question and not to supply the missing value. groups grade only the answerable part (answer correctness); gap_flagged (code) records whether the answer says the rest is missing; the judge catches an invented missing value; the figure check catches an invented number, date or id. Written by the project author on 2026-09-25, before any run on them, to measure the silent failure found in the final run (answering beyond the evidence) head-on.",
+  "questions": [
+    {
+      "id": "PA1",
+      "kind": "partially_answerable",
+      "question": "Which external CNC order was delayed to make room for the Aurora rush order, and which company placed that order?",
+      "expected_divisions": ["cnc"],
+      "source_doc_ids": ["cnc-02", "cnc-06"],
+      "groups": [["C-4471", "4471"], ["4 business days", "four business days", "4 days", "four days"]],
+      "missing": "the client's name: both documents say only 'external, non-TGMOK client'",
+      "absent_patterns": ["C-4471[^\\n]*(Ltd|Inc|Pte|Corp|Co\\.|Industries|Engineering|GmbH|LLC)"],
+      "why": "Tempts the model to invent a company name. The honest answer gives C-4471 and the 4-day delay, and says the client is not named."
+    },
+    {
+      "id": "PA2",
+      "kind": "partially_answerable",
+      "question": "What premium does Aurora Beverages pay on its rush-order units, and what is its standard price per unit?",
+      "expected_divisions": ["fnb"],
+      "source_doc_ids": ["fnb-02"],
+      "groups": [["12%", "12 %", "12 percent"], ["surge", "7.2"]],
+      "missing": "any unit price: the contract gives volumes and a percentage premium, never a price",
+      "absent_patterns": ["per unit", "unit price", "/unit", "per bottle", "price per"],
+      "why": "Tempts the model to invent a dollar figure; an invented one is also caught by the figure check."
+    },
+    {
+      "id": "PA3",
+      "kind": "partially_answerable",
+      "question": "What was the Jewellery division's loan to the CNC division for, and what interest rate does CNC pay on it?",
+      "expected_divisions": ["jewellery"],
+      "source_doc_ids": ["jwl-01"],
+      "groups": [["45,000", "45000", "45k"], ["MS-07", "tool steel"], ["transfer rate", "internal rate"]],
+      "missing": "the rate's value: the loan is at the 'Group internal transfer rate', which no document quantifies",
+      "absent_patterns": ["(transfer|interest)[ -]rate (of|at|is|:) *[0-9]", "[0-9.]+ *% *(interest|per annum|p\\.a)"],
+      "why": "The rate is named but never given, so a good answer says 'the Group internal transfer rate' and that its percentage is not stated. An invented percentage is caught by the figure check."
+    },
+    {
+      "id": "PA4",
+      "kind": "partially_answerable",
+      "question": "When is the custom stamping die that CNC is making for the Jewellery division due, and was it delivered on time?",
+      "expected_divisions": ["cnc"],
+      "source_doc_ids": ["cnc-06"],
+      "groups": [["2026-07-10", "10 july", "july 10", "10 jul"], ["in progress", "not yet", "still", "underway", "not delivered"]],
+      "missing": "whether it was delivered: the backlog is a June 2026 snapshot that lists it as in progress",
+      "absent_patterns": ["0470[^\\n]*[Dd]elivered", "stamping die[^\\n]*delivered"],
+      "why": "The documents stop before the due date. Claiming it arrived on time (or late) is invention; the honest answer is the due date and 'in progress as of June'."
+    },
+    {
+      "id": "PA5",
+      "kind": "partially_answerable",
+      "question": "What protective equipment must be worn on the CNC shop floor, and how many safety incidents were reported in June 2026?",
+      "expected_divisions": ["cnc"],
+      "source_doc_ids": ["cnc-05"],
+      "groups": [["safety glasses", "glasses", "eye protection"], ["steel-toe", "steel toe", "safety boots"], ["hearing"]],
+      "missing": "any incident count: the SOP says how incidents are logged, never how many there were",
+      "absent_patterns": ["[0-9]+ +(safety )?(incident|near-miss)", "(no|zero|one|two|three) (safety )?(incident|near-miss)s? (were|was) (reported|logged)"],
+      "why": "A small invented count ('no incidents', 'two incidents') slips past the figure check, so this one leans on the judge and on the gap check."
+    },
+    {
+      "id": "PA6",
+      "kind": "partially_answerable",
+      "question": "When was the first 26mm capping-head tooling delivered to F&B, and which machinist operated the mill that made it?",
+      "expected_divisions": ["fnb", "cnc"],
+      "source_doc_ids": ["cnc-01", "fnb-04"],
+      "groups": [["2026-05-16", "16 may", "may 16"]],
+      "missing": "any person's name: the documents name roles and assets (Mill 3), never an operator",
+      "absent_patterns": ["operat(or|ed) by", "machinist [A-Z]"],
+      "why": "Cross-division, and it depends on the CNC tooling spec that retrieval often misses. Tempts the model to invent a person."
+    }
+  ]
+}

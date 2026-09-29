@@ -1,9 +1,13 @@
-"""Cost to serve, in the three-layer shape of the course's cost calculator:
+"""Cost to serve, in the three-layer shape of the course's cost calculator (Class 5):
 
-    layer 1  variable model cost per query  = calls x (input tokens x price + output tokens x price)
-    layer 2  failure cost per query         = (1 - success rate) x cost of a person redoing the answer
-    cost per successful answer              = layer 1 + layer 2
-    monthly                                 = cost per successful answer x volume
+    layer 1  variable per question   = calls x (input tokens x price + output tokens x price)
+                                       + a person checking the answer against its notes (every answer)
+    layer 2  expected fallback       = (1 - success rate) x cost of a person redoing the answer by hand
+    cost per successful answer       = layer 1 + layer 2
+    layer 3  fixed monthly           = hosting, upkeep, evaluation re-runs (config.FIXED_MONTHLY_USD)
+    monthly                          = cost per successful answer x volume + layer 3
+    break-even success rate          = the rate at which Tanya costs the same as answering by hand:
+                                       p = 1 - (manual - layer 1) / redo cost    (the course's formula)
 
     python cost_model.py --estimate   free, no key: prices the ACTUAL prompts the shipped system and
                                       the keyword baseline send, and times the one-off setup
@@ -22,9 +26,9 @@ import sys
 import time
 from datetime import date
 
-from config import (ANALYST_USD_PER_HOUR, CHARS_PER_TOKEN, CYCLES_PER_MONTH, DATA_DIR,
-                    EST_ANSWER_TOKENS, GEN_MODEL, HOURS_PER_DAY, HUMAN_REVIEW_MINUTES,
-                    MANUAL_CYCLE_DAYS, PRICES, PRICES_DATED, RESULTS_DIR, VOLUMES)
+from config import (ANALYST_USD_PER_HOUR, CHARS_PER_TOKEN, CHECK_MINUTES, CYCLES_PER_MONTH, DATA_DIR,
+                    EST_ANSWER_TOKENS, FIXED_MONTHLY_USD, GEN_MODEL, HOURS_PER_DAY, HUMAN_REVIEW_MINUTES,
+                    MANUAL_CYCLE_DAYS, NOTEBOOK_CORRECTNESS, PRICES, PRICES_DATED, RESULTS_DIR, VOLUMES)
 
 
 def variable_cost(model, tokens_in, tokens_out):
@@ -33,16 +37,47 @@ def variable_cost(model, tokens_in, tokens_out):
 
 
 def failure_cost_usd():
+    """A person redoing a wrong or declined answer by hand."""
     return ANALYST_USD_PER_HOUR * HUMAN_REVIEW_MINUTES / 60.0
 
 
-def cost_per_successful(var_usd, success_rate):
+def manual_per_question_usd():
+    """The no-AI alternative: a person answering the question from the documents. The same work as a
+    redo, so the same price."""
+    return failure_cost_usd()
+
+
+def check_cost_usd(minutes=CHECK_MINUTES):
+    """A person reading an answer against its cited notes before using it. Paid on EVERY answer, right
+    or wrong: the human-in-the-loop gate is not free just because it is a good idea."""
+    return ANALYST_USD_PER_HOUR * minutes / 60.0
+
+
+def fixed_monthly_usd():
+    return sum(FIXED_MONTHLY_USD.values())
+
+
+def cost_per_successful(model_usd, success_rate, check_usd=None):
+    """Layer 1 (model + the check) + layer 2 (expected redo)."""
     assert 0.0 <= success_rate <= 1.0
-    return var_usd + (1.0 - success_rate) * failure_cost_usd()
+    check_usd = check_cost_usd() if check_usd is None else check_usd
+    return model_usd + check_usd + (1.0 - success_rate) * failure_cost_usd()
 
 
-def monthly(per_success_usd, volume):
-    return per_success_usd * volume
+def break_even_success_rate(cheap_var, dear_total, failure_usd):
+    """The course's formula (Class 5 calculator): the success rate at which the cheap option costs
+    the same as the dear one.  cheap_var + (1-p) * failure = dear_total."""
+    return max(0.0, min(1.0, 1.0 - (dear_total - cheap_var) / failure_usd))
+
+
+def tanya_break_even(model_usd, check_usd=None):
+    """Below this success rate, answering by hand is cheaper than Tanya."""
+    check_usd = check_cost_usd() if check_usd is None else check_usd
+    return break_even_success_rate(model_usd + check_usd, manual_per_question_usd(), failure_cost_usd())
+
+
+def monthly(per_success_usd, volume, fixed=True):
+    return per_success_usd * volume + (fixed_monthly_usd() if fixed else 0.0)
 
 
 def manual_monthly_usd():
@@ -51,6 +86,61 @@ def manual_monthly_usd():
 
 def est_tokens(text):
     return len(text) / CHARS_PER_TOKEN
+
+
+def economics_section(model_usd, success, baseline_success=None, source=""):
+    """The part of the cost that is people: the check on every answer, the expected redo, the break-even
+    against answering by hand, layer 3, and the kill condition. Shared by the estimate and the measured
+    report so the two cannot price people differently."""
+    chk, redo = check_cost_usd(), failure_cost_usd()
+    be = tanya_break_even(model_usd)
+    L = ["## Layer 1, continued: a person checks every answer", "",
+         f"Every answer is a draft that a person reads against its cited notes before using it: {CHECK_MINUTES} "
+         f"minutes at ${ANALYST_USD_PER_HOUR:.0f}/h = ${chk:.2f} (an ASSUMPTION in config.py), about "
+         f"{chk / model_usd:,.0f}x the model cost of the question. This is the human-in-the-loop gate, priced: "
+         "it is paid on right answers too.", "",
+         "## Layer 2 and the break-even against answering by hand", "",
+         f"A wrong or declined answer is redone by hand: {HUMAN_REVIEW_MINUTES} minutes = ${redo:.2f}, the same "
+         "work as answering the question without Tanya, the no-AI alternative. The course's break-even, "
+         f"p = 1 - (manual - layer 1) / redo, puts it at **{be:.0%}**: Tanya is cheaper than answering by hand "
+         f"whenever more than {be:.0%} of its answers are right."]
+    if success is not None:
+        slack = (manual_per_question_usd() - model_usd - (1 - success) * redo) / (ANALYST_USD_PER_HOUR / 60.0)
+        L += ["", f"Measured: {success:.0%} ({source}), {success / be:.0f} times the break-even, so the decision "
+              f"is robust rather than a knife-edge. At {success:.0%}, checking an answer could take up to "
+              f"{slack:.0f} minutes before answering by hand became cheaper."]
+    L += ["", "The break-even moves with the minutes the check takes, far more than with anything the model "
+          "costs, which is why every answer carries its citations and the notes it drew on: they are what keep "
+          "the check short.", "", "| minutes to check one answer | break-even success rate |", "|---|---|"]
+    for m in (1, CHECK_MINUTES, 5, 10, HUMAN_REVIEW_MINUTES):
+        L.append(f"| {m}{' (assumed)' if m == CHECK_MINUTES else ''} | "
+                 f"{tanya_break_even(model_usd, check_cost_usd(m)):.0%} |")
+    L += ["", "## Layer 3: fixed monthly, and the month in total", "",
+          "| fixed cost (ASSUMPTIONS, config.py) | $ per month |", "|---|---|"]
+    L += [f"| {k} | ${v:,.2f} |" for k, v in FIXED_MONTHLY_USD.items()]
+    L += [f"| **total** | **${fixed_monthly_usd():,.2f}** |", "",
+          "| answer success rate | cost per successful answer | " +
+          " | ".join(f"month at {v:,} questions" for v in VOLUMES) + " |", "|---|---|" + "---|" * len(VOLUMES)]
+    for pr in sorted({1.00, 0.90, success or 0.80, 0.70, 0.50}, reverse=True):
+        ps = cost_per_successful(model_usd, pr)
+        mark = " (measured)" if success is not None and abs(pr - success) < 1e-9 else ""
+        L.append(f"| {pr:.0%}{mark} | ${ps:.2f} | " + " | ".join(f"${monthly(ps, v):,.0f}" for v in VOLUMES) + " |")
+    L.append("| answering every question by hand | $" + f"{manual_per_question_usd():.2f} | "
+             + " | ".join(f"${manual_per_question_usd() * v:,.0f}" for v in VOLUMES) + " |")
+    per_at = cost_per_successful(model_usd, success if success is not None else 0.80)
+    min_volume = fixed_monthly_usd() / max(1e-9, manual_per_question_usd() - per_at)
+    L += ["", "Layer 3 is spread over more questions as volume grows, so the case for Tanya strengthens with "
+          "volume; the check and the redo never amortise. Below about "
+          f"{min_volume:.0f} questions a month, the fixed cost alone makes answering by hand cheaper.", "",
+          "## Kill condition, written before a pilot", "",
+          "Class 5's last gate: capture the baseline now and write down what would make us stop. Re-run the "
+          "fixed 20-question set after every change, and:", "",
+          f"1. if answer correctness falls below the keyword baseline's"
+          + (f" ({baseline_success:.0%} in the same run)" if baseline_success is not None else "")
+          + ", switch to keyword retrieval: it is simpler, needs no embedding model, and on that result it won;",
+          f"2. if it falls below the {be:.0%} break-even, or reviewers report the check taking longer than it "
+          "would take to answer by hand, stop and answer by hand."]
+    return L
 
 
 def estimate_run(gen_model, judge_model, n_questions, n_scored, configs, do_judge=True,
@@ -98,13 +188,13 @@ def run_estimate():
         whole, per_note = [], []
         for q in main:
             hits = H.retrieve_config(config, q["question"], idx)
-            context = "\n\n".join(f"[{i+1}] ({h['doc_id']}) {h['text']}" for i, h in enumerate(hits))
+            context = rag_core.format_notes(hits)
             user = f"NOTES:\n{context}\n\nQUESTION: {q['question']}"
             whole.append(est_tokens(rag_core.GROUNDED) + est_tokens(user))
             per_note.append(est_tokens(context) / max(1, len(hits)))
         return sum(whole) / len(whole), sum(per_note) / len(per_note)
 
-    measured = {c: prompt_tokens(c) for c in (H.SHIPPED, H.BASELINE)}
+    measured = {c: prompt_tokens(c) for c in (H.SHIPPED, H.BASELINE, "full_context")}
     ask = {c: m[0] for c, m in measured.items()}
     note_tokens = measured[H.SHIPPED][1]
 
@@ -135,25 +225,25 @@ def run_estimate():
          f"{EST_ANSWER_TOKENS} | ${per_q[H.SHIPPED]:.5f} |",
          f"| ask a question: `{H.BASELINE}` (the keyword baseline) | 1 | {ask[H.BASELINE]:,.0f} | "
          f"{EST_ANSWER_TOKENS} | ${per_q[H.BASELINE]:.5f} |",
+         f"| ask a question: `full_context` (all 18 documents in the prompt, no retrieval) | 1 | "
+         f"{ask['full_context']:,.0f} | {EST_ANSWER_TOKENS} | ${per_q['full_context']:.5f} |",
          f"| file an upload (classify + impact brief) | 2 | {t_classify_in + t_brief_in:,.0f} | 310 | "
          f"${per_upload:.5f} |",
          "", "A question the shipped system hands to a person below the confidence threshold makes "
          "**zero** model calls. Embedding is local and free per call.", "",
-         "## Layer 2: why the pass rate, not the token price, sets the cost", "",
-         f"A wrong or declined answer is priced as a person spending {HUMAN_REVIEW_MINUTES} minutes at "
-         f"${ANALYST_USD_PER_HOUR:.0f}/h = ${failure_cost_usd():.2f} (an ASSUMPTION in config.py) -- about "
-         f"{failure_cost_usd() / per_q[H.SHIPPED]:,.0f}x the model cost of one question. The pass rate is "
-         "only known after the live run, so this is the sensitivity, not a claim:", "",
-         "| answer pass rate | cost per successful answer | monthly at " +
-         " | monthly at ".join(f"{v:,} questions" for v in VOLUMES) + " |",
-         "|---|---|" + "---|" * len(VOLUMES)]
-    for pr in (1.00, 0.95, 0.90, 0.85, 0.80):
-        ps = cost_per_successful(per_q[H.SHIPPED], pr)
-        L.append(f"| {pr:.0%} | ${ps:.4f} | " + " | ".join(f"${monthly(ps, v):,.2f}" for v in VOLUMES) + " |")
-    L += ["", f"Context, not a like-for-like saving: the problem statement puts cross-division synthesis "
-          f"at 3-5 business days per weekly cycle, about ${manual_monthly_usd():,.0f}/month of analyst time "
-          f"at these assumptions. Tanya answers questions; it does not replace the report, and a person "
-          "still reviews its output.", "",
+         f"**Retrieval against long context.** At 18 documents the whole corpus fits in one prompt, which is "
+         f"Class 2's rule for skipping retrieval, and it costs only {ask['full_context'] / ask[H.SHIPPED]:.1f}x "
+         "the tokens of the shipped top-5. That is the honest case for long context here. Retrieval is chosen "
+         "for what the pilot stands for: every division's documents over years will not fit, the long-context "
+         "cost grows with the corpus while top-5 does not, and retrieval is where a real deployment would "
+         "enforce which division's documents a reader may see.", ""]
+    L += economics_section(per_q[H.SHIPPED], NOTEBOOK_CORRECTNESS.get(H.SHIPPED),
+                           NOTEBOOK_CORRECTNESS.get(H.BASELINE),
+                           "answer correctness in the final notebook run, `results/notebook_run.md`")
+    L += ["", "## Context: the weekly report", "",
+          f"The problem statement puts cross-division synthesis at 3-5 business days per weekly cycle, about "
+          f"${manual_monthly_usd():,.0f}/month of analyst time at these assumptions. That is context, not a "
+          "like-for-like saving: Tanya answers questions, it does not replace the report.", "",
           "## Time to deploy, measured on this machine", "",
           f"Embedder: {using}.", "",
           "| step | time | notes |", "|---|---|---|",
@@ -195,38 +285,27 @@ def run_measured():
              "Tokens and pass rates are MEASURED (results/summary.json, the API's own usage counts). "
              "Labour numbers are ASSUMPTIONS (config.py). Success = the answer contains its key facts "
              "(answer correctness), main set only.", "",
-             "| config | avg tokens in/out | layer 1 $/query | answer correctness | cost per successful answer |",
-             "|---|---|---|---|---|"]
-    rows = {}
-    first_var = None
+             "| config | avg tokens in/out | model $/question | + check | answer correctness | "
+             "cost per successful answer | break-even vs by hand |",
+             "|---|---|---|---|---|---|---|"]
+    succ_of, var_of = {}, {}
     for name, agg in s["configs"].items():
         var = variable_cost(gen, agg["avg_tokens_in"], agg["avg_tokens_out"])
-        first_var = first_var or var
         main_agg = s.get("by_set", {}).get("configs", {}).get(name, {}).get("main", agg)
         succ = main_agg["key_fact_pass"] or 0.0
-        per_success = cost_per_successful(var, succ)
-        rows[name] = per_success
-        lines.append(f"| {name} | {agg['avg_tokens_in']:.0f} / {agg['avg_tokens_out']:.0f} | "
-                     f"${var:.5f} | {succ:.0%} | ${per_success:.4f} |")
-
-    lines += ["", "## Monthly, at assumed volumes", "",
-              "| config | " + " | ".join(f"{v:,} questions" for v in VOLUMES) + " |",
-              "|---|" + "---|" * len(VOLUMES)]
-    for name, ps in rows.items():
-        lines.append(f"| {name} | " + " | ".join(f"${monthly(ps, v):,.2f}" for v in VOLUMES) + " |")
-
-    lines += ["", "## What the failure term is doing", "",
-              f"A wrong or abstained answer is priced as a person spending {HUMAN_REVIEW_MINUTES} minutes at "
-              f"${ANALYST_USD_PER_HOUR:.0f}/h = ${failure_cost_usd():.2f}. That is about "
-              f"{failure_cost_usd() / first_var:,.0f}x the model cost of a query, so the pass rate, not the "
-              "token price, decides the cost per successful answer. Changing the config only pays for itself "
-              "if it moves the pass rate.", "",
-              "## Context: the manual process this aims to shorten", "",
+        succ_of[name], var_of[name] = succ, var
+        lines.append(f"| {name} | {agg['avg_tokens_in']:.0f} / {agg['avg_tokens_out']:.0f} | ${var:.5f} | "
+                     f"${check_cost_usd():.2f} | {succ:.0%} | ${cost_per_successful(var, succ):.2f} | "
+                     f"{tanya_break_even(var):.0%} |")
+    ship = s.get("shipped_config", "shipped")
+    if ship in var_of:
+        lines += [""] + economics_section(var_of[ship], succ_of[ship], succ_of.get(s.get("baseline_config")),
+                                          "answer correctness in this run, main set")
+    lines += ["", "## Context: the weekly report", "",
               f"The problem statement puts cross-division synthesis at 3-5 business days per report cycle. At "
               f"{MANUAL_CYCLE_DAYS} days x {HOURS_PER_DAY} h x ${ANALYST_USD_PER_HOUR:.0f}/h x {CYCLES_PER_MONTH} "
               f"cycles/month that is about ${manual_monthly_usd():,.0f}/month of analyst time. This is context, "
-              "not a like-for-like saving: Tanya answers questions, it does not replace the report, and a person "
-              "still reviews its output.", ""]
+              "not a like-for-like saving: Tanya answers questions, it does not replace the report.", ""]
 
     if s.get("judge_model") and s["judge_model"] in PRICES:
         jc = sum(variable_cost(s["judge_model"], a["judge_tokens_in"], a["judge_tokens_out"])

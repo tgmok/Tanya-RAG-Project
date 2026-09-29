@@ -7,12 +7,12 @@ not something discovered after looking at outputs.
 
 | Hook | Divisions | Documents that carry it |
 |---|---|---|
-| H1 | F&B → CNC | An F&B packaging spec change requires new CNC tooling | `fnb/packaging_change_sop.md`, `cnc/tooling_spec_bottle_cap.md` |
-| H2 | Jewellery → F&B, CNC | Jewellery division extends intercompany financing to the other two divisions | `jewellery/finance_intercompany_loan_report.md`, `fnb/financial_summary_q3.md`, `cnc/capacity_planning_report.md` |
-| H3 | F&B → CNC | An F&B rush order causes CNC to reallocate machining capacity | `fnb/client_contract_summary.md`, `cnc/capacity_planning_report.md` |
+| H1 | F&B → CNC | An F&B packaging spec change requires new CNC tooling | `fnb/fnb-01_packaging_change_sop.md`, `cnc/cnc-01_tooling_spec_bottle_cap.md` |
+| H2 | Jewellery → F&B, CNC | Jewellery division extends intercompany financing to the other two divisions | `jewellery/jwl-01_finance_intercompany_loan_report.md`, `fnb/fnb-06_financial_summary_q3.md`, `cnc/cnc-02_capacity_planning_report.md` |
+| H3 | F&B → CNC | An F&B rush order causes CNC to reallocate machining capacity | `fnb/fnb-02_client_contract_summary.md`, `cnc/cnc-02_capacity_planning_report.md` |
 
 Each hook is deliberately split across **two or three documents in different divisions**, so a
-single-division retrieval can only ever answer half the question — this is what Section 7's
+single-division retrieval can only ever answer half the question — this is what the metric
 "context recall: did Tanya retrieve chunks from every division a cross-division query touches"
 metric is built to catch.
 
@@ -36,8 +36,8 @@ division's point of view, as it would actually be recorded.
 ```
 
 `<hook fact>` was filled in from the hooks table above, once per hook, for each document that
-carries it — this fixes the ground truth before generation, per the data-diligence brief in
-Section 6 of the watch-outs.
+carries it — this fixes the ground truth before generation, per the data guidance in the
+course watch-outs.
 
 ## Regenerating
 

@@ -1,21 +1,30 @@
-"""Tanya's guardrails: every Section 8 mitigation that is code, not prompt.
+"""Tanya's guardrails: every risk mitigation that is code, not prompt.
 
 A mitigation you only describe is not a mitigation, so each one below is a function the app or
 the evaluation actually calls, and run_guardrails.py exercises every one of them against named
 cases (results/guardrails.md). No model calls here, no network.
 
+OWASP numbers follow the Top 10 for LLM Applications, 2026 edition, as taught in Class 6 (they
+differ from the 2025 edition's). The silent failure is named with NIST AI 600-1's word for it,
+confabulation: confidently stated erroneous content.
+
   risk                                                  guard (this file)          where it runs
   ----------------------------------------------------  -------------------------  ------------------------
-  silent failure: a fluent answer with an invented      unsupported_figures()      app, every answer;
-    figure, date or id (OWASP LLM09:2025 Misinformation)                           evaluation, every answer
+  confabulation: a fluent answer with an invented       unsupported_figures()      app, every answer;
+    figure, date or id (NIST AI 600-1)                                             evaluation, every answer
   fake citation dressed up as grounding (the bug in     malformed_citation()       evaluation; regression demo
     the screen recordings)
   answering when retrieval found nothing relevant       handoff_message() via      app + evaluation, before
                                                         rag_core.answer_question   any model call
-  unbounded spend in one session (LLM10:2025)           session_tokens_exceeded()  app, before every model call
+  unbounded spend in one session                        session_tokens_exceeded()  app, before every model call
+    (LLM06:2026 Unbounded Consumption)
   instructions hidden in an uploaded document           scan_for_injection()       app, before the one
-    (LLM01:2025 Prompt Injection)                                                  automatic model call on raw
+    (LLM01:2026 Prompt Injection)                                                  automatic model call on raw
                                                                                    upload text
+  instructions inside a note that reaches the answer    strip_instructions() via   app + evaluation, every
+    prompt: an upload a person filed anyway (LLM01:2026  rag_core.format_notes      prompt that carries notes
+    indirect; LLM09:2026 Vector & Embedding Weaknesses,
+    the write path into the store)
   recognising an abstention, exactly                    is_abstention()            app + evaluation
 
 Human confirmation before an upload is filed is the remaining built mitigation; it is interface
@@ -27,7 +36,7 @@ from config import ABSTAIN_PHRASE, MAX_SESSION_TOKENS
 
 
 # ---------------------------------------------------------------------------
-# Unbounded consumption (OWASP LLM10:2025)
+# Unbounded consumption (OWASP LLM06:2026)
 # ---------------------------------------------------------------------------
 
 def session_tokens_exceeded(tokens_in, tokens_out, cap=MAX_SESSION_TOKENS):
@@ -37,7 +46,7 @@ def session_tokens_exceeded(tokens_in, tokens_out, cap=MAX_SESSION_TOKENS):
 
 
 # ---------------------------------------------------------------------------
-# Prompt injection in uploaded documents (OWASP LLM01:2025)
+# Prompt injection in uploaded documents (OWASP LLM01:2026)
 # ---------------------------------------------------------------------------
 
 # Uploaded documents are untrusted input: the classifier reads the raw upload text with an LLM
@@ -65,6 +74,38 @@ _INJECTION_RE = re.compile("|".join(INJECTION_PATTERNS), re.IGNORECASE)
 def scan_for_injection(text):
     """Return the distinct matched phrases (as they appear in the text), or [] if none."""
     return list(dict.fromkeys(m.group(0) for m in _INJECTION_RE.finditer(text or "")))
+
+
+# The same patterns, applied a second time: to every note just before it goes into a prompt. The
+# upload scan above only routes a suspicious document to a person, and a person can still file it,
+# after which its text is retrievable into ANY later answer (Class 6: LLM09:2026, "treat anything a
+# third party put in the store as untrusted text -- which is row 1 again").
+#
+# This is a tripwire, not the defence. OWASP's own text is that no reliable prevention for LLM01
+# exists, and an attacker can rephrase around any pattern list. What makes a successful injection
+# survivable here is architecture: Tanya has no tools and no outbound channel (two legs of the
+# lethal trifecta, not three), and every answer is a draft a person reads. What this adds is
+# visibility: the sentence is removed as the course's strip_instructions() removes a line, the
+# removal is recorded on the note, and the app tells the reader it happened.
+REMOVED_MARK = "[removed by Tanya: a sentence addressed to the model]"
+_SENTENCE_BREAK = re.compile(r"(?<=[.!?])\s+|\n+")
+
+
+def strip_instructions(text):
+    """Return (text with every sentence that matches an injection pattern replaced by
+    REMOVED_MARK, the removed sentences). Text with no match comes back unchanged, byte for byte,
+    so on the fixed corpus (no matches; run_guardrails.py checks every chunk) the prompts the
+    evaluation measured are exactly the prompts the app sends."""
+    if not _INJECTION_RE.search(text or ""):
+        return text, []
+    kept, removed = [], []
+    for sentence in _SENTENCE_BREAK.split(text):
+        if _INJECTION_RE.search(sentence):
+            removed.append(sentence.strip())
+            kept.append(REMOVED_MARK)
+        elif sentence.strip():
+            kept.append(sentence)
+    return " ".join(kept), removed
 
 
 # ---------------------------------------------------------------------------
@@ -114,14 +155,14 @@ _FIGURE = re.compile(r"\d{4}-\d{2}-\d{2}|[A-Z]{1,5}(?:-[A-Z0-9]+)+|\$?\d[\d,]*\.
 
 
 def unsupported_figures(answer, docs_by_id):
-    """Code check that a cited document really contains the figures in the answer (the Section 8
+    """Code check that a cited document really contains the figures in the answer (the
     citation-verification mitigation). Returns the numbers, dates and ids in the answer that appear
     in NONE of the cited documents; [] if all are supported; None if the answer abstains or cites
     no known document (nothing to verify against).
 
     Known limit, measured in round 11 of testing: it catches invented FIGURES, not an invented
     claim with nothing numeric in it ("installed immediately", a component name borrowed from an
-    unrelated document). That residual risk is named in docs/TRADEOFF_ANALYSIS.md."""
+    unrelated document). That residual confabulation risk is named in docs/TRADEOFF_ANALYSIS.md."""
     if is_abstention(answer):
         return None
     cited = cited_doc_ids(answer, docs_by_id)

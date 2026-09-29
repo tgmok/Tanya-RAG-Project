@@ -3,7 +3,7 @@ in jewellery_retail_transactions.md.
 
 Unlike the F&B/CNC slices, the raw source (jewelry.csv, ~13.6MB, 95,911 rows) is NOT
 committed to this repo: it needs your own Kaggle login to download, and per the
-watch-outs' Section 6 guidance ("if you cannot redistribute the data, plan now for a
+course watch-outs' guidance ("if you cannot redistribute the data, plan now for a
 repository that runs without it -- ship trained weights, a small sample, and a README
 that says exactly this"), only the small hand-picked sample and aggregate summary table
 are committed here. Run this script against your own local copy to reproduce them.

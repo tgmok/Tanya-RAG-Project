@@ -11,7 +11,7 @@ have. Same data, same source, different host.
 restriction on the mirrored CSV.
 
 **This file is NOT part of Tanya's main corpus.** Like `nyc_inspections.md`, it exists
-only for the Section 6 real-world validation check. These are real industrial accident
+only for the real-world validation check. These are real industrial accident
 records from real plants, unrelated to TGMOK Holdings.
 
 8 real accident records, filtered to the **Metals** industry sector (closest real-world

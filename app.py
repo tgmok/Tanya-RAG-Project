@@ -64,11 +64,26 @@ def budget_ok():
         st.error(
             f"Session token cap reached ({st.session_state.tokens_in + st.session_state.tokens_out:,} "
             f"/ {config.MAX_SESSION_TOKENS:,} tokens). No further model calls this session -- "
-            "reload the page to reset. This is a guardrail against unbounded spend (OWASP LLM10), "
+            "reload the page to reset. This is a guardrail against unbounded spend (OWASP LLM06:2026), "
             "not a cost estimate; at gpt-4o-mini prices the cap itself costs under $0.05."
         )
         return False
     return True
+
+
+def show_notes(hits, label="Retrieved notes"):
+    """The evidence a reviewer checks an answer against (Class 6: a human-in-the-loop gate needs a
+    window, the evidence, and the authority to act). If guardrails.strip_instructions removed a
+    sentence addressed to the model from any note, say so: a tripwire nobody sees is not a control."""
+    removed = [(h["doc_id"], s) for h in hits for s in h.get("removed") or []]
+    if removed:
+        st.warning("A retrieved note contained text addressed to the model, and it was removed before the "
+                   "model read it: " + "; ".join(f"{d}: '{s[:120]}'" for d, s in removed)
+                   + ". Check who filed that document, and treat this answer with extra care.")
+    with st.expander(label):
+        for h in hits:
+            st.markdown(f"- **{h['doc_id']}** · {h.get('title', '')} ({h['division']}, score "
+                        f"{h['score']:.3f}): {h['text'][:200]}...")
 
 
 init_state()
@@ -164,16 +179,10 @@ if uploaded_file is not None and st.session_state.pending_upload is None:
         else:
             flags = guardrails.scan_for_injection(text)
             if flags:
-                st.warning(
-                    "This document contains a phrase commonly seen in prompt-injection attempts, "
-                    "so it was NOT sent to the classifier automatically: "
-                    + ", ".join(f"'{f}'" for f in flags)
-                    + ". Read the document yourself and pick its division(s) below if it is legitimate."
-                )
+                # No model call: the warning itself is shown on the confirm screen after the rerun.
                 st.session_state.pending_upload = {
                     "filename": uploaded_file.name, "text": text,
-                    "classification": {"error": "Skipped automatic classification (see warning above).",
-                                       "flagged_phrases": flags},
+                    "classification": {"error": "Skipped automatic classification.", "flagged_phrases": flags},
                 }
                 st.rerun()
             elif st.session_state.client is None:
@@ -198,12 +207,28 @@ if st.session_state.pending_upload is not None:
     classification = pu["classification"]
 
     st.markdown(f"**File:** `{pu['filename']}`")
-    if "error" in classification:
+    if classification.get("flagged_phrases"):
+        # Shown here, not only before the rerun that lands on this screen, or it would flash and vanish.
+        st.warning(
+            "This document contains a phrase commonly seen in prompt-injection attempts, so it was NOT "
+            "sent to the classifier: " + ", ".join(f"'{f}'" for f in classification["flagged_phrases"])
+            + ". Read it yourself and pick its division(s) below only if it is legitimate. If you file it, "
+            "Tanya still strips that sentence from every prompt it would reach."
+        )
+        suggested = []
+    elif "error" in classification:
         st.warning(classification["error"])
         suggested = []
     else:
         st.markdown(f"**Tanya's read:** {classification['summary']}")
         st.caption(f"Reasoning: {classification['reasoning']}")
+        with st.expander("What the model returned (JSON)"):
+            # Structured output, then verified in code: the prompt names the exact JSON shape, and the code
+            # parses it, keeps only real divisions, and pre-ticks them below for a person to confirm.
+            st.code(classification.get("raw") or "", language="json")
+            st.caption("The model was told to reply with only this JSON shape. Code parsed it, kept only valid "
+                       "divisions (fnb, cnc, jewellery), and pre-ticked them below. A reply it cannot parse is "
+                       "retried once, then you choose the divisions by hand.")
         suggested = classification["divisions"]
 
     st.markdown("**Confirm which division(s) this belongs to** (edit if Tanya got it wrong):")
@@ -239,33 +264,35 @@ if st.session_state.pending_upload is not None:
         with st.spinner("Rebuilding the retrieval index with the new document..."):
             rebuild_index()
 
-        with st.spinner("Generating cross-division impact snapshot..."):
-            snapshot, hits, tokens = rag_core.generate_impact_snapshot(
-                st.session_state.client, saved_text, chosen, new_doc_ids,
-                st.session_state.chunks, st.session_state.matrix, st.session_state.embedder,
-            )
-            add_tokens(tokens)
+        if st.session_state.client is None:
+            # A flagged upload reaches this point without a key (the scan skips the classifier call).
+            # Filing still works; only the model-written brief needs a key.
+            st.success(f"Filed under: {', '.join(chosen)}. Paste a key in the sidebar for the impact brief.")
+        else:
+            with st.spinner("Generating cross-division impact snapshot..."):
+                snapshot, hits, tokens = rag_core.generate_impact_snapshot(
+                    st.session_state.client, saved_text, chosen, new_doc_ids,
+                    st.session_state.chunks, st.session_state.matrix, st.session_state.embedder,
+                )
+                add_tokens(tokens)
 
-        st.success(f"Filed under: {', '.join(chosen)}")
-        st.markdown("### Cross-division impact snapshot")
-        st.info(snapshot)
-        docs_by_id = {d["doc_id"]: d["text"] for d in st.session_state.docs}
-        unsupported = guardrails.unsupported_figures(snapshot, docs_by_id)
-        if unsupported:
-            st.warning("Not found in the cited documents: " + ", ".join(unsupported)
-                       + ". Check these against the source before relying on this snapshot.")
-        elif unsupported is None and not guardrails.is_abstention(snapshot):
-            st.warning("This snapshot cites no existing document, so its figures could not be checked "
-                       "against the corpus (it may only be describing the new upload itself).")
-        with st.expander("Notes this snapshot drew on"):
-            for h in hits:
-                st.markdown(f"- **{h['doc_id']}** · {h.get('title', '')} ({h['division']}, score {h['score']:.3f}): "
-                            f"{h['text'][:200]}...")
-        st.caption(
-            "This snapshot is a demo aid for a human to read and judge -- it is not "
-            "added to data/eval_questions.json as a scored case, since there is no "
-            "pre-verified ground truth for a document uploaded live."
-        )
+            st.success(f"Filed under: {', '.join(chosen)}")
+            st.markdown("### Cross-division impact snapshot")
+            st.info(snapshot)
+            docs_by_id = {d["doc_id"]: d["text"] for d in st.session_state.docs}
+            unsupported = guardrails.unsupported_figures(snapshot, docs_by_id)
+            if unsupported:
+                st.warning("Not found in the cited documents: " + ", ".join(unsupported)
+                           + ". Check these against the source before relying on this snapshot.")
+            elif unsupported is None and not guardrails.is_abstention(snapshot):
+                st.warning("This snapshot cites no existing document, so its figures could not be checked "
+                           "against the corpus (it may only be describing the new upload itself).")
+            show_notes(hits, "Notes this snapshot drew on")
+            st.caption(
+                "This snapshot is a demo aid for a human to read and judge -- it is not "
+                "added to data/eval_questions.json as a scored case, since there is no "
+                "pre-verified ground truth for a document uploaded live."
+            )
         st.session_state.pending_upload = None
         st.session_state.uploader_key += 1  # clear the file so it isn't reclassified on the
                                             # next unrelated interaction (e.g. a chat question)
@@ -283,10 +310,7 @@ for turn in st.session_state.chat_history:
     with st.chat_message(turn["role"]):
         st.markdown(turn["content"])
         if turn["role"] == "assistant" and turn.get("hits"):
-            with st.expander("Retrieved notes"):
-                for h in turn["hits"]:
-                    st.markdown(f"- **{h['doc_id']}** · {h.get('title', '')} ({h['division']}, score "
-                                f"{h['score']:.3f}): {h['text'][:200]}...")
+            show_notes(turn["hits"])
 
 question = st.chat_input("Ask about any division, or a cross-division question...")
 if question:
@@ -303,10 +327,7 @@ if question:
             answer = ("*(No API key set -- showing retrieved notes only, no "
                       "generated answer.)*")
             st.markdown(answer)
-            with st.expander("Retrieved notes"):
-                for h in hits:
-                    st.markdown(f"- **{h['doc_id']}** · {h.get('title', '')} ({h['division']}, score "
-                                f"{h['score']:.3f}): {h['text'][:200]}...")
+            show_notes(hits)
         elif not budget_ok():
             answer, hits = None, []
         else:
@@ -325,10 +346,8 @@ if question:
                            + ". Check these against the source before relying on this answer.")
             elif unsupported is None and not guardrails.is_abstention(answer):
                 st.warning("This answer cites no document, so its figures could not be checked.")
-            with st.expander("Retrieved notes"):
-                for h in hits:
-                    st.markdown(f"- **{h['doc_id']}** · {h.get('title', '')} ({h['division']}, score "
-                                f"{h['score']:.3f}): {h['text'][:200]}...")
+            st.caption("A draft for you to check against the notes below. Tanya takes no action on it.")
+            show_notes(hits)
 
         if answer is not None:
             st.session_state.chat_history.append({

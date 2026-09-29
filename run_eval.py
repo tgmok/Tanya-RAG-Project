@@ -4,10 +4,12 @@
     python run_eval.py --chunk-sweep        free: why 200-word chunks
     python run_eval.py --leakage            free: does a question already contain its own answer?
     python run_eval.py --dry-run            free: the whole live path with a fake model -> results/_dryrun/
-    python run_eval.py --run                live: the shipped system against the keyword baseline on the
-                                            same questions -- answer correctness, faithfulness (judge),
-                                            abstention, the silent-failure count, citations, tokens
-    python run_eval.py --agreement          after you hand-grade results/judge_spotcheck.json
+    python run_eval.py --run                live, about $0.21: the shipped system against the keyword
+                                            baseline on the same questions -- answer correctness,
+                                            faithfulness (judge), abstention, the silent-failure count,
+                                            citations, tokens. Add other configs with --configs.
+    python run_eval.py --agreement          after you hand-grade results/judge_spotcheck.json:
+                                            the judge's precision, recall and Cohen's kappa
 
 --run prints an estimated cost and asks before spending anything (use --yes to skip the prompt).
 The API key is read from OPENROUTER_API_KEY or MY_PRIVATE_OPENROUTER_KEY, else asked for with a
@@ -44,18 +46,44 @@ def write_retrieval_report(out_dir, questions, idx):
          f"{cfg.OVERLAP}. Fixed corpus only (18 documents, {len(idx['plain']['chunks'])} chunks).", "",
          f"`{H.SHIPPED}` is exactly what the app runs. `{H.BASELINE}` is THE baseline: keyword search over the "
          "same chunks, a non-AI method, so the comparison asks whether embeddings earn their complexity.", "",
-         "Division recall = the retrieved chunks cover EVERY division the question needs (Section 7's "
+         "Division recall = the retrieved chunks cover EVERY division the question needs (the "
          "context-recall metric). Doc recall = share of the needed documents retrieved. "
          "Target for cross-division division recall: 80%.", "",
          "Caveat: `balanced_2x3` and `full_context` cover every division by construction, so their division recall "
          "is 100% by design and shows nothing about choosing the right documents. Compare avg doc recall, words sent, and the "
          "answer-level results from --run, instead.", "",
-         "| config | cross-division recall (main 11) | all scored (main 20) | avg doc recall | avg items sent | avg words sent |",
-         "|---|---|---|---|---|---|"]
+         "MRR = mean reciprocal rank of the first chunk from a needed document (1.0 = always first). Misses count every "
+         "scored question in every set that is missing at least one needed document.", "",
+         "| config | cross-division recall (main 11) | all scored (main 20) | avg doc recall (main 20) | MRR (main 20) | "
+         "misses (all scored) | avg items sent | avg words sent |",
+         "|---|---|---|---|---|---|---|---|"]
     for config, d in per_config.items():
         m = d["main"]
+        missing = sum(1 for r in d["records"] if r["doc_recall"] is not None and r["doc_recall"] < 1)
         L.append(f"| `{config}`: {H.CONFIGS[config]['label']} | {fmt(m['division_recall_cross'])} | "
-                 f"{fmt(m['division_recall_all'])} | {fmt(m['avg_doc_recall'])} | {m['avg_chunks']:.1f} | {m['avg_words']:.0f} |")
+                 f"{fmt(m['division_recall_all'])} | {fmt(m['avg_doc_recall'])} | {fmt(m['mrr'], pct=False)} | "
+                 f"{missing}/{d['all']['n_scored']} | {m['avg_chunks']:.1f} | {m['avg_words']:.0f} |")
+
+    def row(c):
+        d = per_config[c]
+        return (d["main"]["avg_doc_recall"], sum(1 for r in d["records"] if r["doc_recall"] is not None
+                                                 and r["doc_recall"] < 1), d["all"]["n_scored"], d["main"]["avg_words"])
+    if all(c in per_config for c in (H.SHIPPED, "titled_k7", "follow_refs", "hybrid_k5")):
+        s, k7, fr, hy = (row(c) for c in (H.SHIPPED, "titled_k7", "follow_refs", "hybrid_k5"))
+        L += ["", "## Three retrieval experiments, measured here and not shipped", "",
+              "Each changes one thing from `shipped`. None is in the app: adopting one would change the answers the "
+              "final notebook run measured, and re-measuring them needs a live run. They are reported so the "
+              "next step is chosen on evidence.", "",
+              f"- **`follow_refs`** (a fixed code step: follow the reference ids the retrieved notes mention): "
+              f"document recall {fmt(s[0])} -> {fmt(fr[0])}, questions missing a needed document {s[1]} -> {fr[1]} "
+              f"of {s[2]}, words sent {s[3]:.0f} -> {fr[3]:.0f}.",
+              f"- **`titled_k7`**, its control: the same 7-chunk budget with no reference-following: document recall "
+              f"{fmt(k7[0])}, misses {k7[1]} of {k7[2]}, words {k7[3]:.0f}. What `follow_refs` gains over this row is "
+              "the reference-following itself, not the two extra chunks.",
+              f"- **`hybrid_k5`** (embeddings and keyword search fused by rank, Class 2's hybrid search): document "
+              f"recall {fmt(hy[0])}, misses {hy[1]} of {hy[2]}, words {hy[3]:.0f}.", "",
+              "Caveat: the synthetic documents were written with shared reference ids across each cross-division "
+              "hook, which flatters reference-following. Real documents cite each other less consistently.", ""]
 
     for config, d in per_config.items():
         misses = [r for r in d["records"] if r["diagnosis"]]
@@ -69,7 +97,7 @@ def write_retrieval_report(out_dir, questions, idx):
                          f"{len(idx['plain']['chunks'])} at score {dg['best_chunk_score']}, versus a retrieval cutoff of "
                          f"{dg['retrieval_cutoff_score']}")
     curve, dist = H.abstention_curve(questions, idx)
-    L += ["", "## Abstain below a retrieval score? (Section 8's confidence threshold; free, no model)", "",
+    L += ["", "## Abstain below a retrieval score? (the confidence threshold; free, no model)", "",
           f"Best retrieval score under `{H.SHIPPED}` -- the scores the app's threshold actually sees. Answerable questions: minimum {dist['answerable_min']:.3f}, median "
           f"{dist['answerable_median']:.3f}. Questions the corpus cannot answer: "
           + ", ".join(f"{s_:.3f}" for s_ in dist["absent"]) + ".", "",
@@ -132,7 +160,7 @@ def run_chunk_sweep(out_dir, questions):
 
 
 def run_leakage(out_dir, questions):
-    """Free (no model). Watch-outs section 6: does the input already contain the answer?
+    """Free (no model). The course watch-outs: does the input already contain the answer?
     Report the score before and after stripping it."""
     print("Building index (loads the embedding model)...")
     idx = H.build_indexes()
@@ -266,7 +294,7 @@ def write_eval_report(out_dir, summary, results):
           "separately. The independent set was written by a different model from the documents alone.", "",
           "| set | system | scored questions | answer correctness | OOS declined | declined |",
           "|---|---|---|---|---|---|"]
-    sets = [st for st in ("main", "extra", "breaker", "independent")
+    sets = [st for st in ("main", "extra", "breaker", "partial", "independent")
             if any(r["set"] == st for recs in results["configs"].values() for r in recs)]
     for st in sets:
         for c, recs in results["configs"].items():
@@ -274,6 +302,22 @@ def write_eval_report(out_dir, summary, results):
             L.append(f"| {st} | `{c}` | {a['n_scored']} | {fmt(a['key_fact_pass'])} | "
                      f"{fmt(a['oos_correct'])} | {fmt(a.get('declined'))} |")
     L.append("")
+
+    # ---- partially answerable: the silent failure, measured head-on --------------------------
+    if "partial" in sets:
+        L += ["## Partially answerable questions", "",
+              "Each asks for one thing the documents answer and one they do not (checked absent from all 18 "
+              "documents by `self_test.py`). The right behaviour: answer the first part, say the second is not in "
+              "the documents, invent nothing. Declining outright loses the part it could answer; supplying the "
+              "missing part is the silent failure.", "",
+              "| system | answerable part correct | says the rest is missing | declined outright | faithful (judge) |",
+              "|---|---|---|---|---|"]
+        for c, recs in results["configs"].items():
+            a = H.aggregate([r for r in recs if r["set"] == "partial"])
+            jf = f"{fmt(a['judge_faithful'])} (n={a['judge_n']})" if a["judge_n"] else "n/a"
+            L.append(f"| `{c}` | {fmt(a['key_fact_pass'])} | {fmt(a.get('gap_flagged'))} | "
+                     f"{fmt(a.get('declined'))} | {jf} |")
+        L.append("")
 
     # ---- what failed, per config --------------------------------------------------------------
     evidence = {True: "needed docs retrieved", False: "needed docs NOT retrieved", None: "docs not recorded"}
@@ -332,8 +376,12 @@ def main():
 
     if args.agreement:
         res = H.agreement()
-        print("Nothing graded yet: set human_faithful to true/false in results/judge_spotcheck.json"
-              if res is None else f"Agreement: {res[0]}/{res[1]}. Written to results/judge_agreement.md")
+        if res is None:
+            print("Nothing to grade: results/judge_spotcheck.json is missing or ungraded. It is written by --run and "
+                  "deleted once graded; the last hand check is recorded in results/judge_agreement.md.")
+        else:
+            kappa = "undefined" if res[2] is None else f"{res[2]:.2f}"
+            print(f"Agreement: {res[0]}/{res[1]}, Cohen's kappa {kappa}. Written to results/judge_agreement.md")
         return
 
     out_dir = H.RESULTS_DIR / "_dryrun" if args.dry_run else H.RESULTS_DIR
@@ -422,8 +470,8 @@ def main():
         # Hand-check the judge on the system that ships, not on whichever config ran first.
         spot = H.SHIPPED if H.SHIPPED in results["configs"] else args.configs[0]
         items = H.make_spotcheck(results["configs"][spot], out_dir)
-        print(f"\nWrote {len(items)} `{spot}` answers to {out_dir / 'judge_spotcheck.json'} for you to grade by hand,"
-              " then run: python run_eval.py --agreement")
+        print(f"\nWrote {len(items)} `{spot}` answers to {out_dir / 'judge_spotcheck.json'} for you to grade by hand "
+              f"(read them in {out_dir / 'judge_spotcheck_to_grade.md'}), then run: python run_eval.py --agreement")
     print(f"\nDone. Read {out_dir / 'summary.md'}. Then: python cost_model.py")
 
 

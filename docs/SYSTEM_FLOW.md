@@ -3,6 +3,10 @@
 How the app (`app.py`) routes a request, where each built guardrail (`guardrails.py`) sits on
 that path, and how TGMOK Holdings' three divisions are connected in the underlying corpus.
 
+It is a workflow, not an agent (Class 4): the code fixes every step, the model is called once per
+question, and it has no tools, so the only thing it can produce is text a person reads. The one
+write in the system, filing an upload, waits for a person to confirm.
+
 ## Request flow
 
 Two entry points converge on the same retrieval-and-answer path. Uploading a document is
@@ -15,9 +19,9 @@ flowchart TD
     START([User opens Tanya]) --> CHOICE{Upload a document,<br/>or ask directly?}
 
     CHOICE -->|upload PDF/DOCX/TXT| EXTRACT["doc_parser.extract_text()<br/>pypdf / python-docx, no model"]
-    EXTRACT --> SCAN(["G2 scan_for_injection()<br/>OWASP LLM01"])
+    EXTRACT --> SCAN(["G2 scan_for_injection()<br/>OWASP LLM01:2026"])
     SCAN -->|phrase matched| MANUAL["Person picks division(s) by hand;<br/>matched phrases shown"]
-    SCAN -->|clean| CAP1(["G1 session token cap<br/>OWASP LLM10"])
+    SCAN -->|clean| CAP1(["G1 session token cap<br/>OWASP LLM06:2026"])
     CAP1 --> CLASSIFY["rag_core.classify_document()<br/>LLM call: divisions + reasoning + summary"]
     CLASSIFY --> PARSEOK{Valid JSON,<br/>even after one retry?}
     PARSEOK -->|no| MANUAL
@@ -27,8 +31,8 @@ flowchart TD
     CONFIRM -->|cancel| CHOICE
     CONFIRM -->|confirm| FILE["format_upload_content() adds 'Filed under: ...';<br/>write .md into data/uploads/&lt;division&gt;/"]
     FILE --> REBUILD["rag_core.build_index()<br/>re-chunk + re-embed"]
-    REBUILD --> SNAPSHOT["generate_impact_snapshot()<br/>retrieve from OTHER divisions using<br/>the new document's own text as the query"]
-    SNAPSHOT --> FIG1(["G5 unsupported_figures()<br/>OWASP LLM09"])
+    REBUILD --> SNAPSHOT["generate_impact_snapshot()<br/>retrieve from OTHER divisions using<br/>the new document's own text as the query;<br/>every note stripped as in G8"]
+    SNAPSHOT --> FIG1(["G5 unsupported_figures()<br/>confabulation check"])
     FIG1 --> SHOW["Brief + cited notes + a warning if any figure<br/>is not in a cited document (read by a person,<br/>not a scored case)"]
     SHOW --> CHAT
 
@@ -37,10 +41,11 @@ flowchart TD
     RETRIEVE --> HAND(["G3 best score below 0.45?"])
     HAND -->|yes| PERSON["'The documents do not say.' +<br/>handed to a person -- NO model call"]
     HAND -->|no| CAP2(["G1 session token cap"])
-    CAP2 --> GROUNDED["generate() with the GROUNDED prompt:<br/>answer ONLY from the numbered notes"]
+    CAP2 --> STRIP(["G8 format_notes: strip any sentence<br/>addressed to the model; warn the reader<br/>OWASP LLM01 / LLM09:2026"])
+    STRIP --> GROUNDED["generate() with the GROUNDED prompt:<br/>answer ONLY from the numbered notes"]
     GROUNDED --> ABSTAIN{Notes contain<br/>the answer?}
     ABSTAIN -->|no| DECLINE["'The documents do not say.'"]
-    ABSTAIN -->|yes| CITE["Answer + 'Cited: fnb-01, cnc-01'<br/>(real ids, never bracket numbers)"]
+    ABSTAIN -->|yes| CITE["Answer + 'Cited: fnb-01, cnc-01'<br/>(real ids, never bracket numbers),<br/>shown with the notes it drew on"]
     CITE --> FIG2(["G5 unsupported_figures()"])
     FIG2 --> CHAT
     DECLINE --> CHAT
@@ -96,7 +101,7 @@ flowchart LR
 ```
 
 A question that only retrieves from one division in a hook pair will always be incomplete --
-this is what Section 7's context-recall metric measures. The shipped retrieval covers every
-needed division on all 11 cross-division questions, but still misses a needed *document* on 4 of
-31 scored questions; three of those are the same CNC tooling spec, `cnc-01`, diagnosed in the
+this is what the context-recall metric measures. The shipped retrieval covers every
+needed division on all 11 cross-division questions, but still misses a needed *document* on 5 of
+37 scored questions; three of those are the same CNC tooling spec, `cnc-01`, diagnosed in the
 notebook's "break it" section (`results/retrieval_recall.md` lists every miss).

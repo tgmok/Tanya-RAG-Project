@@ -6,7 +6,7 @@
 **Licence:** NYC Open Data — public government data, published under NYC's Open Data
 terms of use (no copyright restriction on municipal inspection records).
 
-**This file is NOT part of Tanya's main corpus.** It exists only for the Section 6
+**This file is NOT part of Tanya's main corpus.** It exists only for the
 real-world validation check ("validate a handful of cases against something real, or
 state plainly what your synthetic set cannot tell you"). Do not add cross-division hooks
 here — these are real, independent records, unrelated to TGMOK Holdings.

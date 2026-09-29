@@ -14,7 +14,7 @@ requires a Kaggle account) on 2026-09-14.
 (category, price, metal, gem, colour), not narrative document text -- there are no
 sentences to chunk and retrieve the way there are in the F&B/CNC slices. It validates
 **pricing plausibility**: does the synthetic quote logic in
-`jewellery/gold_pricing_policy.md` and `jewellery/client_quote_template.md` land in a
+`jewellery/jwl-02_gold_pricing_policy.md` and `jewellery/jwl-06_client_quote_template.md` land in a
 realistic real-world range? It does not validate whether TGMOK Holdings' jewellery SOPs
 read like real internal documents -- there is no equivalent real text for that
 (see `README_validation.md`).
@@ -47,7 +47,7 @@ read like real internal documents -- there is no equivalent real text for that
 
 ## Validation point worth writing up
 
-TGMOK Holdings' example quote (`jewellery/client_quote_template.md`, job JWL-Q-3391) is
+TGMOK Holdings' example quote (`jewellery/jwl-06_client_quote_template.md`, job JWL-Q-3391) is
 an **18-karat gold, 12g, custom-engraved pendant requiring a new stamping die**, totalling
 **$2,029.92**. The real median gold+diamond pendant price above is **$136.85** -- an
 order of magnitude lower. This is not necessarily a flaw: the real distribution mixes

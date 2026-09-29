@@ -7,7 +7,10 @@ the pipeline the app actually runs.
 
 Reads the fixed, hand-verified corpus in data/<division>/ and writes only to data/uploads/,
 which the evaluation never reads. Settings come from config.py; the code-side mitigations
-(citation checks, confidence hand-off, token cap, injection scan) live in guardrails.py.
+(citation checks, confidence hand-off, token cap, injection scan and strip) live in guardrails.py.
+
+This is a workflow, not an agent (Class 4): the code fixes every step, the model is called once
+per question, and it has no tools, so it can write text for a person and nothing else.
 
 Upload classification asks for JSON defensively: an explicit schema, a generous token budget
 (reasoning models can silently truncate), regex extraction rather than trusting the whole reply
@@ -20,7 +23,7 @@ import numpy as np
 
 from config import (ABSTAIN_BELOW, CHUNK_WORDS, DATA_DIR, DIVISIONS, EMBED_MODEL, GEN_MODEL,
                     OVERLAP, PATH_TO_DOC_ID, ROOT, TITLED_EMBEDDING, TOP_K, UPLOADS_DIR)
-from guardrails import handoff_message
+from guardrails import handoff_message, strip_instructions
 
 GROUNDED = (
     "Answer using ONLY the numbered notes provided below. Each note reads "
@@ -223,12 +226,27 @@ def generate(client, prompt, system=None, model=None, max_new_tokens=500, temper
     return (content or "").strip(), tokens
 
 
+def format_notes(hits, start=1):
+    """The numbered notes block every answer prompt carries: "[N] (doc_id) text". The one place it
+    is built, so the app, the evaluation and the cost estimate send identical prompts.
+
+    Each note's text first passes guardrails.strip_instructions: a sentence addressed to the model
+    (say, in an upload a person filed despite the scan) is replaced by a visible marker, and what
+    was removed is recorded on the hit as h["removed"] for the app to show. Notes with no such
+    sentence, which is every note in the fixed corpus, are sent unchanged."""
+    lines = []
+    for i, h in enumerate(hits, start):
+        text, h["removed"] = strip_instructions(h["text"])
+        lines.append(f"[{i}] ({h['doc_id']}) {text}")
+    return "\n\n".join(lines)
+
+
 def answer_question(client, question, chunks, matrix, embedder, k=TOP_K, divisions=None,
                     abstain_below=ABSTAIN_BELOW):
     hits = retrieve(question, chunks, matrix, embedder, k=k, divisions=divisions)
     if abstain_below is not None and hits and hits[0]["score"] < abstain_below:
         return handoff_message(hits[0]["score"], abstain_below), hits, {"in": 0, "out": 0}
-    context = "\n\n".join(f"[{i+1}] ({h['doc_id']}) {h['text']}" for i, h in enumerate(hits))
+    context = format_notes(hits)
     answer, tokens = generate(client, f"NOTES:\n{context}\n\nQUESTION: {question}", system=GROUNDED)
     return answer, hits, tokens
 
@@ -300,6 +318,7 @@ def classify_document(client, text, max_chars=6000):
                           "Please select the affected division(s) manually.",
                 "raw": raw, "tokens": tokens}
     result["tokens"] = tokens
+    result["raw"] = raw   # the model's exact reply, before parsing: the app shows it beside the parsed result
     return result
 
 
@@ -339,8 +358,13 @@ def generate_impact_snapshot(client, new_doc_text, new_doc_divisions, new_doc_id
     query = new_doc_text[:1500]
     hits = retrieve(query, chunks, matrix, embedder, k=k, divisions=other_divisions or None)
     excerpt_id = new_doc_ids[0] if new_doc_ids else "new-upload"
-    notes = [f"[1] ({excerpt_id}) {query[:400]}"]
-    notes += [f"[{i+2}] ({h['doc_id']} · {h['division']}) {h['text']}" for i, h in enumerate(hits)]
+    # The upload itself is untrusted text too: the scan at upload time warned the person, and this
+    # strips the same sentences from what the model reads (see format_notes).
+    excerpt, _ = strip_instructions(query[:400])
+    notes = [f"[1] ({excerpt_id}) {excerpt}"]
+    for i, h in enumerate(hits):
+        text, h["removed"] = strip_instructions(h["text"])
+        notes.append(f"[{i+2}] ({h['doc_id']} · {h['division']}) {text}")
     context = "\n\n".join(notes)
     snapshot, tokens = generate(client, context, system=IMPACT_SYSTEM, max_new_tokens=500)
     return snapshot, hits, tokens

@@ -17,26 +17,31 @@ Everything in the first block runs with **no API key** (and no network after a o
 download of the `all-MiniLM-L6-v2` embedder).
 
 ```bash
+git clone https://github.com/tgmok/Tanya-RAG-Project
+cd Tanya-RAG-Project
 pip install -r requirements.txt          # read the torch note inside first
 python data/check_my_data.py             # corpus, answer key and key facts hang together
 python self_test.py                      # the evaluation instruments themselves are sound
-python run_guardrails.py                 # every built guardrail against 28 named cases
-python run_eval.py --retrieval-only      # recall of 9 retrieval setups, every miss diagnosed
+python run_guardrails.py                 # every built guardrail against 39 named cases
+python run_eval.py --retrieval-only      # recall and MRR of 12 retrieval setups, every miss diagnosed
 python run_eval.py --chunk-sweep         # why 200-word chunks
 python run_eval.py --leakage             # does a question already contain its own answer?
-python cost_model.py --estimate          # calls x tokens x price, and time to deploy
+python cost_model.py --estimate          # cost per successful answer, break-even, time to deploy
 python run_eval.py --dry-run --yes       # the whole live path with a fake model
 streamlit run app.py                     # the app; retrieval works without a key
 ```
 
-The answer-level evaluation needs a key (it prints an estimate, about $0.62, and asks first):
+The answer-level evaluation needs a key (it prints an estimate, about $0.20, and asks first):
 
 ```bash
 python run_eval.py --run                 # shipped system vs keyword baseline -> results/summary.md
-python run_eval.py --agreement           # after hand-grading results/judge_spotcheck.json
+python run_eval.py --agreement           # after grading the spot-check --run writes (temporary files)
 python cost_model.py                     # measured cost per successful answer
 python demo_citation_fix.py              # the bug from the screen recordings, re-run
 ```
+
+Any other retrieval setup can join the live run, roughly $0.10 to $0.20 each: for example
+`python run_eval.py --run --configs shipped tfidf_k5 follow_refs`.
 
 The key is read from `OPENROUTER_API_KEY`, or from an untracked `OpenRouter_api.txt` in this
 folder (it is in `.gitignore`), or asked for with a hidden prompt. It is never written anywhere.
@@ -54,16 +59,16 @@ config.py                  THE one place to change a setting: models, chunking, 
 
 rag_core.py                the pipeline: load, chunk, embed, retrieve, grounded answer,
                            upload classification, impact brief. Shared by app, eval and demo.
-guardrails.py              every Section 8 mitigation that is code: token cap, injection scan,
-                           confidence hand-off, exact abstention, figure check, fake-citation check
+guardrails.py              every risk mitigation that is code: token cap, injection scan and
+                           strip, confidence hand-off, exact abstention, figure check, fake-citation check
 app.py                     Streamlit interface: upload -> scan -> classify -> confirm -> brief -> chat
 doc_parser.py              PDF/DOCX to text, no model calls
 
 run_eval.py                the evaluation entry point                      <- what a marker runs
-harness.py                 question sets, 9 retrieval configs, code checks, judge, aggregation
+harness.py                 question sets, 12 retrieval configs, code checks, judge, aggregation
 run_guardrails.py          guardrail checklist             -> results/guardrails.md
 self_test.py               checks the instruments, not the system
-cost_model.py              cost per query, per success, and time to deploy -> results/cost_*.md
+cost_model.py              cost per query, per success, break-even, time to deploy -> results/cost_*.md
 demo_citation_fix.py       the recorded failure, re-run    -> results/citation_fix.md
 make_docs.py               regenerates docs/EVALUATION_SET.md and the blind question pack
 Tanya_RAG_Notebook.ipynb   the smallest first version, and the evaluation as a narrative
@@ -74,12 +79,13 @@ data/
     data_dictionary.md         every document, its division, and the hook facts it carries
     eval_questions.json        the answer key: 23 questions, fixed before anything ran
     eval_key_facts.json        the facts each answer must contain (answer correctness)
-    extra_questions.json       near-miss questions (a fact the corpus nearly contains)
+    extra_questions.json       false-premise questions (the question assumes something untrue)
+    partial_questions.json     partially answerable: one part in the documents, one in none
     breaker_questions.json     deliberate attempts to break retrieval
     independent_questions.json written by a different model from the documents alone
     check_my_data.py           run after every data change
     validation_real/           small real-world slices, one per division, kept out of the corpus
-    sample_uploads/            the document used to demo and test the upload path
+    sample_uploads/            the two demo uploads: a client brief, and an injection attack
     uploads/                   added through the app; ignored by git AND by the evaluation
 
 docs/
@@ -91,23 +97,45 @@ docs/
     BLIND_QUESTION_PACK.md     the documents-only pack used to write the independent questions
 
 results/                   every number in the write-up comes from a file here
-    retrieval_recall.md        9 configs, every miss diagnosed, the abstention-threshold curve
+    retrieval_recall.md        12 configs, every miss diagnosed, two experiments, the threshold curve
     chunk_sweep.md             why 200/50 chunks
     leakage.md                 which questions contain their own answer, before/after stripping
     notebook_run.md            answer-level results of the final notebook run, copied verbatim
-    guardrails.md              the Section 8 checklist
-    cost_estimate.md           cost per question and per upload, and time to deploy (free)
+    guardrails.md              the guardrail checklist, and the Class 6 red-team categories
+    cost_estimate.md           cost per successful answer, break-even, kill condition, time to deploy
     summary.md                 answer-level results (after --run)
     cost_model.md              measured cost per successful answer (after --run)
-    judge_agreement.md         the judge's precision and recall against hand labels (after --agreement)
+    judge_agreement.md         the judge against my own grading: precision, recall, Cohen's kappa
     citation_fix.md            the recorded bug, re-run (after demo_citation_fix.py)
 ```
+
+## How a question works
+
+A question goes in, one model call comes out, and every step around that call is code. The same
+fixed path runs for every question, so this is a workflow, not an agent.
+
+```mermaid
+flowchart TD
+    Q(["a question"]) --> R["retrieve the top-5 notes<br/>title-prefixed embeddings, run locally"]
+    R --> H{"best score<br/>below 0.45?"}
+    H -->|yes| P["handed to a person<br/>no model call"]
+    H -->|no| S["strip any sentence<br/>aimed at the model"]
+    S --> G["gpt-4o-mini answers ONLY from the notes,<br/>cites real ids, or says 'The documents do not say.'"]
+    G --> F["figure check: every number, date and id<br/>must appear in a cited document"]
+    F --> A(["an answer, with the notes it used, for a person to check"])
+```
+
+A new document takes the other entry: an injection scan, one model call that must return JSON
+(divisions, reasoning, summary), a person confirming the divisions, filing and re-indexing, then a
+brief built from the other divisions' notes. Every guardrail on both paths is in
+`docs/SYSTEM_FLOW.md`.
 
 ## What is measured
 
 - **Retrieval, free:** did the retrieved notes cover every division and every document a question
-  needs? Nine setups, including the shipped one, the keyword baseline and "all documents in the
-  prompt", with every miss diagnosed by rank and score.
+  needs (recall@k), and how near the top was the first of them (MRR)? Twelve setups, including the
+  shipped one, the keyword baseline, "all documents in the prompt" and two experiments not shipped
+  (hybrid search, and following reference ids), with every miss diagnosed by rank and score.
 - **The baseline is keyword search over the same chunks** (`tfidf_k5`), a non-AI method. A model
   with no retrieval is not the baseline: it has never seen these fictional documents, so it scores
   near zero whatever the retrieval does, and teaches nothing.
@@ -119,19 +147,29 @@ results/                   every number in the write-up comes from a file here
 - **Abstention, as two numbers:** how often it declines, and whether the declines were right (out
   of scope, or the needed documents were not retrieved). Plus the **silent failure**: answering
   although the needed documents were not in front of the model.
-- **The judge is measured too:** precision and recall against answers graded by hand.
-- **Sets reported separately:** main (designed before anything ran), near-miss, breakers, and
-  independent (written by another model from the documents alone).
+- **The judge is measured too:** against 10 answers I graded by hand it agreed on all 10, caught both
+  unfaithful ones and raised no false alarm (precision and recall 100%, Cohen's kappa 1.00).
+- **Cost per successful answer, not per call:** the model's cents, a person checking every answer,
+  and a person redoing the wrong ones, with the break-even against answering by hand, fixed monthly
+  costs and a written kill condition (`results/cost_estimate.md`).
+- **Question types follow the A1 break-it categories:** two documents needed (the cross-division
+  questions), vocabulary mismatch, distractor, and absent but plausible (which tests abstention),
+  plus two that probe invention harder: **false premise**, and **partially answerable**, where one
+  part is in the documents and the other is in none (verified absent by `self_test.py`). The right
+  answer gives the first part and says the second is missing; supplying it is the silent failure.
+- **Sets reported separately:** main (designed before anything ran), false premise, break-it,
+  partially answerable, and independent (written by another model from the documents alone).
 
 ## Limits we found
 
-- **Faithfulness misses its target on the final run: 80% against 85%**, with answer correctness
-  also 80%. The keyword baseline was more faithful (95%) and slightly less correct (75%), so
-  embeddings earn their place on coverage and correctness, not on faithfulness
-  (`results/notebook_run.md`, 20 questions, one judge pass, the judge not yet hand-checked).
+- **Faithfulness is near the 85% target, not safely above it: 80% in the notebook run, 89% in
+  the evaluation run.** Answer correctness was 80% both times. The keyword baseline was more
+  faithful (95%, then 100%) and less correct (75%), so embeddings earn their place on coverage and
+  correctness, not on faithfulness (`results/notebook_run.md`, `results/summary.md`). The judge
+  agreed with my own grading on 10 of 10 answers (`results/judge_agreement.md`).
 - **Titling fixes the division, not the document.** The shipped retrieval covers every needed
   division on all 11 cross-division questions (plain top-5: 91%), but document recall stays at
-  88% either way. It still misses a needed document on 4 of 31 scored questions; three are the
+  88% either way. It still misses a needed document on 5 of 37 scored questions; three are the
   same CNC tooling spec (`cnc-01`), which for CD1 ranks #8 of 21 chunks at 0.432 against a 0.477
   cutoff.
 - **The keyword baseline beats embeddings on document recall** (91% vs 88%). The non-AI baseline
@@ -141,22 +179,44 @@ results/                   every number in the write-up comes from a file here
   division before retrieving cuts cross-division recall to 45%, against 91% for the same
   retrieval without it, so it is not used.
 - **A retrieval-score threshold is a weak abstention signal.** At the shipped 0.45 it catches 2 of
-  6 unanswerable questions and wrongly hands off 1 of 31 answerable ones; answerable and
+  6 unanswerable questions and wrongly hands off 1 of 37 answerable ones; answerable and
   plausible-but-absent questions overlap in score. It is a backstop, not the defence.
-- **Confident hallucination when retrieval misses.** An earlier live run found the model answering
-  anyway when the needed document was not retrieved, including one invented component. The figure
-  check catches invented numbers, dates and ids, but not an invented claim with none in it; the
-  silent-failure count in `results/summary.md` is how that shape is detected.
+- **Confabulation when retrieval misses** (NIST AI 600-1's word for confidently stated wrong
+  content). An earlier live run found the model answering anyway when the needed document was not
+  retrieved, including one invented component. The figure check catches invented numbers, dates
+  and ids, but not an invented claim with none in it; the silent-failure count is how that shape is
+  detected.
 - **Uploads are untrusted input.** A pattern scan routes a suspicious upload to a person instead of
-  the automatic classifier (OWASP LLM01), with no false positives on the 18 real documents. A
-  document a person chooses to file anyway is then retrievable into answers, where the grounded
-  prompt is the remaining defence.
+  the automatic classifier (OWASP LLM01:2026), with no false positives on the 18 real documents. If
+  a person files it anyway, matching sentences are stripped from its notes before any prompt and
+  the reader is warned. That is a tripwire, not a fix (an attacker can rephrase); what makes an
+  injection survivable is that Tanya has no tools and no way to send anything out.
+- **Retrieval still misses documents that code could reach.** Following the reference ids in the
+  retrieved notes cuts the questions missing a needed document from 5 of 37 to 1, and hybrid search
+  lifts document recall from 88% to 93% (`results/retrieval_recall.md`). Neither is shipped: that
+  would change the answers the final run measured, so each waits for a live run.
 - **The corpus is synthetic and was written by an LLM.** The validation slices are small (8 records
   each), and the jewellery one checks pricing plausibility only.
 - **Not everything is independent.** The designed questions and key facts come from the same hand
   that wrote the corpus; only the independent set was written elsewhere.
 - **Machine-specific:** `torch` 2.13 and later crashed at import on the author's AMD Ryzen (Zen4)
   CPU, so 2.2.2 is pinned, which in turn needs `numpy` below 2.
+
+## Course coverage
+
+| class | idea | where it is in this project |
+|---|---|---|
+| 1 | sorting vs making; check a machine that makes | answering is making, so every answer is checked (code checks, judge, a person); routing an upload is sorting with no labelled uploads to train on, so the model suggests and a person confirms |
+| 2 | the stack, build vs buy by five factors | layer-by-layer own/rent table (`docs/TRADEOFF_ANALYSIS.md`): own data, orchestration and evaluation, rent the model |
+| 2 | RAG: chunking, top-k, hybrid search, contextual retrieval, long context | chunk sweep; top-k; title-prefixed chunks (contextual retrieval, shipped); hybrid search with reciprocal rank fusion (measured); `full_context` priced against top-5 |
+| 2 | evals: L1 assertions, L2 judge aligned to people, recall@k and MRR | key-fact and citation checks in code; a judge from another model family with precision, recall and kappa against hand labels; recall and MRR per config |
+| 3 | fix the eval set first, change one thing, measure again | answer key frozen before any run; every retrieval change measured on the full set, including the ones that failed (division classifier) and the ones not shipped |
+| 3 | structured output: declare the schema, then verify it | the upload classifier must reply in one JSON shape; code parses and checks it, retries once, then a person chooses; the app shows the raw JSON |
+| 3 | token economics | calls x tokens x price from the real prompts (`results/cost_estimate.md`) |
+| 4 | agent or workflow; the ground-truth test | a workflow on purpose: fixed steps, one call, no tools; the one variable step (search again after a miss) is measured as code (`follow_refs`) |
+| 5 | cost per successful task, break-even, fixed costs, kill condition | `cost_model.py`: 20% break-even against answering by hand, measured 80%, $181/month layer 3, written kill condition |
+| 6 | the 2x2 (visible? undoable?), human in the loop as window, evidence and authority | retrieval and generation monitored and verified; the one write gated; the app shows the evidence under every answer |
+| 6 | OWASP 2026 red-team categories, confabulation, the lethal trifecta, PDPA | `results/guardrails.md`: 39 cases and every category; two legs of the trifecta, not three; PDPA named as the binding floor |
 
 ## Extending the evaluation set
 
@@ -173,3 +233,19 @@ results/                   every number in the write-up comes from a file here
   in `Tanya_RAG_Notebook.ipynb`.
 - Claude (Anthropic) wrote the corpus and much of the code with the author. ChatGPT wrote the
   independent questions IND1 to IND5 from the blind pack.
+
+## Status (2026-09-29)
+
+- [x] RAG over 18 synthetic documents in three divisions; answers cite real document ids, and say
+  "The documents do not say." when the notes do not
+- [x] Keyword search over the same chunks as the baseline; 200-word chunks chosen by a sweep from 25 to 300
+- [x] Correctness and faithfulness on the same 20 questions, two runs: 80% correct both times (baseline
+  75%); faithful 80%, then 89% (baseline 95%, then 100%)
+- [x] The judge checked against my own grading: 10 of 10 agree (`results/judge_agreement.md`)
+- [x] 43 questions in five sets, including 6 partially answerable: none invented the missing half
+- [x] Guardrails in code, 39 of 39 cases, every Class 6 red-team category addressed
+- [x] Cost per successful answer $4.00 at 80%, break-even 20% against answering by hand, a kill condition
+- [x] Two retrieval fixes measured and not shipped: reference-following (misses 5 of 37 -> 1), hybrid
+  search (document recall 88% -> 93%)
+- [x] Trade-off analysis in `docs/TRADEOFF_ANALYSIS.md`, under 1,200 words
+- [ ] Demo video and NTULearn submission

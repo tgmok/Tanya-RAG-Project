@@ -6,17 +6,21 @@
       "division_recall_cross": 1.0,
       "division_recall_all": 1.0,
       "avg_doc_recall": 0.8833333333333332,
+      "all_docs_share": 0.8,
+      "mrr": 0.9166666666666666,
       "avg_chunks": 5.0,
       "avg_words": 836.8
     },
     "all": {
-      "n_scored": 31,
+      "n_scored": 37,
       "n_cross": 12,
       "division_recall_cross": 1.0,
       "division_recall_all": 1.0,
-      "avg_doc_recall": 0.9247311827956989,
+      "avg_doc_recall": 0.9099099099099098,
+      "all_docs_share": 0.8648648648648649,
+      "mrr": 0.8693693693693693,
       "avg_chunks": 5.0,
-      "avg_words": 806.2903225806451
+      "avg_words": 810.2972972972973
     },
     "records": [
       {
@@ -25,6 +29,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -64,6 +69,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 0.3333333333333333,
         "n_chunks": 5,
         "words_sent": 866,
         "retrieved": [
@@ -103,6 +109,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.6666666666666666,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 873,
         "retrieved": [
@@ -142,6 +149,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -174,6 +182,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 856,
         "retrieved": [
@@ -206,6 +215,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -238,6 +248,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -270,6 +281,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 860,
         "retrieved": [
@@ -302,6 +314,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 900,
         "retrieved": [
@@ -334,6 +347,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -366,6 +380,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 802,
         "retrieved": [
@@ -398,6 +413,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.0,
+        "rr": 0.0,
         "n_chunks": 5,
         "words_sent": 908,
         "retrieved": [
@@ -443,6 +459,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 903,
         "retrieved": [
@@ -475,6 +492,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 809,
         "retrieved": [
@@ -507,6 +525,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 836,
         "retrieved": [
@@ -539,6 +558,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 824,
         "retrieved": [
@@ -571,6 +591,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 733,
         "retrieved": [
@@ -603,6 +624,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 727,
         "retrieved": [
@@ -635,6 +657,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 679,
         "retrieved": [
@@ -667,6 +690,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 831,
         "retrieved": [
@@ -699,6 +723,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 719,
         "retrieved": [
@@ -731,6 +756,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 723,
         "retrieved": [
@@ -763,6 +789,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.3333333333333333,
         "n_chunks": 5,
         "words_sent": 791,
         "retrieved": [
@@ -795,6 +822,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -827,6 +855,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 794,
         "retrieved": [
@@ -859,6 +888,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 775,
         "retrieved": [
@@ -886,11 +916,217 @@
         "diagnosis": []
       },
       {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 835,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.665
+          ],
+          [
+            "fnb-02",
+            0.597
+          ],
+          [
+            "fnb-02",
+            0.562
+          ],
+          [
+            "cnc-06",
+            0.492
+          ],
+          [
+            "jwl-01",
+            0.419
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 843,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.724
+          ],
+          [
+            "fnb-02",
+            0.623
+          ],
+          [
+            "cnc-02",
+            0.397
+          ],
+          [
+            "fnb-06",
+            0.395
+          ],
+          [
+            "jwl-01",
+            0.364
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 789,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.566
+          ],
+          [
+            "jwl-01",
+            0.52
+          ],
+          [
+            "cnc-04",
+            0.446
+          ],
+          [
+            "fnb-06",
+            0.386
+          ],
+          [
+            "jwl-06",
+            0.366
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 0.0,
+        "rr": 0.0,
+        "n_chunks": 5,
+        "words_sent": 823,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.556
+          ],
+          [
+            "jwl-04",
+            0.535
+          ],
+          [
+            "cnc-04",
+            0.497
+          ],
+          [
+            "jwl-05",
+            0.468
+          ],
+          [
+            "cnc-02",
+            0.464
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-06",
+            "best_chunk_rank": 6,
+            "best_chunk_score": 0.454,
+            "retrieval_cutoff_score": 0.464
+          }
+        ]
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 902,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.527
+          ],
+          [
+            "cnc-02",
+            0.377
+          ],
+          [
+            "cnc-04",
+            0.374
+          ],
+          [
+            "fnb-05",
+            0.34
+          ],
+          [
+            "cnc-06",
+            0.337
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 794,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.606
+          ],
+          [
+            "cnc-03",
+            0.548
+          ],
+          [
+            "fnb-04",
+            0.532
+          ],
+          [
+            "fnb-01",
+            0.423
+          ],
+          [
+            "fnb-01",
+            0.407
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
         "id": "IND1",
         "kind": "cross_division",
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 719,
         "retrieved": [
@@ -923,6 +1159,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 755,
         "retrieved": [
@@ -955,6 +1192,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 708,
         "retrieved": [
@@ -987,6 +1225,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 715,
         "retrieved": [
@@ -1019,6 +1258,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 767,
         "retrieved": [
@@ -1054,17 +1294,21 @@
       "division_recall_cross": 0.6363636363636364,
       "division_recall_all": 0.8,
       "avg_doc_recall": 0.7833333333333333,
+      "all_docs_share": 0.6,
+      "mrr": 0.9166666666666666,
       "avg_chunks": 3.0,
       "avg_words": 491.5
     },
     "all": {
-      "n_scored": 31,
+      "n_scored": 37,
       "n_cross": 12,
       "division_recall_cross": 0.6666666666666666,
-      "division_recall_all": 0.8709677419354839,
-      "avg_doc_recall": 0.8602150537634408,
+      "division_recall_all": 0.8918918918918919,
+      "avg_doc_recall": 0.8423423423423423,
+      "all_docs_share": 0.7297297297297297,
+      "mrr": 0.8873873873873872,
       "avg_chunks": 3.0,
-      "avg_words": 490.8709677419355
+      "avg_words": 488.35135135135135
     },
     "records": [
       {
@@ -1073,6 +1317,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 518,
         "retrieved": [
@@ -1104,6 +1349,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 0.3333333333333333,
         "n_chunks": 3,
         "words_sent": 466,
         "retrieved": [
@@ -1135,6 +1381,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.6666666666666666,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 534,
         "retrieved": [
@@ -1166,6 +1413,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 502,
         "retrieved": [
@@ -1197,6 +1445,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 538,
         "retrieved": [
@@ -1221,6 +1470,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 371,
         "retrieved": [
@@ -1245,6 +1495,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 518,
         "retrieved": [
@@ -1269,6 +1520,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 393,
         "retrieved": [
@@ -1300,6 +1552,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 580,
         "retrieved": [
@@ -1331,6 +1584,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 464,
         "retrieved": [
@@ -1355,6 +1609,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 479,
         "retrieved": [
@@ -1386,6 +1641,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.0,
+        "rr": 0.0,
         "n_chunks": 3,
         "words_sent": 580,
         "retrieved": [
@@ -1423,6 +1679,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 538,
         "retrieved": [
@@ -1447,6 +1704,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 455,
         "retrieved": [
@@ -1471,6 +1729,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 470,
         "retrieved": [
@@ -1495,6 +1754,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 478,
         "retrieved": [
@@ -1519,6 +1779,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 470,
         "retrieved": [
@@ -1543,6 +1804,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 523,
         "retrieved": [
@@ -1567,6 +1829,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 466,
         "retrieved": [
@@ -1591,6 +1854,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 487,
         "retrieved": [
@@ -1615,6 +1879,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 518,
         "retrieved": [
@@ -1639,6 +1904,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 445,
         "retrieved": [
@@ -1663,6 +1929,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 3,
         "words_sent": 540,
         "retrieved": [
@@ -1687,6 +1954,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 470,
         "retrieved": [
@@ -1711,6 +1979,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 546,
         "retrieved": [
@@ -1735,6 +2004,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 457,
         "retrieved": [
@@ -1754,11 +2024,176 @@
         "diagnosis": []
       },
       {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 0.5,
+        "rr": 1.0,
+        "n_chunks": 3,
+        "words_sent": 518,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.68
+          ],
+          [
+            "fnb-02",
+            0.576
+          ],
+          [
+            "fnb-01",
+            0.465
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-06",
+            "best_chunk_rank": 6,
+            "best_chunk_score": 0.441,
+            "retrieval_cutoff_score": 0.465
+          }
+        ]
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 3,
+        "words_sent": 445,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.625
+          ],
+          [
+            "fnb-02",
+            0.484
+          ],
+          [
+            "fnb-06",
+            0.409
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 3,
+        "words_sent": 445,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.534
+          ],
+          [
+            "jwl-01",
+            0.478
+          ],
+          [
+            "cnc-04",
+            0.418
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 0.0,
+        "rr": 0.0,
+        "n_chunks": 3,
+        "words_sent": 500,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.565
+          ],
+          [
+            "jwl-04",
+            0.558
+          ],
+          [
+            "cnc-02",
+            0.471
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-06",
+            "best_chunk_rank": 7,
+            "best_chunk_score": 0.45,
+            "retrieval_cutoff_score": 0.471
+          }
+        ]
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 3,
+        "words_sent": 470,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.519
+          ],
+          [
+            "cnc-02",
+            0.358
+          ],
+          [
+            "fnb-01",
+            0.357
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 3,
+        "words_sent": 474,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.611
+          ],
+          [
+            "fnb-04",
+            0.523
+          ],
+          [
+            "cnc-03",
+            0.519
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
         "id": "IND1",
         "kind": "cross_division",
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 466,
         "retrieved": [
@@ -1783,6 +2218,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 3,
         "words_sent": 518,
         "retrieved": [
@@ -1807,6 +2243,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 3,
         "words_sent": 592,
         "retrieved": [
@@ -1831,6 +2268,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 382,
         "retrieved": [
@@ -1855,6 +2293,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 453,
         "retrieved": [
@@ -1882,17 +2321,21 @@
       "division_recall_cross": 0.9090909090909091,
       "division_recall_all": 0.95,
       "avg_doc_recall": 0.8833333333333332,
+      "all_docs_share": 0.75,
+      "mrr": 0.9266666666666665,
       "avg_chunks": 5.0,
       "avg_words": 826.4
     },
     "all": {
-      "n_scored": 31,
+      "n_scored": 37,
       "n_cross": 12,
       "division_recall_cross": 0.9166666666666666,
-      "division_recall_all": 0.967741935483871,
-      "avg_doc_recall": 0.9247311827956989,
+      "division_recall_all": 0.972972972972973,
+      "avg_doc_recall": 0.8963963963963963,
+      "all_docs_share": 0.8108108108108109,
+      "mrr": 0.8927927927927928,
       "avg_chunks": 5.0,
-      "avg_words": 820.5806451612904
+      "avg_words": 823.0540540540541
     },
     "records": [
       {
@@ -1901,6 +2344,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -1940,6 +2384,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 0.3333333333333333,
         "n_chunks": 5,
         "words_sent": 866,
         "retrieved": [
@@ -1979,6 +2424,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.6666666666666666,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 909,
         "retrieved": [
@@ -2018,6 +2464,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 836,
         "retrieved": [
@@ -2057,6 +2504,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 856,
         "retrieved": [
@@ -2089,6 +2537,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 755,
         "retrieved": [
@@ -2121,6 +2570,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -2153,6 +2603,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -2185,6 +2636,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 900,
         "retrieved": [
@@ -2217,6 +2669,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -2249,6 +2702,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 802,
         "retrieved": [
@@ -2281,6 +2735,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 0.2,
         "n_chunks": 5,
         "words_sent": 892,
         "retrieved": [
@@ -2320,6 +2775,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 839,
         "retrieved": [
@@ -2352,6 +2808,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 681,
         "retrieved": [
@@ -2384,6 +2841,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 854,
         "retrieved": [
@@ -2416,6 +2874,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 782,
         "retrieved": [
@@ -2448,6 +2907,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 843,
         "retrieved": [
@@ -2480,6 +2940,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 727,
         "retrieved": [
@@ -2512,6 +2973,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -2544,6 +3006,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 839,
         "retrieved": [
@@ -2576,6 +3039,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 858,
         "retrieved": [
@@ -2608,6 +3072,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 656,
         "retrieved": [
@@ -2640,6 +3105,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 791,
         "retrieved": [
@@ -2672,6 +3138,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -2704,6 +3171,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 866,
         "retrieved": [
@@ -2736,6 +3204,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 775,
         "retrieved": [
@@ -2763,11 +3232,224 @@
         "diagnosis": []
       },
       {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 0.5,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 866,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.68
+          ],
+          [
+            "fnb-02",
+            0.576
+          ],
+          [
+            "fnb-01",
+            0.465
+          ],
+          [
+            "fnb-04",
+            0.459
+          ],
+          [
+            "jwl-01",
+            0.447
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-06",
+            "best_chunk_rank": 6,
+            "best_chunk_score": 0.441,
+            "retrieval_cutoff_score": 0.447
+          }
+        ]
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 843,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.625
+          ],
+          [
+            "fnb-02",
+            0.484
+          ],
+          [
+            "fnb-06",
+            0.409
+          ],
+          [
+            "jwl-01",
+            0.393
+          ],
+          [
+            "cnc-02",
+            0.39
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 789,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.534
+          ],
+          [
+            "jwl-01",
+            0.478
+          ],
+          [
+            "cnc-04",
+            0.418
+          ],
+          [
+            "jwl-06",
+            0.39
+          ],
+          [
+            "fnb-06",
+            0.389
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 0.0,
+        "rr": 0.0,
+        "n_chunks": 5,
+        "words_sent": 823,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.565
+          ],
+          [
+            "jwl-04",
+            0.558
+          ],
+          [
+            "cnc-02",
+            0.471
+          ],
+          [
+            "cnc-04",
+            0.467
+          ],
+          [
+            "jwl-05",
+            0.455
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-06",
+            "best_chunk_rank": 7,
+            "best_chunk_score": 0.45,
+            "retrieval_cutoff_score": 0.455
+          }
+        ]
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 838,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.519
+          ],
+          [
+            "cnc-02",
+            0.358
+          ],
+          [
+            "fnb-01",
+            0.357
+          ],
+          [
+            "cnc-04",
+            0.349
+          ],
+          [
+            "fnb-05",
+            0.346
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 856,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.611
+          ],
+          [
+            "fnb-04",
+            0.523
+          ],
+          [
+            "cnc-03",
+            0.519
+          ],
+          [
+            "fnb-01",
+            0.45
+          ],
+          [
+            "cnc-04",
+            0.41
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
         "id": "IND1",
         "kind": "cross_division",
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 864,
         "retrieved": [
@@ -2800,6 +3482,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 910,
         "retrieved": [
@@ -2832,6 +3515,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 843,
         "retrieved": [
@@ -2864,6 +3548,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 715,
         "retrieved": [
@@ -2896,6 +3581,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 839,
         "retrieved": [
@@ -2931,17 +3617,21 @@
       "division_recall_cross": 1.0,
       "division_recall_all": 1.0,
       "avg_doc_recall": 0.8833333333333332,
+      "all_docs_share": 0.8,
+      "mrr": 0.9166666666666666,
       "avg_chunks": 5.0,
       "avg_words": 836.8
     },
     "all": {
-      "n_scored": 31,
+      "n_scored": 37,
       "n_cross": 12,
       "division_recall_cross": 1.0,
       "division_recall_all": 1.0,
-      "avg_doc_recall": 0.9247311827956989,
+      "avg_doc_recall": 0.9099099099099098,
+      "all_docs_share": 0.8648648648648649,
+      "mrr": 0.8693693693693693,
       "avg_chunks": 5.0,
-      "avg_words": 806.2903225806451
+      "avg_words": 810.2972972972973
     },
     "records": [
       {
@@ -2950,6 +3640,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -2989,6 +3680,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 0.3333333333333333,
         "n_chunks": 5,
         "words_sent": 866,
         "retrieved": [
@@ -3028,6 +3720,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.6666666666666666,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 873,
         "retrieved": [
@@ -3067,6 +3760,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -3099,6 +3793,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 856,
         "retrieved": [
@@ -3131,6 +3826,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -3163,6 +3859,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -3195,6 +3892,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 860,
         "retrieved": [
@@ -3227,6 +3925,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 900,
         "retrieved": [
@@ -3259,6 +3958,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -3291,6 +3991,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 802,
         "retrieved": [
@@ -3323,6 +4024,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.0,
+        "rr": 0.0,
         "n_chunks": 5,
         "words_sent": 908,
         "retrieved": [
@@ -3368,6 +4070,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 903,
         "retrieved": [
@@ -3400,6 +4103,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 809,
         "retrieved": [
@@ -3432,6 +4136,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 836,
         "retrieved": [
@@ -3464,6 +4169,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 824,
         "retrieved": [
@@ -3496,6 +4202,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 733,
         "retrieved": [
@@ -3528,6 +4235,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 727,
         "retrieved": [
@@ -3560,6 +4268,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 679,
         "retrieved": [
@@ -3592,6 +4301,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 831,
         "retrieved": [
@@ -3624,6 +4334,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 719,
         "retrieved": [
@@ -3656,6 +4367,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 723,
         "retrieved": [
@@ -3688,6 +4400,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.3333333333333333,
         "n_chunks": 5,
         "words_sent": 791,
         "retrieved": [
@@ -3720,6 +4433,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -3752,6 +4466,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 794,
         "retrieved": [
@@ -3784,6 +4499,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 775,
         "retrieved": [
@@ -3811,11 +4527,217 @@
         "diagnosis": []
       },
       {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 835,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.665
+          ],
+          [
+            "fnb-02",
+            0.597
+          ],
+          [
+            "fnb-02",
+            0.562
+          ],
+          [
+            "cnc-06",
+            0.492
+          ],
+          [
+            "jwl-01",
+            0.419
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 843,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.724
+          ],
+          [
+            "fnb-02",
+            0.623
+          ],
+          [
+            "cnc-02",
+            0.397
+          ],
+          [
+            "fnb-06",
+            0.395
+          ],
+          [
+            "jwl-01",
+            0.364
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 789,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.566
+          ],
+          [
+            "jwl-01",
+            0.52
+          ],
+          [
+            "cnc-04",
+            0.446
+          ],
+          [
+            "fnb-06",
+            0.386
+          ],
+          [
+            "jwl-06",
+            0.366
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 0.0,
+        "rr": 0.0,
+        "n_chunks": 5,
+        "words_sent": 823,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.556
+          ],
+          [
+            "jwl-04",
+            0.535
+          ],
+          [
+            "cnc-04",
+            0.497
+          ],
+          [
+            "jwl-05",
+            0.468
+          ],
+          [
+            "cnc-02",
+            0.464
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-06",
+            "best_chunk_rank": 6,
+            "best_chunk_score": 0.454,
+            "retrieval_cutoff_score": 0.464
+          }
+        ]
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 902,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.527
+          ],
+          [
+            "cnc-02",
+            0.377
+          ],
+          [
+            "cnc-04",
+            0.374
+          ],
+          [
+            "fnb-05",
+            0.34
+          ],
+          [
+            "cnc-06",
+            0.337
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 794,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.606
+          ],
+          [
+            "cnc-03",
+            0.548
+          ],
+          [
+            "fnb-04",
+            0.532
+          ],
+          [
+            "fnb-01",
+            0.423
+          ],
+          [
+            "fnb-01",
+            0.407
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
         "id": "IND1",
         "kind": "cross_division",
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 719,
         "retrieved": [
@@ -3848,6 +4770,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 755,
         "retrieved": [
@@ -3880,6 +4803,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 708,
         "retrieved": [
@@ -3912,6 +4836,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 715,
         "retrieved": [
@@ -3944,6 +4869,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 767,
         "retrieved": [
@@ -3979,17 +4905,21 @@
       "division_recall_cross": 0.6363636363636364,
       "division_recall_all": 0.8,
       "avg_doc_recall": 0.7833333333333333,
+      "all_docs_share": 0.6,
+      "mrr": 0.9166666666666666,
       "avg_chunks": 3.0,
       "avg_words": 575.7
     },
     "all": {
-      "n_scored": 31,
+      "n_scored": 37,
       "n_cross": 12,
       "division_recall_cross": 0.6666666666666666,
-      "division_recall_all": 0.8709677419354839,
-      "avg_doc_recall": 0.8602150537634408,
+      "division_recall_all": 0.8918918918918919,
+      "avg_doc_recall": 0.8423423423423423,
+      "all_docs_share": 0.7297297297297297,
+      "mrr": 0.8873873873873872,
       "avg_chunks": 3.0,
-      "avg_words": 577.7096774193549
+      "avg_words": 576.4594594594595
     },
     "records": [
       {
@@ -3998,6 +4928,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 650,
         "retrieved": [
@@ -4029,6 +4960,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 0.3333333333333333,
         "n_chunks": 3,
         "words_sent": 616,
         "retrieved": [
@@ -4060,6 +4992,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.6666666666666666,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 604,
         "retrieved": [
@@ -4091,6 +5024,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 652,
         "retrieved": [
@@ -4122,6 +5056,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 538,
         "retrieved": [
@@ -4146,6 +5081,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 671,
         "retrieved": [
@@ -4170,6 +5106,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 671,
         "retrieved": [
@@ -4194,6 +5131,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 543,
         "retrieved": [
@@ -4225,6 +5163,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 650,
         "retrieved": [
@@ -4256,6 +5195,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 464,
         "retrieved": [
@@ -4280,6 +5220,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 479,
         "retrieved": [
@@ -4311,6 +5252,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.0,
+        "rr": 0.0,
         "n_chunks": 3,
         "words_sent": 650,
         "retrieved": [
@@ -4348,6 +5290,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 541,
         "retrieved": [
@@ -4372,6 +5315,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 578,
         "retrieved": [
@@ -4396,6 +5340,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 620,
         "retrieved": [
@@ -4420,6 +5365,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 478,
         "retrieved": [
@@ -4444,6 +5390,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 470,
         "retrieved": [
@@ -4468,6 +5415,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 536,
         "retrieved": [
@@ -4492,6 +5440,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 466,
         "retrieved": [
@@ -4516,6 +5465,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 637,
         "retrieved": [
@@ -4540,6 +5490,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 671,
         "retrieved": [
@@ -4564,6 +5515,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 608,
         "retrieved": [
@@ -4588,6 +5540,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 3,
         "words_sent": 543,
         "retrieved": [
@@ -4612,6 +5565,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 470,
         "retrieved": [
@@ -4636,6 +5590,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 616,
         "retrieved": [
@@ -4660,6 +5615,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 457,
         "retrieved": [
@@ -4679,11 +5635,176 @@
         "diagnosis": []
       },
       {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 0.5,
+        "rr": 1.0,
+        "n_chunks": 3,
+        "words_sent": 671,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.68
+          ],
+          [
+            "fnb-02",
+            0.576
+          ],
+          [
+            "fnb-01",
+            0.465
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-06",
+            "best_chunk_rank": 6,
+            "best_chunk_score": 0.441,
+            "retrieval_cutoff_score": 0.465
+          }
+        ]
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 3,
+        "words_sent": 608,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.625
+          ],
+          [
+            "fnb-06",
+            0.409
+          ],
+          [
+            "jwl-01",
+            0.393
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 3,
+        "words_sent": 547,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.534
+          ],
+          [
+            "cnc-04",
+            0.418
+          ],
+          [
+            "jwl-06",
+            0.39
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 0.0,
+        "rr": 0.0,
+        "n_chunks": 3,
+        "words_sent": 500,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.565
+          ],
+          [
+            "jwl-04",
+            0.558
+          ],
+          [
+            "cnc-02",
+            0.471
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-06",
+            "best_chunk_rank": 7,
+            "best_chunk_score": 0.45,
+            "retrieval_cutoff_score": 0.471
+          }
+        ]
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 3,
+        "words_sent": 620,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.519
+          ],
+          [
+            "cnc-02",
+            0.358
+          ],
+          [
+            "fnb-01",
+            0.357
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 3,
+        "words_sent": 474,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.611
+          ],
+          [
+            "fnb-04",
+            0.523
+          ],
+          [
+            "cnc-03",
+            0.519
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
         "id": "IND1",
         "kind": "cross_division",
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 616,
         "retrieved": [
@@ -4708,6 +5829,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 3,
         "words_sent": 671,
         "retrieved": [
@@ -4732,6 +5854,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 3,
         "words_sent": 608,
         "retrieved": [
@@ -4756,6 +5879,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 532,
         "retrieved": [
@@ -4780,6 +5904,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 3,
         "words_sent": 603,
         "retrieved": [
@@ -4807,17 +5932,21 @@
       "division_recall_cross": 0.9090909090909091,
       "division_recall_all": 0.95,
       "avg_doc_recall": 0.9083333333333332,
+      "all_docs_share": 0.8,
+      "mrr": 0.8875,
       "avg_chunks": 5.0,
       "avg_words": 865.1
     },
     "all": {
-      "n_scored": 31,
+      "n_scored": 37,
       "n_cross": 12,
       "division_recall_cross": 0.9166666666666666,
-      "division_recall_all": 0.9354838709677419,
-      "avg_doc_recall": 0.9247311827956989,
+      "division_recall_all": 0.9459459459459459,
+      "avg_doc_recall": 0.9369369369369369,
+      "all_docs_share": 0.8648648648648649,
+      "mrr": 0.8536036036036035,
       "avg_chunks": 5.0,
-      "avg_words": 866.1612903225806
+      "avg_words": 864.4324324324324
     },
     "records": [
       {
@@ -4826,6 +5955,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 797,
         "retrieved": [
@@ -4858,6 +5988,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 866,
         "retrieved": [
@@ -4890,6 +6021,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.6666666666666666,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 897,
         "retrieved": [
@@ -4929,6 +6061,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 959,
         "retrieved": [
@@ -4961,6 +6094,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 928,
         "retrieved": [
@@ -4993,6 +6127,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -5025,6 +6160,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 962,
         "retrieved": [
@@ -5057,6 +6193,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 915,
         "retrieved": [
@@ -5096,6 +6233,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 947,
         "retrieved": [
@@ -5128,6 +6266,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -5160,6 +6299,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 820,
         "retrieved": [
@@ -5199,6 +6339,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 0.25,
         "n_chunks": 5,
         "words_sent": 875,
         "retrieved": [
@@ -5238,6 +6379,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 787,
         "retrieved": [
@@ -5270,6 +6412,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 826,
         "retrieved": [
@@ -5302,6 +6445,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 862,
         "retrieved": [
@@ -5334,6 +6478,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 856,
         "retrieved": [
@@ -5366,6 +6511,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 921,
         "retrieved": [
@@ -5398,6 +6544,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 843,
         "retrieved": [
@@ -5430,6 +6577,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 820,
         "retrieved": [
@@ -5462,6 +6610,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 835,
         "retrieved": [
@@ -5494,6 +6643,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 799,
         "retrieved": [
@@ -5526,6 +6676,7 @@
         "set": "extra",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 0.3333333333333333,
         "n_chunks": 5,
         "words_sent": 972,
         "retrieved": [
@@ -5565,6 +6716,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 921,
         "retrieved": [
@@ -5597,6 +6749,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 852,
         "retrieved": [
@@ -5629,6 +6782,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 872,
         "retrieved": [
@@ -5661,6 +6815,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 835,
         "retrieved": [
@@ -5688,11 +6843,210 @@
         "diagnosis": []
       },
       {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 5,
+        "words_sent": 928,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.305
+          ],
+          [
+            "cnc-02",
+            0.282
+          ],
+          [
+            "fnb-04",
+            0.209
+          ],
+          [
+            "cnc-06",
+            0.191
+          ],
+          [
+            "cnc-01",
+            0.176
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 824,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.268
+          ],
+          [
+            "fnb-02",
+            0.19
+          ],
+          [
+            "cnc-01",
+            0.116
+          ],
+          [
+            "fnb-06",
+            0.109
+          ],
+          [
+            "fnb-03",
+            0.108
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 851,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.335
+          ],
+          [
+            "jwl-01",
+            0.286
+          ],
+          [
+            "cnc-02",
+            0.244
+          ],
+          [
+            "cnc-01",
+            0.207
+          ],
+          [
+            "fnb-06",
+            0.206
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 5,
+        "words_sent": 804,
+        "retrieved": [
+          [
+            "jwl-02",
+            0.223
+          ],
+          [
+            "cnc-06",
+            0.218
+          ],
+          [
+            "jwl-04",
+            0.195
+          ],
+          [
+            "jwl-06",
+            0.195
+          ],
+          [
+            "jwl-05",
+            0.183
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 862,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.33
+          ],
+          [
+            "fnb-01",
+            0.142
+          ],
+          [
+            "cnc-02",
+            0.134
+          ],
+          [
+            "cnc-03",
+            0.103
+          ],
+          [
+            "cnc-06",
+            0.102
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 864,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.242
+          ],
+          [
+            "fnb-01",
+            0.206
+          ],
+          [
+            "fnb-04",
+            0.205
+          ],
+          [
+            "fnb-02",
+            0.179
+          ],
+          [
+            "cnc-02",
+            0.177
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
         "id": "IND1",
         "kind": "cross_division",
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 864,
         "retrieved": [
@@ -5725,6 +7079,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 930,
         "retrieved": [
@@ -5757,6 +7112,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 938,
         "retrieved": [
@@ -5789,6 +7145,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 731,
         "retrieved": [
@@ -5821,6 +7178,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 835,
         "retrieved": [
@@ -5856,17 +7214,21 @@
       "division_recall_cross": 0.45454545454545453,
       "division_recall_all": 0.7,
       "avg_doc_recall": 0.8083333333333332,
+      "all_docs_share": 0.6,
+      "mrr": 0.9375,
       "avg_chunks": 5.0,
       "avg_words": 835.45
     },
     "all": {
-      "n_scored": 31,
+      "n_scored": 37,
       "n_cross": 12,
       "division_recall_cross": 0.5,
-      "division_recall_all": 0.7741935483870968,
-      "avg_doc_recall": 0.8602150537634408,
+      "division_recall_all": 0.8108108108108109,
+      "avg_doc_recall": 0.8558558558558558,
+      "all_docs_share": 0.7297297297297297,
+      "mrr": 0.8986486486486487,
       "avg_chunks": 5.0,
-      "avg_words": 822.7096774193549
+      "avg_words": 822.9459459459459
     },
     "records": [
       {
@@ -5875,6 +7237,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -5914,6 +7277,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 890,
         "retrieved": [
@@ -5953,6 +7317,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.6666666666666666,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 909,
         "retrieved": [
@@ -5992,6 +7357,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 844,
         "retrieved": [
@@ -6031,6 +7397,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 890,
         "retrieved": [
@@ -6070,6 +7437,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 755,
         "retrieved": [
@@ -6102,6 +7470,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 884,
         "retrieved": [
@@ -6134,6 +7503,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -6173,6 +7543,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 844,
         "retrieved": [
@@ -6212,6 +7583,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -6244,6 +7616,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 802,
         "retrieved": [
@@ -6276,6 +7649,7 @@
         "set": "main",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 0.25,
         "n_chunks": 5,
         "words_sent": 890,
         "retrieved": [
@@ -6315,6 +7689,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 839,
         "retrieved": [
@@ -6347,6 +7722,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 746,
         "retrieved": [
@@ -6379,6 +7755,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 844,
         "retrieved": [
@@ -6411,6 +7788,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 860,
         "retrieved": [
@@ -6443,6 +7821,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 843,
         "retrieved": [
@@ -6475,6 +7854,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 727,
         "retrieved": [
@@ -6507,6 +7887,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -6539,6 +7920,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 879,
         "retrieved": [
@@ -6571,6 +7953,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 860,
         "retrieved": [
@@ -6603,6 +7986,7 @@
         "set": "extra",
         "division_recall": false,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -6642,6 +8026,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 713,
         "retrieved": [
@@ -6674,6 +8059,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 793,
         "retrieved": [
@@ -6706,6 +8092,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 866,
         "retrieved": [
@@ -6738,6 +8125,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 775,
         "retrieved": [
@@ -6765,11 +8153,217 @@
         "diagnosis": []
       },
       {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 914,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.68
+          ],
+          [
+            "cnc-06",
+            0.441
+          ],
+          [
+            "cnc-04",
+            0.363
+          ],
+          [
+            "cnc-05",
+            0.341
+          ],
+          [
+            "cnc-01",
+            0.262
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 713,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.625
+          ],
+          [
+            "fnb-02",
+            0.484
+          ],
+          [
+            "fnb-06",
+            0.409
+          ],
+          [
+            "fnb-01",
+            0.321
+          ],
+          [
+            "fnb-04",
+            0.292
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 795,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.534
+          ],
+          [
+            "jwl-01",
+            0.478
+          ],
+          [
+            "cnc-04",
+            0.418
+          ],
+          [
+            "jwl-06",
+            0.39
+          ],
+          [
+            "cnc-02",
+            0.346
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 0.0,
+        "rr": 0.0,
+        "n_chunks": 5,
+        "words_sent": 823,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.565
+          ],
+          [
+            "jwl-04",
+            0.558
+          ],
+          [
+            "cnc-02",
+            0.471
+          ],
+          [
+            "cnc-04",
+            0.467
+          ],
+          [
+            "jwl-05",
+            0.455
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-06",
+            "best_chunk_rank": 7,
+            "best_chunk_score": 0.45,
+            "retrieval_cutoff_score": 0.455
+          }
+        ]
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 844,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.519
+          ],
+          [
+            "cnc-02",
+            0.358
+          ],
+          [
+            "cnc-04",
+            0.349
+          ],
+          [
+            "cnc-06",
+            0.335
+          ],
+          [
+            "cnc-03",
+            0.291
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 856,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.611
+          ],
+          [
+            "fnb-04",
+            0.523
+          ],
+          [
+            "cnc-03",
+            0.519
+          ],
+          [
+            "fnb-01",
+            0.45
+          ],
+          [
+            "cnc-04",
+            0.41
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
         "id": "IND1",
         "kind": "cross_division",
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 864,
         "retrieved": [
@@ -6802,6 +8396,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 858,
         "retrieved": [
@@ -6834,6 +8429,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 5,
         "words_sent": 818,
         "retrieved": [
@@ -6866,6 +8462,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 715,
         "retrieved": [
@@ -6898,6 +8495,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 5,
         "words_sent": 740,
         "retrieved": [
@@ -6933,17 +8531,21 @@
       "division_recall_cross": 1.0,
       "division_recall_all": 1.0,
       "avg_doc_recall": 0.8833333333333332,
+      "all_docs_share": 0.8,
+      "mrr": 0.9166666666666666,
       "avg_chunks": 6.0,
       "avg_words": 1003.7
     },
     "all": {
-      "n_scored": 31,
+      "n_scored": 37,
       "n_cross": 12,
       "division_recall_cross": 1.0,
       "division_recall_all": 1.0,
-      "avg_doc_recall": 0.9247311827956989,
+      "avg_doc_recall": 0.9099099099099098,
+      "all_docs_share": 0.8648648648648649,
+      "mrr": 0.8873873873873872,
       "avg_chunks": 6.0,
-      "avg_words": 1007.1612903225806
+      "avg_words": 1008.0540540540541
     },
     "records": [
       {
@@ -6952,6 +8554,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 1052,
         "retrieved": [
@@ -6995,6 +8598,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.3333333333333333,
         "n_chunks": 6,
         "words_sent": 1016,
         "retrieved": [
@@ -7031,6 +8635,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.6666666666666666,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 962,
         "retrieved": [
@@ -7074,6 +8679,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 1054,
         "retrieved": [
@@ -7110,6 +8716,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 1113,
         "retrieved": [
@@ -7146,6 +8753,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 928,
         "retrieved": [
@@ -7182,6 +8790,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 963,
         "retrieved": [
@@ -7218,6 +8827,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 999,
         "retrieved": [
@@ -7254,6 +8864,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 963,
         "retrieved": [
@@ -7290,6 +8901,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 1043,
         "retrieved": [
@@ -7326,6 +8938,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 948,
         "retrieved": [
@@ -7362,6 +8975,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.0,
+        "rr": 0.0,
         "n_chunks": 6,
         "words_sent": 1050,
         "retrieved": [
@@ -7411,6 +9025,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 1095,
         "retrieved": [
@@ -7447,6 +9062,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 874,
         "retrieved": [
@@ -7483,6 +9099,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 1047,
         "retrieved": [
@@ -7519,6 +9136,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 0.5,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 902,
         "retrieved": [
@@ -7562,6 +9180,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 975,
         "retrieved": [
@@ -7598,6 +9217,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 1085,
         "retrieved": [
@@ -7634,6 +9254,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 1051,
         "retrieved": [
@@ -7670,6 +9291,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 954,
         "retrieved": [
@@ -7706,6 +9328,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 1093,
         "retrieved": [
@@ -7742,6 +9365,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 834,
         "retrieved": [
@@ -7778,6 +9402,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 6,
         "words_sent": 1126,
         "retrieved": [
@@ -7814,6 +9439,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 943,
         "retrieved": [
@@ -7850,6 +9476,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 965,
         "retrieved": [
@@ -7886,6 +9513,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 1032,
         "retrieved": [
@@ -7917,11 +9545,241 @@
         "diagnosis": []
       },
       {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 6,
+        "words_sent": 1075,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.68
+          ],
+          [
+            "fnb-02",
+            0.576
+          ],
+          [
+            "fnb-01",
+            0.465
+          ],
+          [
+            "jwl-01",
+            0.447
+          ],
+          [
+            "cnc-06",
+            0.441
+          ],
+          [
+            "jwl-03",
+            0.201
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 6,
+        "words_sent": 1010,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.625
+          ],
+          [
+            "fnb-02",
+            0.484
+          ],
+          [
+            "jwl-01",
+            0.393
+          ],
+          [
+            "cnc-02",
+            0.39
+          ],
+          [
+            "jwl-02",
+            0.276
+          ],
+          [
+            "cnc-04",
+            0.245
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 6,
+        "words_sent": 955,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.534
+          ],
+          [
+            "jwl-01",
+            0.478
+          ],
+          [
+            "cnc-04",
+            0.418
+          ],
+          [
+            "fnb-06",
+            0.389
+          ],
+          [
+            "cnc-02",
+            0.346
+          ],
+          [
+            "fnb-01",
+            0.297
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 0.0,
+        "rr": 0.0,
+        "n_chunks": 6,
+        "words_sent": 1002,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.565
+          ],
+          [
+            "jwl-04",
+            0.558
+          ],
+          [
+            "cnc-02",
+            0.471
+          ],
+          [
+            "cnc-04",
+            0.467
+          ],
+          [
+            "fnb-01",
+            0.394
+          ],
+          [
+            "fnb-01",
+            0.381
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-06",
+            "best_chunk_rank": 7,
+            "best_chunk_score": 0.45,
+            "retrieval_cutoff_score": 0.381
+          }
+        ]
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 6,
+        "words_sent": 983,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.519
+          ],
+          [
+            "cnc-02",
+            0.358
+          ],
+          [
+            "fnb-01",
+            0.357
+          ],
+          [
+            "fnb-05",
+            0.346
+          ],
+          [
+            "jwl-04",
+            0.232
+          ],
+          [
+            "jwl-02",
+            0.225
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 6,
+        "words_sent": 1051,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.611
+          ],
+          [
+            "fnb-04",
+            0.523
+          ],
+          [
+            "cnc-03",
+            0.519
+          ],
+          [
+            "fnb-01",
+            0.45
+          ],
+          [
+            "jwl-01",
+            0.263
+          ],
+          [
+            "jwl-02",
+            0.239
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
         "id": "IND1",
         "kind": "cross_division",
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 1041,
         "retrieved": [
@@ -7958,6 +9816,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 6,
         "words_sent": 1075,
         "retrieved": [
@@ -7994,6 +9853,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 0.5,
         "n_chunks": 6,
         "words_sent": 1145,
         "retrieved": [
@@ -8030,6 +9890,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 940,
         "retrieved": [
@@ -8066,6 +9927,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": 1.0,
         "n_chunks": 6,
         "words_sent": 954,
         "retrieved": [
@@ -8105,15 +9967,19 @@
       "division_recall_cross": 1.0,
       "division_recall_all": 1.0,
       "avg_doc_recall": 1.0,
+      "all_docs_share": 1.0,
+      "mrr": null,
       "avg_chunks": 18.0,
       "avg_words": 3228.0
     },
     "all": {
-      "n_scored": 31,
+      "n_scored": 37,
       "n_cross": 12,
       "division_recall_cross": 1.0,
       "division_recall_all": 1.0,
       "avg_doc_recall": 1.0,
+      "all_docs_share": 1.0,
+      "mrr": null,
       "avg_chunks": 18.0,
       "avg_words": 3228.0
     },
@@ -8124,6 +9990,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -8208,6 +10075,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -8292,6 +10160,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -8376,6 +10245,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -8460,6 +10330,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -8544,6 +10415,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -8628,6 +10500,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -8712,6 +10585,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -8796,6 +10670,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -8880,6 +10755,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -8964,6 +10840,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9048,6 +10925,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9132,6 +11010,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9216,6 +11095,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9300,6 +11180,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9384,6 +11265,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9468,6 +11350,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9552,6 +11435,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9636,6 +11520,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9720,6 +11605,7 @@
         "set": "main",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9804,6 +11690,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9888,6 +11775,7 @@
         "set": "extra",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -9972,6 +11860,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -10056,6 +11945,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -10140,6 +12030,7 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -10224,6 +12115,517 @@
         "set": "breaker",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
+        "n_chunks": 18,
+        "words_sent": 3228,
+        "retrieved": [
+          [
+            "fnb-01",
+            1.0
+          ],
+          [
+            "fnb-02",
+            1.0
+          ],
+          [
+            "fnb-03",
+            1.0
+          ],
+          [
+            "fnb-04",
+            1.0
+          ],
+          [
+            "fnb-05",
+            1.0
+          ],
+          [
+            "fnb-06",
+            1.0
+          ],
+          [
+            "cnc-01",
+            1.0
+          ],
+          [
+            "cnc-02",
+            1.0
+          ],
+          [
+            "cnc-03",
+            1.0
+          ],
+          [
+            "cnc-04",
+            1.0
+          ],
+          [
+            "cnc-05",
+            1.0
+          ],
+          [
+            "cnc-06",
+            1.0
+          ],
+          [
+            "jwl-01",
+            1.0
+          ],
+          [
+            "jwl-02",
+            1.0
+          ],
+          [
+            "jwl-03",
+            1.0
+          ],
+          [
+            "jwl-04",
+            1.0
+          ],
+          [
+            "jwl-05",
+            1.0
+          ],
+          [
+            "jwl-06",
+            1.0
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": null,
+        "n_chunks": 18,
+        "words_sent": 3228,
+        "retrieved": [
+          [
+            "fnb-01",
+            1.0
+          ],
+          [
+            "fnb-02",
+            1.0
+          ],
+          [
+            "fnb-03",
+            1.0
+          ],
+          [
+            "fnb-04",
+            1.0
+          ],
+          [
+            "fnb-05",
+            1.0
+          ],
+          [
+            "fnb-06",
+            1.0
+          ],
+          [
+            "cnc-01",
+            1.0
+          ],
+          [
+            "cnc-02",
+            1.0
+          ],
+          [
+            "cnc-03",
+            1.0
+          ],
+          [
+            "cnc-04",
+            1.0
+          ],
+          [
+            "cnc-05",
+            1.0
+          ],
+          [
+            "cnc-06",
+            1.0
+          ],
+          [
+            "jwl-01",
+            1.0
+          ],
+          [
+            "jwl-02",
+            1.0
+          ],
+          [
+            "jwl-03",
+            1.0
+          ],
+          [
+            "jwl-04",
+            1.0
+          ],
+          [
+            "jwl-05",
+            1.0
+          ],
+          [
+            "jwl-06",
+            1.0
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": null,
+        "n_chunks": 18,
+        "words_sent": 3228,
+        "retrieved": [
+          [
+            "fnb-01",
+            1.0
+          ],
+          [
+            "fnb-02",
+            1.0
+          ],
+          [
+            "fnb-03",
+            1.0
+          ],
+          [
+            "fnb-04",
+            1.0
+          ],
+          [
+            "fnb-05",
+            1.0
+          ],
+          [
+            "fnb-06",
+            1.0
+          ],
+          [
+            "cnc-01",
+            1.0
+          ],
+          [
+            "cnc-02",
+            1.0
+          ],
+          [
+            "cnc-03",
+            1.0
+          ],
+          [
+            "cnc-04",
+            1.0
+          ],
+          [
+            "cnc-05",
+            1.0
+          ],
+          [
+            "cnc-06",
+            1.0
+          ],
+          [
+            "jwl-01",
+            1.0
+          ],
+          [
+            "jwl-02",
+            1.0
+          ],
+          [
+            "jwl-03",
+            1.0
+          ],
+          [
+            "jwl-04",
+            1.0
+          ],
+          [
+            "jwl-05",
+            1.0
+          ],
+          [
+            "jwl-06",
+            1.0
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": null,
+        "n_chunks": 18,
+        "words_sent": 3228,
+        "retrieved": [
+          [
+            "fnb-01",
+            1.0
+          ],
+          [
+            "fnb-02",
+            1.0
+          ],
+          [
+            "fnb-03",
+            1.0
+          ],
+          [
+            "fnb-04",
+            1.0
+          ],
+          [
+            "fnb-05",
+            1.0
+          ],
+          [
+            "fnb-06",
+            1.0
+          ],
+          [
+            "cnc-01",
+            1.0
+          ],
+          [
+            "cnc-02",
+            1.0
+          ],
+          [
+            "cnc-03",
+            1.0
+          ],
+          [
+            "cnc-04",
+            1.0
+          ],
+          [
+            "cnc-05",
+            1.0
+          ],
+          [
+            "cnc-06",
+            1.0
+          ],
+          [
+            "jwl-01",
+            1.0
+          ],
+          [
+            "jwl-02",
+            1.0
+          ],
+          [
+            "jwl-03",
+            1.0
+          ],
+          [
+            "jwl-04",
+            1.0
+          ],
+          [
+            "jwl-05",
+            1.0
+          ],
+          [
+            "jwl-06",
+            1.0
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": null,
+        "n_chunks": 18,
+        "words_sent": 3228,
+        "retrieved": [
+          [
+            "fnb-01",
+            1.0
+          ],
+          [
+            "fnb-02",
+            1.0
+          ],
+          [
+            "fnb-03",
+            1.0
+          ],
+          [
+            "fnb-04",
+            1.0
+          ],
+          [
+            "fnb-05",
+            1.0
+          ],
+          [
+            "fnb-06",
+            1.0
+          ],
+          [
+            "cnc-01",
+            1.0
+          ],
+          [
+            "cnc-02",
+            1.0
+          ],
+          [
+            "cnc-03",
+            1.0
+          ],
+          [
+            "cnc-04",
+            1.0
+          ],
+          [
+            "cnc-05",
+            1.0
+          ],
+          [
+            "cnc-06",
+            1.0
+          ],
+          [
+            "jwl-01",
+            1.0
+          ],
+          [
+            "jwl-02",
+            1.0
+          ],
+          [
+            "jwl-03",
+            1.0
+          ],
+          [
+            "jwl-04",
+            1.0
+          ],
+          [
+            "jwl-05",
+            1.0
+          ],
+          [
+            "jwl-06",
+            1.0
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": null,
+        "n_chunks": 18,
+        "words_sent": 3228,
+        "retrieved": [
+          [
+            "fnb-01",
+            1.0
+          ],
+          [
+            "fnb-02",
+            1.0
+          ],
+          [
+            "fnb-03",
+            1.0
+          ],
+          [
+            "fnb-04",
+            1.0
+          ],
+          [
+            "fnb-05",
+            1.0
+          ],
+          [
+            "fnb-06",
+            1.0
+          ],
+          [
+            "cnc-01",
+            1.0
+          ],
+          [
+            "cnc-02",
+            1.0
+          ],
+          [
+            "cnc-03",
+            1.0
+          ],
+          [
+            "cnc-04",
+            1.0
+          ],
+          [
+            "cnc-05",
+            1.0
+          ],
+          [
+            "cnc-06",
+            1.0
+          ],
+          [
+            "jwl-01",
+            1.0
+          ],
+          [
+            "jwl-02",
+            1.0
+          ],
+          [
+            "jwl-03",
+            1.0
+          ],
+          [
+            "jwl-04",
+            1.0
+          ],
+          [
+            "jwl-05",
+            1.0
+          ],
+          [
+            "jwl-06",
+            1.0
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -10308,6 +12710,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -10392,6 +12795,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -10476,6 +12880,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -10560,6 +12965,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -10644,6 +13050,7 @@
         "set": "independent",
         "division_recall": true,
         "doc_recall": 1.0,
+        "rr": null,
         "n_chunks": 18,
         "words_sent": 3228,
         "retrieved": [
@@ -10718,6 +13125,4376 @@
           [
             "jwl-06",
             1.0
+          ]
+        ],
+        "diagnosis": []
+      }
+    ]
+  },
+  "hybrid_k5": {
+    "main": {
+      "n_scored": 20,
+      "n_cross": 11,
+      "division_recall_cross": 1.0,
+      "division_recall_all": 1.0,
+      "avg_doc_recall": 0.9333333333333332,
+      "all_docs_share": 0.85,
+      "mrr": 0.8975,
+      "avg_chunks": 5.0,
+      "avg_words": 853.3
+    },
+    "all": {
+      "n_scored": 37,
+      "n_cross": 12,
+      "division_recall_cross": 1.0,
+      "division_recall_all": 1.0,
+      "avg_doc_recall": 0.9639639639639639,
+      "all_docs_share": 0.918918918918919,
+      "mrr": 0.8702702702702704,
+      "avg_chunks": 5.0,
+      "avg_words": 835.7837837837837
+    },
+    "records": [
+      {
+        "id": "CD1",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 864,
+        "retrieved": [
+          [
+            "fnb-01",
+            0.033
+          ],
+          [
+            "cnc-02",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "cnc-01",
+            0.031
+          ],
+          [
+            "fnb-04",
+            0.031
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD2",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 0.5,
+        "rr": 0.2,
+        "n_chunks": 5,
+        "words_sent": 866,
+        "retrieved": [
+          [
+            "fnb-01",
+            0.032
+          ],
+          [
+            "fnb-01",
+            0.032
+          ],
+          [
+            "cnc-02",
+            0.031
+          ],
+          [
+            "fnb-02",
+            0.031
+          ],
+          [
+            "fnb-04",
+            0.031
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-01",
+            "best_chunk_rank": 6,
+            "best_chunk_score": 0.031,
+            "retrieval_cutoff_score": 0.031
+          }
+        ]
+      },
+      {
+        "id": "CD3",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 0.6666666666666666,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 753,
+        "retrieved": [
+          [
+            "fnb-01",
+            0.033
+          ],
+          [
+            "cnc-02",
+            0.032
+          ],
+          [
+            "cnc-04",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "fnb-02",
+            0.03
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-01",
+            "best_chunk_rank": 7,
+            "best_chunk_score": 0.03,
+            "retrieval_cutoff_score": 0.03
+          }
+        ]
+      },
+      {
+        "id": "CD4",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 964,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.033
+          ],
+          [
+            "cnc-06",
+            0.032
+          ],
+          [
+            "fnb-02",
+            0.031
+          ],
+          [
+            "cnc-04",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD5",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 864,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.033
+          ],
+          [
+            "fnb-04",
+            0.033
+          ],
+          [
+            "cnc-01",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "fnb-02",
+            0.031
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD6",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 850,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.033
+          ],
+          [
+            "cnc-06",
+            0.032
+          ],
+          [
+            "fnb-02",
+            0.032
+          ],
+          [
+            "fnb-04",
+            0.03
+          ],
+          [
+            "fnb-01",
+            0.029
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD7",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 884,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.033
+          ],
+          [
+            "fnb-02",
+            0.032
+          ],
+          [
+            "cnc-06",
+            0.032
+          ],
+          [
+            "cnc-04",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD8",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 5,
+        "words_sent": 938,
+        "retrieved": [
+          [
+            "fnb-04",
+            0.033
+          ],
+          [
+            "fnb-06",
+            0.033
+          ],
+          [
+            "cnc-01",
+            0.031
+          ],
+          [
+            "jwl-01",
+            0.031
+          ],
+          [
+            "fnb-02",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD9",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 900,
+        "retrieved": [
+          [
+            "cnc-04",
+            0.033
+          ],
+          [
+            "jwl-01",
+            0.032
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "cnc-02",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.031
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S9",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 793,
+        "retrieved": [
+          [
+            "jwl-04",
+            0.033
+          ],
+          [
+            "jwl-05",
+            0.032
+          ],
+          [
+            "jwl-03",
+            0.032
+          ],
+          [
+            "jwl-02",
+            0.031
+          ],
+          [
+            "jwl-06",
+            0.031
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD11",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 802,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.033
+          ],
+          [
+            "jwl-02",
+            0.032
+          ],
+          [
+            "jwl-04",
+            0.032
+          ],
+          [
+            "jwl-05",
+            0.031
+          ],
+          [
+            "cnc-04",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD12",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 0.5,
+        "rr": 0.25,
+        "n_chunks": 5,
+        "words_sent": 932,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.032
+          ],
+          [
+            "fnb-01",
+            0.032
+          ],
+          [
+            "jwl-04",
+            0.031
+          ],
+          [
+            "cnc-06",
+            0.031
+          ],
+          [
+            "cnc-02",
+            0.03
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "jwl-02",
+            "best_chunk_rank": 16,
+            "best_chunk_score": 0.027,
+            "retrieval_cutoff_score": 0.03
+          }
+        ]
+      },
+      {
+        "id": "S1",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 823,
+        "retrieved": [
+          [
+            "fnb-05",
+            0.033
+          ],
+          [
+            "fnb-02",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "cnc-06",
+            0.03
+          ],
+          [
+            "fnb-02",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S2",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 809,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.033
+          ],
+          [
+            "jwl-01",
+            0.032
+          ],
+          [
+            "jwl-01",
+            0.032
+          ],
+          [
+            "jwl-03",
+            0.031
+          ],
+          [
+            "fnb-03",
+            0.029
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S3",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 782,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.033
+          ],
+          [
+            "cnc-06",
+            0.032
+          ],
+          [
+            "cnc-02",
+            0.032
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "cnc-03",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S4",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 824,
+        "retrieved": [
+          [
+            "cnc-03",
+            0.033
+          ],
+          [
+            "fnb-04",
+            0.032
+          ],
+          [
+            "cnc-02",
+            0.032
+          ],
+          [
+            "cnc-01",
+            0.031
+          ],
+          [
+            "cnc-05",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S5",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 862,
+        "retrieved": [
+          [
+            "jwl-02",
+            0.033
+          ],
+          [
+            "jwl-06",
+            0.032
+          ],
+          [
+            "jwl-01",
+            0.031
+          ],
+          [
+            "jwl-05",
+            0.03
+          ],
+          [
+            "fnb-06",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S6",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 857,
+        "retrieved": [
+          [
+            "jwl-03",
+            0.033
+          ],
+          [
+            "jwl-04",
+            0.032
+          ],
+          [
+            "cnc-04",
+            0.031
+          ],
+          [
+            "jwl-06",
+            0.031
+          ],
+          [
+            "jwl-01",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S7",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 820,
+        "retrieved": [
+          [
+            "jwl-05",
+            0.033
+          ],
+          [
+            "jwl-06",
+            0.032
+          ],
+          [
+            "jwl-04",
+            0.031
+          ],
+          [
+            "jwl-02",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S8",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 879,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.033
+          ],
+          [
+            "fnb-01",
+            0.032
+          ],
+          [
+            "fnb-05",
+            0.032
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "fnb-06",
+            0.031
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "NM1",
+        "kind": "near_miss",
+        "set": "extra",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 799,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.033
+          ],
+          [
+            "fnb-02",
+            0.032
+          ],
+          [
+            "fnb-04",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "cnc-01",
+            0.031
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "NM2",
+        "kind": "near_miss",
+        "set": "extra",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 936,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.032
+          ],
+          [
+            "jwl-01",
+            0.031
+          ],
+          [
+            "fnb-04",
+            0.031
+          ],
+          [
+            "cnc-01",
+            0.031
+          ],
+          [
+            "cnc-02",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "VM1",
+        "kind": "vocabulary_mismatch",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 5,
+        "words_sent": 713,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.033
+          ],
+          [
+            "fnb-06",
+            0.032
+          ],
+          [
+            "fnb-04",
+            0.031
+          ],
+          [
+            "fnb-02",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "VM2",
+        "kind": "vocabulary_mismatch",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 793,
+        "retrieved": [
+          [
+            "jwl-02",
+            0.033
+          ],
+          [
+            "jwl-06",
+            0.032
+          ],
+          [
+            "jwl-05",
+            0.032
+          ],
+          [
+            "jwl-03",
+            0.031
+          ],
+          [
+            "jwl-04",
+            0.031
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "DIS1",
+        "kind": "distractor",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 794,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.033
+          ],
+          [
+            "fnb-04",
+            0.032
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "cnc-03",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.031
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "DIS2",
+        "kind": "distractor",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 775,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.033
+          ],
+          [
+            "fnb-04",
+            0.032
+          ],
+          [
+            "fnb-01",
+            0.032
+          ],
+          [
+            "cnc-03",
+            0.03
+          ],
+          [
+            "cnc-01",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 5,
+        "words_sent": 783,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.033
+          ],
+          [
+            "cnc-02",
+            0.033
+          ],
+          [
+            "cnc-06",
+            0.031
+          ],
+          [
+            "fnb-04",
+            0.031
+          ],
+          [
+            "fnb-02",
+            0.031
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 841,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.033
+          ],
+          [
+            "fnb-02",
+            0.033
+          ],
+          [
+            "fnb-06",
+            0.031
+          ],
+          [
+            "cnc-02",
+            0.031
+          ],
+          [
+            "cnc-01",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 835,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.033
+          ],
+          [
+            "jwl-01",
+            0.032
+          ],
+          [
+            "cnc-02",
+            0.031
+          ],
+          [
+            "fnb-06",
+            0.031
+          ],
+          [
+            "cnc-04",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.25,
+        "n_chunks": 5,
+        "words_sent": 804,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.032
+          ],
+          [
+            "jwl-04",
+            0.032
+          ],
+          [
+            "jwl-02",
+            0.031
+          ],
+          [
+            "cnc-06",
+            0.031
+          ],
+          [
+            "jwl-05",
+            0.031
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 882,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.033
+          ],
+          [
+            "cnc-02",
+            0.032
+          ],
+          [
+            "cnc-06",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "fnb-04",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 794,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.033
+          ],
+          [
+            "fnb-04",
+            0.032
+          ],
+          [
+            "fnb-01",
+            0.032
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "cnc-03",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND1",
+        "kind": "cross_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 866,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.033
+          ],
+          [
+            "fnb-01",
+            0.032
+          ],
+          [
+            "fnb-04",
+            0.031
+          ],
+          [
+            "fnb-02",
+            0.031
+          ],
+          [
+            "fnb-01",
+            0.031
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND2",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 5,
+        "words_sent": 755,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.033
+          ],
+          [
+            "cnc-02",
+            0.033
+          ],
+          [
+            "cnc-06",
+            0.031
+          ],
+          [
+            "fnb-02",
+            0.03
+          ],
+          [
+            "fnb-01",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND3",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 5,
+        "words_sent": 938,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.033
+          ],
+          [
+            "jwl-01",
+            0.032
+          ],
+          [
+            "fnb-02",
+            0.031
+          ],
+          [
+            "cnc-02",
+            0.031
+          ],
+          [
+            "fnb-04",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND4",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 715,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.033
+          ],
+          [
+            "jwl-02",
+            0.032
+          ],
+          [
+            "jwl-05",
+            0.032
+          ],
+          [
+            "fnb-06",
+            0.03
+          ],
+          [
+            "fnb-02",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND5",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 5,
+        "words_sent": 835,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.033
+          ],
+          [
+            "fnb-01",
+            0.032
+          ],
+          [
+            "fnb-01",
+            0.031
+          ],
+          [
+            "fnb-05",
+            0.031
+          ],
+          [
+            "fnb-04",
+            0.03
+          ]
+        ],
+        "diagnosis": []
+      }
+    ]
+  },
+  "titled_k7": {
+    "main": {
+      "n_scored": 20,
+      "n_cross": 11,
+      "division_recall_cross": 1.0,
+      "division_recall_all": 1.0,
+      "avg_doc_recall": 0.9333333333333332,
+      "all_docs_share": 0.85,
+      "mrr": 0.9238095238095237,
+      "avg_chunks": 7.0,
+      "avg_words": 1154.45
+    },
+    "all": {
+      "n_scored": 37,
+      "n_cross": 12,
+      "division_recall_cross": 1.0,
+      "division_recall_all": 1.0,
+      "avg_doc_recall": 0.9639639639639639,
+      "all_docs_share": 0.918918918918919,
+      "mrr": 0.8777348777348777,
+      "avg_chunks": 7.0,
+      "avg_words": 1140.1081081081081
+    },
+    "records": [
+      {
+        "id": "CD1",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 0.5,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1160,
+        "retrieved": [
+          [
+            "fnb-01",
+            0.66
+          ],
+          [
+            "fnb-01",
+            0.603
+          ],
+          [
+            "cnc-04",
+            0.502
+          ],
+          [
+            "cnc-02",
+            0.492
+          ],
+          [
+            "cnc-06",
+            0.477
+          ],
+          [
+            "fnb-04",
+            0.457
+          ],
+          [
+            "cnc-03",
+            0.447
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-01",
+            "best_chunk_rank": 8,
+            "best_chunk_score": 0.432,
+            "retrieval_cutoff_score": 0.447
+          }
+        ]
+      },
+      {
+        "id": "CD2",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.3333333333333333,
+        "n_chunks": 7,
+        "words_sent": 1117,
+        "retrieved": [
+          [
+            "fnb-01",
+            0.581
+          ],
+          [
+            "cnc-02",
+            0.545
+          ],
+          [
+            "fnb-04",
+            0.506
+          ],
+          [
+            "fnb-01",
+            0.485
+          ],
+          [
+            "fnb-02",
+            0.466
+          ],
+          [
+            "fnb-02",
+            0.462
+          ],
+          [
+            "cnc-01",
+            0.433
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD3",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 0.6666666666666666,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1103,
+        "retrieved": [
+          [
+            "cnc-04",
+            0.514
+          ],
+          [
+            "fnb-01",
+            0.502
+          ],
+          [
+            "cnc-02",
+            0.479
+          ],
+          [
+            "jwl-06",
+            0.464
+          ],
+          [
+            "jwl-05",
+            0.447
+          ],
+          [
+            "jwl-02",
+            0.444
+          ],
+          [
+            "fnb-02",
+            0.423
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "cnc-01",
+            "best_chunk_rank": 12,
+            "best_chunk_score": 0.345,
+            "retrieval_cutoff_score": 0.423
+          }
+        ]
+      },
+      {
+        "id": "CD4",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1236,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.578
+          ],
+          [
+            "cnc-06",
+            0.547
+          ],
+          [
+            "cnc-04",
+            0.448
+          ],
+          [
+            "fnb-01",
+            0.388
+          ],
+          [
+            "fnb-02",
+            0.367
+          ],
+          [
+            "cnc-05",
+            0.363
+          ],
+          [
+            "jwl-01",
+            0.303
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD5",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1184,
+        "retrieved": [
+          [
+            "fnb-04",
+            0.625
+          ],
+          [
+            "cnc-02",
+            0.545
+          ],
+          [
+            "fnb-01",
+            0.528
+          ],
+          [
+            "cnc-01",
+            0.469
+          ],
+          [
+            "fnb-06",
+            0.461
+          ],
+          [
+            "fnb-02",
+            0.424
+          ],
+          [
+            "cnc-03",
+            0.42
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD6",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1276,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.547
+          ],
+          [
+            "cnc-06",
+            0.502
+          ],
+          [
+            "fnb-01",
+            0.487
+          ],
+          [
+            "cnc-04",
+            0.457
+          ],
+          [
+            "fnb-02",
+            0.455
+          ],
+          [
+            "fnb-06",
+            0.454
+          ],
+          [
+            "fnb-01",
+            0.439
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD7",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1137,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.579
+          ],
+          [
+            "fnb-02",
+            0.508
+          ],
+          [
+            "cnc-06",
+            0.465
+          ],
+          [
+            "cnc-04",
+            0.443
+          ],
+          [
+            "fnb-01",
+            0.432
+          ],
+          [
+            "fnb-01",
+            0.416
+          ],
+          [
+            "fnb-02",
+            0.397
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD8",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1111,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.652
+          ],
+          [
+            "fnb-04",
+            0.448
+          ],
+          [
+            "fnb-01",
+            0.418
+          ],
+          [
+            "jwl-01",
+            0.397
+          ],
+          [
+            "fnb-01",
+            0.361
+          ],
+          [
+            "fnb-02",
+            0.344
+          ],
+          [
+            "cnc-01",
+            0.337
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD9",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1147,
+        "retrieved": [
+          [
+            "cnc-04",
+            0.371
+          ],
+          [
+            "cnc-02",
+            0.337
+          ],
+          [
+            "fnb-01",
+            0.298
+          ],
+          [
+            "jwl-01",
+            0.295
+          ],
+          [
+            "fnb-01",
+            0.262
+          ],
+          [
+            "cnc-06",
+            0.26
+          ],
+          [
+            "jwl-01",
+            0.253
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S9",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1145,
+        "retrieved": [
+          [
+            "jwl-04",
+            0.685
+          ],
+          [
+            "jwl-03",
+            0.561
+          ],
+          [
+            "jwl-05",
+            0.506
+          ],
+          [
+            "jwl-06",
+            0.453
+          ],
+          [
+            "jwl-02",
+            0.381
+          ],
+          [
+            "jwl-01",
+            0.309
+          ],
+          [
+            "cnc-05",
+            0.305
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD11",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1186,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.613
+          ],
+          [
+            "jwl-04",
+            0.501
+          ],
+          [
+            "jwl-02",
+            0.489
+          ],
+          [
+            "cnc-04",
+            0.471
+          ],
+          [
+            "jwl-05",
+            0.436
+          ],
+          [
+            "cnc-06",
+            0.398
+          ],
+          [
+            "jwl-01",
+            0.397
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD12",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 0.5,
+        "rr": 0.14285714285714285,
+        "n_chunks": 7,
+        "words_sent": 1290,
+        "retrieved": [
+          [
+            "cnc-04",
+            0.537
+          ],
+          [
+            "jwl-01",
+            0.425
+          ],
+          [
+            "cnc-03",
+            0.413
+          ],
+          [
+            "cnc-02",
+            0.412
+          ],
+          [
+            "fnb-01",
+            0.41
+          ],
+          [
+            "cnc-01",
+            0.41
+          ],
+          [
+            "cnc-06",
+            0.403
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "jwl-02",
+            "best_chunk_rank": 20,
+            "best_chunk_score": 0.22,
+            "retrieval_cutoff_score": 0.403
+          }
+        ]
+      },
+      {
+        "id": "S1",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1285,
+        "retrieved": [
+          [
+            "fnb-05",
+            0.469
+          ],
+          [
+            "cnc-05",
+            0.309
+          ],
+          [
+            "fnb-02",
+            0.289
+          ],
+          [
+            "fnb-03",
+            0.254
+          ],
+          [
+            "cnc-06",
+            0.23
+          ],
+          [
+            "cnc-04",
+            0.223
+          ],
+          [
+            "fnb-01",
+            0.219
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S2",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 982,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.544
+          ],
+          [
+            "jwl-01",
+            0.487
+          ],
+          [
+            "jwl-01",
+            0.452
+          ],
+          [
+            "jwl-03",
+            0.333
+          ],
+          [
+            "fnb-03",
+            0.3
+          ],
+          [
+            "fnb-01",
+            0.288
+          ],
+          [
+            "fnb-02",
+            0.285
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S3",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1184,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.63
+          ],
+          [
+            "cnc-02",
+            0.511
+          ],
+          [
+            "cnc-06",
+            0.455
+          ],
+          [
+            "fnb-01",
+            0.445
+          ],
+          [
+            "cnc-04",
+            0.44
+          ],
+          [
+            "fnb-01",
+            0.418
+          ],
+          [
+            "fnb-04",
+            0.401
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S4",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1187,
+        "retrieved": [
+          [
+            "cnc-03",
+            0.761
+          ],
+          [
+            "cnc-05",
+            0.517
+          ],
+          [
+            "fnb-04",
+            0.485
+          ],
+          [
+            "cnc-01",
+            0.464
+          ],
+          [
+            "cnc-02",
+            0.451
+          ],
+          [
+            "cnc-04",
+            0.443
+          ],
+          [
+            "fnb-03",
+            0.433
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S5",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1088,
+        "retrieved": [
+          [
+            "jwl-02",
+            0.522
+          ],
+          [
+            "jwl-06",
+            0.42
+          ],
+          [
+            "jwl-05",
+            0.413
+          ],
+          [
+            "jwl-01",
+            0.353
+          ],
+          [
+            "jwl-01",
+            0.352
+          ],
+          [
+            "jwl-03",
+            0.351
+          ],
+          [
+            "cnc-04",
+            0.315
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S6",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1056,
+        "retrieved": [
+          [
+            "jwl-03",
+            0.627
+          ],
+          [
+            "jwl-01",
+            0.37
+          ],
+          [
+            "jwl-04",
+            0.346
+          ],
+          [
+            "jwl-01",
+            0.338
+          ],
+          [
+            "jwl-05",
+            0.328
+          ],
+          [
+            "jwl-06",
+            0.255
+          ],
+          [
+            "jwl-02",
+            0.247
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S7",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1056,
+        "retrieved": [
+          [
+            "jwl-05",
+            0.604
+          ],
+          [
+            "jwl-06",
+            0.429
+          ],
+          [
+            "jwl-03",
+            0.42
+          ],
+          [
+            "jwl-04",
+            0.402
+          ],
+          [
+            "jwl-01",
+            0.333
+          ],
+          [
+            "jwl-02",
+            0.307
+          ],
+          [
+            "jwl-01",
+            0.282
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S8",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1159,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.595
+          ],
+          [
+            "fnb-05",
+            0.394
+          ],
+          [
+            "cnc-05",
+            0.366
+          ],
+          [
+            "fnb-01",
+            0.362
+          ],
+          [
+            "fnb-06",
+            0.352
+          ],
+          [
+            "fnb-01",
+            0.327
+          ],
+          [
+            "cnc-03",
+            0.325
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "NM1",
+        "kind": "near_miss",
+        "set": "extra",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1109,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.612
+          ],
+          [
+            "fnb-02",
+            0.607
+          ],
+          [
+            "fnb-01",
+            0.591
+          ],
+          [
+            "cnc-01",
+            0.565
+          ],
+          [
+            "fnb-04",
+            0.508
+          ],
+          [
+            "fnb-06",
+            0.468
+          ],
+          [
+            "cnc-02",
+            0.446
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "NM2",
+        "kind": "near_miss",
+        "set": "extra",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 976,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.668
+          ],
+          [
+            "jwl-01",
+            0.469
+          ],
+          [
+            "fnb-04",
+            0.392
+          ],
+          [
+            "fnb-01",
+            0.375
+          ],
+          [
+            "jwl-01",
+            0.374
+          ],
+          [
+            "fnb-02",
+            0.334
+          ],
+          [
+            "fnb-01",
+            0.326
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "VM1",
+        "kind": "vocabulary_mismatch",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.3333333333333333,
+        "n_chunks": 7,
+        "words_sent": 1111,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.562
+          ],
+          [
+            "fnb-02",
+            0.486
+          ],
+          [
+            "fnb-06",
+            0.484
+          ],
+          [
+            "fnb-04",
+            0.455
+          ],
+          [
+            "cnc-02",
+            0.412
+          ],
+          [
+            "fnb-01",
+            0.357
+          ],
+          [
+            "jwl-01",
+            0.328
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "VM2",
+        "kind": "vocabulary_mismatch",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 7,
+        "words_sent": 1175,
+        "retrieved": [
+          [
+            "jwl-05",
+            0.503
+          ],
+          [
+            "jwl-02",
+            0.489
+          ],
+          [
+            "jwl-03",
+            0.417
+          ],
+          [
+            "jwl-06",
+            0.417
+          ],
+          [
+            "jwl-04",
+            0.334
+          ],
+          [
+            "cnc-04",
+            0.33
+          ],
+          [
+            "jwl-01",
+            0.32
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "DIS1",
+        "kind": "distractor",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1168,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.542
+          ],
+          [
+            "fnb-04",
+            0.509
+          ],
+          [
+            "fnb-01",
+            0.418
+          ],
+          [
+            "fnb-01",
+            0.374
+          ],
+          [
+            "cnc-03",
+            0.349
+          ],
+          [
+            "fnb-06",
+            0.342
+          ],
+          [
+            "cnc-04",
+            0.268
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "DIS2",
+        "kind": "distractor",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1109,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.511
+          ],
+          [
+            "fnb-04",
+            0.477
+          ],
+          [
+            "cnc-03",
+            0.463
+          ],
+          [
+            "cnc-01",
+            0.417
+          ],
+          [
+            "fnb-01",
+            0.339
+          ],
+          [
+            "cnc-04",
+            0.306
+          ],
+          [
+            "cnc-05",
+            0.288
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1103,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.665
+          ],
+          [
+            "fnb-02",
+            0.597
+          ],
+          [
+            "fnb-02",
+            0.562
+          ],
+          [
+            "cnc-06",
+            0.492
+          ],
+          [
+            "jwl-01",
+            0.419
+          ],
+          [
+            "fnb-01",
+            0.418
+          ],
+          [
+            "fnb-04",
+            0.412
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1140,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.724
+          ],
+          [
+            "fnb-02",
+            0.623
+          ],
+          [
+            "cnc-02",
+            0.397
+          ],
+          [
+            "fnb-06",
+            0.395
+          ],
+          [
+            "jwl-01",
+            0.364
+          ],
+          [
+            "fnb-01",
+            0.26
+          ],
+          [
+            "jwl-02",
+            0.256
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1171,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.566
+          ],
+          [
+            "jwl-01",
+            0.52
+          ],
+          [
+            "cnc-04",
+            0.446
+          ],
+          [
+            "fnb-06",
+            0.386
+          ],
+          [
+            "jwl-06",
+            0.366
+          ],
+          [
+            "cnc-02",
+            0.355
+          ],
+          [
+            "cnc-06",
+            0.328
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.16666666666666666,
+        "n_chunks": 7,
+        "words_sent": 1184,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.556
+          ],
+          [
+            "jwl-04",
+            0.535
+          ],
+          [
+            "cnc-04",
+            0.497
+          ],
+          [
+            "jwl-05",
+            0.468
+          ],
+          [
+            "cnc-02",
+            0.464
+          ],
+          [
+            "cnc-06",
+            0.454
+          ],
+          [
+            "jwl-02",
+            0.434
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1170,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.527
+          ],
+          [
+            "cnc-02",
+            0.377
+          ],
+          [
+            "cnc-04",
+            0.374
+          ],
+          [
+            "fnb-05",
+            0.34
+          ],
+          [
+            "cnc-06",
+            0.337
+          ],
+          [
+            "fnb-04",
+            0.307
+          ],
+          [
+            "fnb-01",
+            0.301
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1168,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.606
+          ],
+          [
+            "cnc-03",
+            0.548
+          ],
+          [
+            "fnb-04",
+            0.532
+          ],
+          [
+            "fnb-01",
+            0.423
+          ],
+          [
+            "fnb-01",
+            0.407
+          ],
+          [
+            "fnb-06",
+            0.393
+          ],
+          [
+            "cnc-04",
+            0.377
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND1",
+        "kind": "cross_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1117,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.667
+          ],
+          [
+            "fnb-01",
+            0.607
+          ],
+          [
+            "fnb-02",
+            0.603
+          ],
+          [
+            "fnb-04",
+            0.597
+          ],
+          [
+            "fnb-02",
+            0.549
+          ],
+          [
+            "cnc-02",
+            0.52
+          ],
+          [
+            "jwl-01",
+            0.453
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND2",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 7,
+        "words_sent": 1147,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.727
+          ],
+          [
+            "cnc-02",
+            0.696
+          ],
+          [
+            "fnb-02",
+            0.646
+          ],
+          [
+            "fnb-01",
+            0.503
+          ],
+          [
+            "cnc-06",
+            0.439
+          ],
+          [
+            "jwl-01",
+            0.43
+          ],
+          [
+            "fnb-06",
+            0.428
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND3",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 7,
+        "words_sent": 1079,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.629
+          ],
+          [
+            "jwl-01",
+            0.601
+          ],
+          [
+            "fnb-02",
+            0.563
+          ],
+          [
+            "fnb-02",
+            0.492
+          ],
+          [
+            "jwl-01",
+            0.411
+          ],
+          [
+            "cnc-02",
+            0.39
+          ],
+          [
+            "jwl-03",
+            0.362
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND4",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1017,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.523
+          ],
+          [
+            "jwl-02",
+            0.471
+          ],
+          [
+            "jwl-05",
+            0.421
+          ],
+          [
+            "fnb-06",
+            0.413
+          ],
+          [
+            "fnb-02",
+            0.389
+          ],
+          [
+            "cnc-04",
+            0.38
+          ],
+          [
+            "fnb-01",
+            0.373
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND5",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1151,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.686
+          ],
+          [
+            "fnb-01",
+            0.465
+          ],
+          [
+            "cnc-05",
+            0.446
+          ],
+          [
+            "fnb-05",
+            0.441
+          ],
+          [
+            "cnc-03",
+            0.394
+          ],
+          [
+            "fnb-01",
+            0.385
+          ],
+          [
+            "cnc-06",
+            0.379
+          ]
+        ],
+        "diagnosis": []
+      }
+    ]
+  },
+  "follow_refs": {
+    "main": {
+      "n_scored": 20,
+      "n_cross": 11,
+      "division_recall_cross": 1.0,
+      "division_recall_all": 1.0,
+      "avg_doc_recall": 0.975,
+      "all_docs_share": 0.95,
+      "mrr": 0.9238095238095237,
+      "avg_chunks": 6.9,
+      "avg_words": 1187.7
+    },
+    "all": {
+      "n_scored": 37,
+      "n_cross": 12,
+      "division_recall_cross": 1.0,
+      "division_recall_all": 1.0,
+      "avg_doc_recall": 0.9864864864864865,
+      "all_docs_share": 0.972972972972973,
+      "mrr": 0.8777348777348777,
+      "avg_chunks": 6.918918918918919,
+      "avg_words": 1168.8648648648648
+    },
+    "records": [
+      {
+        "id": "CD1",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1230,
+        "retrieved": [
+          [
+            "fnb-01",
+            0.66
+          ],
+          [
+            "fnb-01",
+            0.603
+          ],
+          [
+            "cnc-04",
+            0.502
+          ],
+          [
+            "cnc-02",
+            0.492
+          ],
+          [
+            "cnc-06",
+            0.477
+          ],
+          [
+            "cnc-01",
+            0.432
+          ],
+          [
+            "fnb-04",
+            0.457
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD2",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.3333333333333333,
+        "n_chunks": 7,
+        "words_sent": 1248,
+        "retrieved": [
+          [
+            "fnb-01",
+            0.581
+          ],
+          [
+            "cnc-02",
+            0.545
+          ],
+          [
+            "fnb-04",
+            0.506
+          ],
+          [
+            "fnb-01",
+            0.485
+          ],
+          [
+            "fnb-02",
+            0.466
+          ],
+          [
+            "cnc-01",
+            0.433
+          ],
+          [
+            "cnc-06",
+            0.353
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD3",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1191,
+        "retrieved": [
+          [
+            "cnc-04",
+            0.514
+          ],
+          [
+            "fnb-01",
+            0.502
+          ],
+          [
+            "cnc-02",
+            0.479
+          ],
+          [
+            "jwl-06",
+            0.464
+          ],
+          [
+            "jwl-05",
+            0.447
+          ],
+          [
+            "cnc-01",
+            0.345
+          ],
+          [
+            "fnb-01",
+            0.415
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD4",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1282,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.578
+          ],
+          [
+            "cnc-06",
+            0.547
+          ],
+          [
+            "cnc-04",
+            0.448
+          ],
+          [
+            "fnb-01",
+            0.388
+          ],
+          [
+            "fnb-02",
+            0.367
+          ],
+          [
+            "cnc-01",
+            0.186
+          ],
+          [
+            "fnb-01",
+            0.302
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD5",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1240,
+        "retrieved": [
+          [
+            "fnb-04",
+            0.625
+          ],
+          [
+            "cnc-02",
+            0.545
+          ],
+          [
+            "fnb-01",
+            0.528
+          ],
+          [
+            "cnc-01",
+            0.469
+          ],
+          [
+            "fnb-06",
+            0.461
+          ],
+          [
+            "fnb-01",
+            0.386
+          ],
+          [
+            "cnc-06",
+            0.371
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD6",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1282,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.547
+          ],
+          [
+            "cnc-06",
+            0.502
+          ],
+          [
+            "fnb-01",
+            0.487
+          ],
+          [
+            "cnc-04",
+            0.457
+          ],
+          [
+            "fnb-02",
+            0.455
+          ],
+          [
+            "cnc-01",
+            0.224
+          ],
+          [
+            "fnb-01",
+            0.439
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD7",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1282,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.579
+          ],
+          [
+            "fnb-02",
+            0.508
+          ],
+          [
+            "cnc-06",
+            0.465
+          ],
+          [
+            "cnc-04",
+            0.443
+          ],
+          [
+            "fnb-01",
+            0.432
+          ],
+          [
+            "cnc-01",
+            0.176
+          ],
+          [
+            "fnb-01",
+            0.416
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD8",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1258,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.652
+          ],
+          [
+            "fnb-04",
+            0.448
+          ],
+          [
+            "fnb-01",
+            0.418
+          ],
+          [
+            "jwl-01",
+            0.397
+          ],
+          [
+            "fnb-01",
+            0.361
+          ],
+          [
+            "cnc-01",
+            0.337
+          ],
+          [
+            "fnb-02",
+            0.326
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD9",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1282,
+        "retrieved": [
+          [
+            "cnc-04",
+            0.371
+          ],
+          [
+            "cnc-02",
+            0.337
+          ],
+          [
+            "fnb-01",
+            0.298
+          ],
+          [
+            "jwl-01",
+            0.295
+          ],
+          [
+            "fnb-01",
+            0.262
+          ],
+          [
+            "cnc-01",
+            0.19
+          ],
+          [
+            "cnc-06",
+            0.26
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S9",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 6,
+        "words_sent": 977,
+        "retrieved": [
+          [
+            "jwl-04",
+            0.685
+          ],
+          [
+            "jwl-03",
+            0.561
+          ],
+          [
+            "jwl-05",
+            0.506
+          ],
+          [
+            "jwl-06",
+            0.453
+          ],
+          [
+            "jwl-02",
+            0.381
+          ],
+          [
+            "cnc-06",
+            0.131
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD11",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1186,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.613
+          ],
+          [
+            "jwl-04",
+            0.501
+          ],
+          [
+            "jwl-02",
+            0.489
+          ],
+          [
+            "cnc-04",
+            0.471
+          ],
+          [
+            "jwl-05",
+            0.436
+          ],
+          [
+            "cnc-06",
+            0.398
+          ],
+          [
+            "jwl-01",
+            0.397
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "CD12",
+        "kind": "cross_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 0.5,
+        "rr": 0.14285714285714285,
+        "n_chunks": 7,
+        "words_sent": 1290,
+        "retrieved": [
+          [
+            "cnc-04",
+            0.537
+          ],
+          [
+            "jwl-01",
+            0.425
+          ],
+          [
+            "cnc-03",
+            0.413
+          ],
+          [
+            "cnc-02",
+            0.412
+          ],
+          [
+            "fnb-01",
+            0.41
+          ],
+          [
+            "cnc-01",
+            0.41
+          ],
+          [
+            "cnc-06",
+            0.403
+          ]
+        ],
+        "diagnosis": [
+          {
+            "missing_doc": "jwl-02",
+            "best_chunk_rank": 20,
+            "best_chunk_score": 0.22,
+            "retrieval_cutoff_score": 0.403
+          }
+        ]
+      },
+      {
+        "id": "S1",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1251,
+        "retrieved": [
+          [
+            "fnb-05",
+            0.469
+          ],
+          [
+            "cnc-05",
+            0.309
+          ],
+          [
+            "fnb-02",
+            0.289
+          ],
+          [
+            "fnb-03",
+            0.254
+          ],
+          [
+            "cnc-06",
+            0.23
+          ],
+          [
+            "fnb-01",
+            0.219
+          ],
+          [
+            "fnb-04",
+            0.162
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S2",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1157,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.544
+          ],
+          [
+            "jwl-01",
+            0.487
+          ],
+          [
+            "jwl-01",
+            0.452
+          ],
+          [
+            "jwl-03",
+            0.333
+          ],
+          [
+            "fnb-03",
+            0.3
+          ],
+          [
+            "fnb-01",
+            0.24
+          ],
+          [
+            "fnb-04",
+            0.23
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S3",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1234,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.63
+          ],
+          [
+            "cnc-02",
+            0.511
+          ],
+          [
+            "cnc-06",
+            0.455
+          ],
+          [
+            "fnb-01",
+            0.445
+          ],
+          [
+            "cnc-04",
+            0.44
+          ],
+          [
+            "cnc-01",
+            0.371
+          ],
+          [
+            "fnb-01",
+            0.418
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S4",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1208,
+        "retrieved": [
+          [
+            "cnc-03",
+            0.761
+          ],
+          [
+            "cnc-05",
+            0.517
+          ],
+          [
+            "fnb-04",
+            0.485
+          ],
+          [
+            "cnc-01",
+            0.464
+          ],
+          [
+            "cnc-02",
+            0.451
+          ],
+          [
+            "cnc-06",
+            0.427
+          ],
+          [
+            "fnb-01",
+            0.42
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S5",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1065,
+        "retrieved": [
+          [
+            "jwl-02",
+            0.522
+          ],
+          [
+            "jwl-06",
+            0.42
+          ],
+          [
+            "jwl-05",
+            0.413
+          ],
+          [
+            "jwl-01",
+            0.353
+          ],
+          [
+            "jwl-01",
+            0.352
+          ],
+          [
+            "cnc-04",
+            0.315
+          ],
+          [
+            "jwl-04",
+            0.305
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S6",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1056,
+        "retrieved": [
+          [
+            "jwl-03",
+            0.627
+          ],
+          [
+            "jwl-01",
+            0.37
+          ],
+          [
+            "jwl-04",
+            0.346
+          ],
+          [
+            "jwl-01",
+            0.338
+          ],
+          [
+            "jwl-05",
+            0.328
+          ],
+          [
+            "jwl-06",
+            0.255
+          ],
+          [
+            "jwl-02",
+            0.247
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S7",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 6,
+        "words_sent": 856,
+        "retrieved": [
+          [
+            "jwl-05",
+            0.604
+          ],
+          [
+            "jwl-06",
+            0.429
+          ],
+          [
+            "jwl-03",
+            0.42
+          ],
+          [
+            "jwl-04",
+            0.402
+          ],
+          [
+            "jwl-01",
+            0.333
+          ],
+          [
+            "jwl-02",
+            0.307
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "S8",
+        "kind": "single_division",
+        "set": "main",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1179,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.595
+          ],
+          [
+            "fnb-05",
+            0.394
+          ],
+          [
+            "cnc-05",
+            0.366
+          ],
+          [
+            "fnb-01",
+            0.362
+          ],
+          [
+            "fnb-06",
+            0.352
+          ],
+          [
+            "fnb-01",
+            0.327
+          ],
+          [
+            "fnb-04",
+            0.286
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "NM1",
+        "kind": "near_miss",
+        "set": "extra",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1119,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.612
+          ],
+          [
+            "fnb-02",
+            0.607
+          ],
+          [
+            "fnb-01",
+            0.591
+          ],
+          [
+            "cnc-01",
+            0.565
+          ],
+          [
+            "fnb-04",
+            0.508
+          ],
+          [
+            "fnb-01",
+            0.414
+          ],
+          [
+            "jwl-01",
+            0.326
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "NM2",
+        "kind": "near_miss",
+        "set": "extra",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1121,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.668
+          ],
+          [
+            "jwl-01",
+            0.469
+          ],
+          [
+            "fnb-04",
+            0.392
+          ],
+          [
+            "fnb-01",
+            0.375
+          ],
+          [
+            "jwl-01",
+            0.374
+          ],
+          [
+            "cnc-01",
+            0.278
+          ],
+          [
+            "fnb-01",
+            0.326
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "VM1",
+        "kind": "vocabulary_mismatch",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.3333333333333333,
+        "n_chunks": 7,
+        "words_sent": 1173,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.562
+          ],
+          [
+            "fnb-02",
+            0.486
+          ],
+          [
+            "fnb-06",
+            0.484
+          ],
+          [
+            "fnb-04",
+            0.455
+          ],
+          [
+            "cnc-02",
+            0.412
+          ],
+          [
+            "cnc-01",
+            0.179
+          ],
+          [
+            "cnc-06",
+            0.303
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "VM2",
+        "kind": "vocabulary_mismatch",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 6,
+        "words_sent": 977,
+        "retrieved": [
+          [
+            "jwl-05",
+            0.503
+          ],
+          [
+            "jwl-02",
+            0.489
+          ],
+          [
+            "jwl-03",
+            0.417
+          ],
+          [
+            "jwl-06",
+            0.417
+          ],
+          [
+            "jwl-04",
+            0.334
+          ],
+          [
+            "cnc-06",
+            0.257
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "DIS1",
+        "kind": "distractor",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1175,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.542
+          ],
+          [
+            "fnb-04",
+            0.509
+          ],
+          [
+            "fnb-01",
+            0.418
+          ],
+          [
+            "fnb-01",
+            0.374
+          ],
+          [
+            "cnc-03",
+            0.349
+          ],
+          [
+            "fnb-03",
+            0.245
+          ],
+          [
+            "fnb-02",
+            0.233
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "DIS2",
+        "kind": "distractor",
+        "set": "breaker",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1175,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.511
+          ],
+          [
+            "fnb-04",
+            0.477
+          ],
+          [
+            "cnc-03",
+            0.463
+          ],
+          [
+            "cnc-01",
+            0.417
+          ],
+          [
+            "fnb-01",
+            0.339
+          ],
+          [
+            "fnb-01",
+            0.233
+          ],
+          [
+            "jwl-01",
+            0.178
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA1",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1181,
+        "retrieved": [
+          [
+            "cnc-02",
+            0.665
+          ],
+          [
+            "fnb-02",
+            0.597
+          ],
+          [
+            "fnb-02",
+            0.562
+          ],
+          [
+            "cnc-06",
+            0.492
+          ],
+          [
+            "jwl-01",
+            0.419
+          ],
+          [
+            "cnc-01",
+            0.218
+          ],
+          [
+            "fnb-04",
+            0.412
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA2",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1189,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.724
+          ],
+          [
+            "fnb-02",
+            0.623
+          ],
+          [
+            "cnc-02",
+            0.397
+          ],
+          [
+            "fnb-06",
+            0.395
+          ],
+          [
+            "jwl-01",
+            0.364
+          ],
+          [
+            "cnc-01",
+            0.172
+          ],
+          [
+            "fnb-04",
+            0.244
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA3",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1114,
+        "retrieved": [
+          [
+            "jwl-01",
+            0.566
+          ],
+          [
+            "jwl-01",
+            0.52
+          ],
+          [
+            "cnc-04",
+            0.446
+          ],
+          [
+            "fnb-06",
+            0.386
+          ],
+          [
+            "jwl-06",
+            0.366
+          ],
+          [
+            "jwl-05",
+            0.321
+          ],
+          [
+            "cnc-06",
+            0.328
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA4",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.16666666666666666,
+        "n_chunks": 7,
+        "words_sent": 1205,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.556
+          ],
+          [
+            "jwl-04",
+            0.535
+          ],
+          [
+            "cnc-04",
+            0.497
+          ],
+          [
+            "jwl-05",
+            0.468
+          ],
+          [
+            "cnc-02",
+            0.464
+          ],
+          [
+            "cnc-06",
+            0.454
+          ],
+          [
+            "cnc-01",
+            0.244
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA5",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1248,
+        "retrieved": [
+          [
+            "cnc-05",
+            0.527
+          ],
+          [
+            "cnc-02",
+            0.377
+          ],
+          [
+            "cnc-04",
+            0.374
+          ],
+          [
+            "fnb-05",
+            0.34
+          ],
+          [
+            "cnc-06",
+            0.337
+          ],
+          [
+            "fnb-04",
+            0.307
+          ],
+          [
+            "cnc-01",
+            0.193
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "PA6",
+        "kind": "partially_answerable",
+        "set": "partial",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1175,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.606
+          ],
+          [
+            "cnc-03",
+            0.548
+          ],
+          [
+            "fnb-04",
+            0.532
+          ],
+          [
+            "fnb-01",
+            0.423
+          ],
+          [
+            "fnb-01",
+            0.407
+          ],
+          [
+            "fnb-03",
+            0.324
+          ],
+          [
+            "jwl-01",
+            0.287
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND1",
+        "kind": "cross_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1119,
+        "retrieved": [
+          [
+            "cnc-01",
+            0.667
+          ],
+          [
+            "fnb-01",
+            0.607
+          ],
+          [
+            "fnb-02",
+            0.603
+          ],
+          [
+            "fnb-04",
+            0.597
+          ],
+          [
+            "fnb-02",
+            0.549
+          ],
+          [
+            "fnb-01",
+            0.441
+          ],
+          [
+            "jwl-01",
+            0.453
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND2",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 7,
+        "words_sent": 1153,
+        "retrieved": [
+          [
+            "fnb-02",
+            0.727
+          ],
+          [
+            "cnc-02",
+            0.696
+          ],
+          [
+            "fnb-02",
+            0.646
+          ],
+          [
+            "fnb-01",
+            0.503
+          ],
+          [
+            "cnc-06",
+            0.439
+          ],
+          [
+            "fnb-01",
+            0.338
+          ],
+          [
+            "cnc-01",
+            0.316
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND3",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 0.5,
+        "n_chunks": 7,
+        "words_sent": 1106,
+        "retrieved": [
+          [
+            "fnb-06",
+            0.629
+          ],
+          [
+            "jwl-01",
+            0.601
+          ],
+          [
+            "fnb-02",
+            0.563
+          ],
+          [
+            "fnb-02",
+            0.492
+          ],
+          [
+            "jwl-01",
+            0.411
+          ],
+          [
+            "fnb-01",
+            0.25
+          ],
+          [
+            "cnc-01",
+            0.14
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND4",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1099,
+        "retrieved": [
+          [
+            "jwl-06",
+            0.523
+          ],
+          [
+            "jwl-02",
+            0.471
+          ],
+          [
+            "jwl-05",
+            0.421
+          ],
+          [
+            "fnb-06",
+            0.413
+          ],
+          [
+            "fnb-02",
+            0.389
+          ],
+          [
+            "jwl-01",
+            0.369
+          ],
+          [
+            "cnc-06",
+            0.354
+          ]
+        ],
+        "diagnosis": []
+      },
+      {
+        "id": "IND5",
+        "kind": "single_division",
+        "set": "independent",
+        "division_recall": true,
+        "doc_recall": 1.0,
+        "rr": 1.0,
+        "n_chunks": 7,
+        "words_sent": 1165,
+        "retrieved": [
+          [
+            "fnb-03",
+            0.686
+          ],
+          [
+            "fnb-01",
+            0.465
+          ],
+          [
+            "cnc-05",
+            0.446
+          ],
+          [
+            "fnb-05",
+            0.441
+          ],
+          [
+            "cnc-03",
+            0.394
+          ],
+          [
+            "fnb-01",
+            0.385
+          ],
+          [
+            "cnc-01",
+            0.148
           ]
         ],
         "diagnosis": []

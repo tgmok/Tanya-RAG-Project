@@ -47,18 +47,44 @@ CONFIGS = {
     "tfidf_k5": {"kind": "tfidf", "k": 5,
                  "label": "THE BASELINE: keyword (TF-IDF) top-5 over the same chunks, non-AI retrieval"},
     "named_div_k5": {"kind": "named", "k": 5,
-                     "label": "keyword division classifier first, then top-5 inside the named divisions (Section 8 as written)"},
+                     "label": "keyword division classifier first, then top-5 inside the named divisions (the mitigation first proposed)"},
     "balanced_2x3": {"kind": "balanced", "per_division": 2,
                      "label": "top-2 from EACH division (6 chunks); division recall 100% by construction"},
     "full_context": {"kind": "full",
                      "label": "all 18 documents in every prompt, no retrieval; recall 100% by construction"},
+    # Three retrieval experiments, measured free and NOT shipped: adopting one would change the answers
+    # the final notebook run measured, and re-measuring them costs a live run. Each changes ONE thing.
+    "hybrid_k5": {"kind": "hybrid", "k": 5,
+                  "label": "EXPERIMENT: hybrid search, the shipped embeddings and the keyword baseline "
+                           "fused by reciprocal rank, top-5"},
+    "titled_k7": {"kind": "naive", "k": 7, "titled": True, "abstain_below": cfg.ABSTAIN_BELOW,
+                  "label": "CONTROL for follow_refs: the shipped retrieval with the same budget of 7 chunks"},
+    "follow_refs": {"kind": "follow", "k": 5, "extra": 2, "abstain_below": cfg.ABSTAIN_BELOW,
+                    "label": "EXPERIMENT: the shipped top-5, then up to 2 more chunks that share a reference id "
+                             "(a work order, form, contract) with them; a fixed step, the workflow "
+                             "alternative to an agent that searches again"},
 }
 SHIPPED = "shipped"
 BASELINE = "tfidf_k5"
-# The live run: the shipped system and THE baseline first, then the alternatives it was chosen over.
-DEFAULT_RAG_CONFIGS = [SHIPPED, BASELINE, "naive_k5", "titled_k5", "naive_k3", "parent_d3", "full_context"]
+# The live run: the shipped system and THE baseline, the comparison every headline number is about
+# (about $0.21 with the judge). Any other config is opt-in with --configs, each about $0.10-0.20 more.
+DEFAULT_RAG_CONFIGS = [SHIPPED, BASELINE]
+ALTERNATIVE_RAG_CONFIGS = ["naive_k5", "titled_k5", "naive_k3", "parent_d3", "full_context"]
+RRF_K = 60   # the usual reciprocal-rank-fusion constant; it damps the influence of rank 1
+# A reference id as the documents write them: CNC-WO-0442, CNC-TR-01, AB-2231, C-4471, MS-07.
+REFERENCE_ID = re.compile(r"\b[A-Z]{1,5}(?:-[A-Z0-9]+)+\b")
 
 BASELINE_SYSTEM = "Answer in one or two short sentences."
+# A partially answerable question should get its answerable half AND a plain statement that the rest
+# is not in the documents. These phrases are how an answer says so; gap_flagged() records it.
+GAP_PHRASES = ["do not say", "does not say", "don't say", "doesn't say", "do not mention", "does not mention",
+               "not mentioned", "do not specify", "does not specify", "not specified", "not stated",
+               "do not state", "does not state", "not given", "not provided", "not disclosed", "not named",
+               "not listed", "not recorded", "no information", "not included", "do not include",
+               "does not include", "not available", "not in the notes", "not in the documents", "unknown",
+               "no record", "do not provide", "does not provide", "do not indicate", "does not indicate",
+               "do not name", "does not name", "not identified", "do not identify", "does not identify",
+               "withheld", "not quantified", "not reported", "no figure", "no count"]
 GENERIC_DECLINE = ["do not say", "don't have", "do not have", "cannot", "can't", "unable",
                    "no information", "not aware", "not available", "i'm sorry", "i am sorry"]
 
@@ -90,6 +116,7 @@ def load_questions(include_extra=True, include_independent=True):
 
     for name, path, flag in (("extra", DATA_DIR / "extra_questions.json", include_extra),
                              ("breaker", DATA_DIR / "breaker_questions.json", include_extra),
+                             ("partial", DATA_DIR / "partial_questions.json", include_extra),
                              ("independent", DATA_DIR / "independent_questions.json", include_independent)):
         if flag and path.exists():
             for q in _load_json(path)["questions"]:
@@ -142,8 +169,8 @@ DIVISION_KEYWORDS = {"fnb": ["f&b", "fnb", "food", "beverage"], "cnc": ["cnc", "
 
 
 def named_divisions(question):
-    """Rule-based query classifier: which divisions does the question name? (Problem statement, Section 8:
-    'the query is classified by division with a keyword matching or a quick LLM check'.)"""
+    """Rule-based query classifier: which divisions does the question name? (the problem statement's first
+    proposed mitigation: 'the query is classified by division with a keyword matching or a quick LLM check'.)"""
     t = question.lower()
     return [d for d, ks in DIVISION_KEYWORDS.items() if any(k in t for k in ks)]
 
@@ -161,8 +188,41 @@ def _scores_and_chunks(config, question, idx):
         q = t["vectorizer"].transform([question]).toarray()[0]
         n = np.linalg.norm(q)
         return idx["plain"]["chunks"], t["matrix"] @ (q / n if n else q)
-    base = idx["titled"] if spec.get("titled") else idx["plain"]
+    if spec["kind"] == "hybrid":
+        # Reciprocal rank fusion: each chunk scores 1/(60 + its rank) in each list, summed. Ranks,
+        # not raw scores, because cosine and TF-IDF scores live on different scales.
+        _, dense = _scores_and_chunks(SHIPPED, question, idx)
+        chunks, sparse = _scores_and_chunks(BASELINE, question, idx)
+        fused = np.zeros(len(chunks))
+        for scores in (dense, sparse):
+            ranks = np.empty(len(scores), dtype=int)
+            ranks[np.argsort(-scores)] = np.arange(1, len(scores) + 1)
+            fused += 1.0 / (RRF_K + ranks)
+        return chunks, fused
+    # "follow" ranks exactly as the shipped retrieval does; its extra step is in retrieve_config
+    base = idx["titled"] if (spec.get("titled") or spec["kind"] == "follow") else idx["plain"]
     return base["chunks"], base["matrix"] @ base["embedder"].embed([question])[0]
+
+
+def follow_references(hits, chunks, scores, extra):
+    """The fixed second step of `follow_refs`: collect the reference ids the retrieved notes mention,
+    then add up to `extra` chunks that are not yet retrieved and share the most of those ids (ties
+    broken by similarity to the question). No model decides anything, so the path is the same for
+    every question and can be tested; an agent would instead ask the model whether its evidence is
+    complete, which is the judgement that failed in the silent failures."""
+    have = {(h["doc_id"], h["text"]) for h in hits}
+    ids = {m for h in hits for m in REFERENCE_ID.findall(h["text"])}
+    if not ids:
+        return hits
+    shared = []
+    for i, c in enumerate(chunks):
+        if (c["doc_id"], c["text"]) in have:
+            continue
+        n = len(ids & set(REFERENCE_ID.findall(c["text"])))
+        if n:
+            shared.append((n, float(scores[i]), i))
+    shared.sort(key=lambda t: (-t[0], -t[1]))
+    return hits + [{**chunks[i], "score": sc, "followed": n} for n, sc, i in shared[:extra]]
 
 
 def retrieve_config(config, question, idx):
@@ -181,6 +241,8 @@ def retrieve_config(config, question, idx):
     chunks, scores = _scores_and_chunks(config, question, idx)
     order = np.argsort(-scores)[:spec["k"]]
     hits = [{**chunks[i], "score": float(scores[i])} for i in order]
+    if kind == "follow":
+        return follow_references(hits, chunks, scores, spec["extra"])
     if kind == "parent":
         best = {}
         for h in hits:
@@ -212,6 +274,16 @@ def _diagnose_missing(q, config, hits, idx):
     return diag
 
 
+def reciprocal_rank(hits, need_docs):
+    """1 / the position of the first retrieved chunk from a needed document; 0 if none was retrieved.
+    Averaged over questions this is MRR (Class 2's retrieval metrics, beside recall@k): recall asks
+    WHETHER the evidence arrived, MRR asks how near the top the first of it sits."""
+    for pos, h in enumerate(hits, 1):
+        if h["doc_id"] in need_docs:
+            return 1.0 / pos
+    return 0.0
+
+
 def recall_for_question(q, config, idx):
     hits = retrieve_config(config, q["question"], idx)
     got_div = {h["division"] for h in hits}
@@ -221,6 +293,8 @@ def recall_for_question(q, config, idx):
         "id": q["id"], "kind": q["kind"], "set": q["set"],
         "division_recall": set(q["expected_divisions"]) <= got_div,
         "doc_recall": (len(need_docs & got_docs) / len(need_docs)) if need_docs else None,
+        # no ranking to speak of when every document is sent in corpus order
+        "rr": reciprocal_rank(hits, need_docs) if need_docs and CONFIGS[config]["kind"] != "full" else None,
         "n_chunks": len(hits),
         "words_sent": sum(len(h["text"].split()) for h in hits),
         "retrieved": [(h["doc_id"], round(h["score"], 3)) for h in hits],
@@ -236,11 +310,14 @@ def summarise_recall(records):
         return (sum(1 for r in rs if r[key]) / len(rs)) if rs else None
 
     docs = [r["doc_recall"] for r in scored if r["doc_recall"] is not None]
+    rrs = [r["rr"] for r in scored if r.get("rr") is not None]
     return {
         "n_scored": len(scored), "n_cross": len(cross),
         "division_recall_cross": rate(cross, "division_recall"),
         "division_recall_all": rate(scored, "division_recall"),
         "avg_doc_recall": (sum(docs) / len(docs)) if docs else None,
+        "all_docs_share": (sum(1 for d in docs if d == 1.0) / len(docs)) if docs else None,
+        "mrr": (sum(rrs) / len(rrs)) if rrs else None,
         "avg_chunks": (sum(r["n_chunks"] for r in scored) / len(scored)) if scored else None,
         "avg_words": (sum(r["words_sent"] for r in scored) / len(scored)) if scored else None,
     }
@@ -263,6 +340,13 @@ def key_fact_check(answer, facts):
 
 def abstained_grounded(answer):
     return "do not say" in (answer or "").lower()
+
+
+def gap_flagged(answer):
+    """Does the answer say that part of what was asked is not in the documents? For a partially
+    answerable question this is the honest behaviour; silence about the missing half is not."""
+    body = re.split(r"cited:", answer or "", flags=re.I)[0].lower()
+    return any(p in body for p in GAP_PHRASES)
 
 
 def declined_generic(answer):
@@ -329,18 +413,19 @@ def run_rag_question(client, q, config, idx, gen_model, judge_model, do_judge, a
     # The shipped config carries the app's own threshold, whatever --abstain-below says: its row
     # must describe the app. Every other config uses the command-line threshold (default: none).
     threshold = CONFIGS[config].get("abstain_below", abstain_below)
-    handoff = (threshold is not None and CONFIGS[config]["kind"] in ("naive", "parent", "balanced", "named")
+    handoff = (threshold is not None and CONFIGS[config]["kind"] in ("naive", "parent", "balanced", "named", "follow")
                and hits and hits[0]["score"] < threshold)
     if handoff:
         answer, tok = guardrails.handoff_message(hits[0]["score"], threshold), {"in": 0, "out": 0}
     else:
-        context = "\n\n".join(f"[{i+1}] ({h['doc_id']}) {h['text']}" for i, h in enumerate(hits))
+        context = rag_core.format_notes(hits)   # the app's own prompt builder, strip included
         answer, tok = _generate(client, f"NOTES:\n{context}\n\nQUESTION: {q['question']}",
                                 system=rag_core.GROUNDED, model=gen_model, max_new_tokens=400)
     abst = abstained_grounded(answer)
     rec = {"id": q["id"], "kind": q["kind"], "set": q["set"], "question": q["question"],
            "answer": answer, "abstained": abst, "citation_valid": citation_valid(answer, hits),
-           "retrieved": [h["doc_id"] for h in hits], "notes": "\n".join(h["text"] for h in hits),
+           "retrieved": [h["doc_id"] for h in hits],
+           "notes": "\n\n".join(f"({h['doc_id']}) {h['text']}" for h in hits),   # as the judge sees them
            "tokens_in": tok["in"], "tokens_out": tok["out"], "handoff": bool(handoff),
            # Were ALL the documents this question needs in front of the model? The evidence side of
            # "should it have declined?" (see aggregate), and the detector for the silent failure:
@@ -353,6 +438,8 @@ def run_rag_question(client, q, config, idx, gen_model, judge_model, do_judge, a
     else:
         ok, missing = key_fact_check(answer, q["facts"])
         rec.update({"key_fact_pass": ok, "missing_facts": missing, "over_abstained": abst})
+        if q["kind"] == "partially_answerable":
+            rec["gap_flagged"] = (not abst) and gap_flagged(answer)
     if do_judge and not abst:
         rec.update(judge_answer(client, q, hits, answer, judge_model))
     return rec
@@ -382,7 +469,7 @@ def aggregate(records):
     def rate(rs, fn):
         return (sum(1 for r in rs if fn(r)) / len(rs)) if rs else None
 
-    # Abstention as the TWO numbers the watch-outs (Section 7) ask for: how often it declines,
+    # Abstention as the TWO numbers the course watch-outs ask for: how often it declines,
     # and whether the questions it declined were ones it would have got wrong. "Would have got
     # wrong" is judged on evidence, not guessed: a decline is RIGHT when the question is out of
     # scope, or when retrieval did not put every document the question needs in front of the
@@ -390,7 +477,7 @@ def aggregate(records):
     # there. Declines where the needed documents are not recorded (some added sets) are left out.
     declines = [r for r in rag_records if r["abstained"]]
     judgeable = [r for r in declines if r["kind"] == "out_of_scope" or r.get("evidence_retrieved") is not None]
-    # The silent failure (Section 8): it ANSWERED an answerable question although the documents
+    # The silent failure: it ANSWERED an answerable question although the documents
     # that question needs were not retrieved -- the shape of every confident hallucination found.
     answered_scored = [r for r in scored if "abstained" in r and not r["abstained"]
                        and r.get("evidence_retrieved") is not None]
@@ -417,6 +504,10 @@ def aggregate(records):
         "figures_supported": rate(verifiable, lambda r: not r["figures_unsupported"]),
         "figures_n": len(verifiable),
         "handoff": rate(rag_records, lambda r: r.get("handoff", False)),
+        # partially answerable set: of the answers that did not decline outright, how many said
+        # the rest of the question is not in the documents
+        "gap_flagged": rate([r for r in records if "gap_flagged" in r and not r["abstained"]],
+                            lambda r: r["gap_flagged"]),
         "avg_tokens_in": sum(r["tokens_in"] for r in records) / n,
         "avg_tokens_out": sum(r["tokens_out"] for r in records) / n,
         "judge_tokens_in": sum(r.get("judge_tokens", {}).get("in", 0) for r in records),
@@ -428,22 +519,77 @@ def aggregate(records):
 # Judge spot-check (human agreement)
 # ---------------------------------------------------------------------------
 
-def make_spotcheck(records, out_dir, n=6, seed=7):
-    """Sample judged answers (every judge FAIL first, up to 2, then random passes) for you
-    to grade by hand. Fill in human_faithful (true/false) then run --agreement."""
+def make_spotcheck(records, out_dir, n=10, max_fails=4, seed=7):
+    """Sample judged answers for you to grade by hand: the judge's FAILs first (up to max_fails, so
+    precision can be measured at all), then random passes (so recall can: a missed unfaithful answer
+    hides among the passes). Writes results/judge_spotcheck.json, where you set human_faithful to
+    true/false, and results/judge_spotcheck_to_grade.md, the same items laid out for reading.
+    Grade from the notes and the answer alone, before looking at the judge's verdict."""
     judged = [r for r in records if r.get("judge_faithful") is not None]
-    fails = [r for r in judged if r["judge_faithful"] is False][:2]
+    fails = [r for r in judged if r["judge_faithful"] is False][:max_fails]
     passes = [r for r in judged if r["judge_faithful"] is True]
     random.Random(seed).shuffle(passes)
     items = [{"id": r["id"], "question": r["question"], "notes": r["notes"], "answer": r["answer"],
               "judge_faithful": r["judge_faithful"], "judge_why": r.get("judge_why", ""),
               "human_faithful": None} for r in (fails + passes)[:n]]
     (out_dir / "judge_spotcheck.json").write_text(json.dumps(items, indent=2, ensure_ascii=False), encoding="utf-8")
+    write_spotcheck_md(items, out_dir)
     return items
 
 
+def _labelled_notes(notes):
+    """Split "(doc_id) text" notes and head each with its document id and title, numbering the parts
+    when one document arrives as two overlapping chunks, so a grader can tell what came from where."""
+    titles = {d: rag_core.doc_title({"text": (DATA_DIR / p).read_text(encoding="utf-8"), "doc_id": d})
+              for d, p in DOC_ID_TO_PATH.items()}
+    blocks = []
+    for block in notes.split("\n\n"):
+        m = re.match(r"\((\S+?)\) (.*)", block, re.S)
+        blocks.append((m.group(1), m.group(2)) if m else ("?", block))
+    total = {d: sum(1 for b, _ in blocks if b == d) for d, _ in blocks}
+    seen, out = {}, []
+    for k, (doc, text) in enumerate(blocks, 1):
+        seen[doc] = seen.get(doc, 0) + 1
+        part = f", part {seen[doc]} of {total[doc]}" if total[doc] > 1 else ""
+        # a chunk that starts at its document's "# Title" line would render as one giant heading
+        text = re.sub(r"^\s*#", r"\\#", text)
+        out += [f"**Note {k}: {doc} · {titles.get(doc, doc)}{part}**", "", "> " + text, ""]
+    return out
+
+
+def write_spotcheck_md(items, out_dir):
+    """The spot-check laid out for reading: question, answer, then every note headed by its document."""
+    L = ["# Judge spot-check: grade these by hand (temporary file)", "",
+         "For each item, read the answer, then check each of its claims against the notes below it. "
+         "**Yes** = every claim is supported by the notes. **No** = at least one claim is not (say which). "
+         "Being right about the world does not count: only what the notes say. Decide before you open "
+         "the judge's verdict at the end of the item.", "",
+         "Tip: the answer's `Cited:` line names the documents it used; start with those notes.", "",
+         "Reply in one line, for example: `1 yes, 2 no (invents a date), 3 yes, ...`", ""]
+    for k, i in enumerate(items, 1):
+        L += [f"## {k}. {i['id']}", "", f"**Question:** {i['question']}", "", f"**Answer:** {i['answer']}", "",
+              "### Notes the model was given", ""] + _labelled_notes(i["notes"]) + [
+              f"<details><summary>The judge's verdict (open after grading)</summary>{i['judge_faithful']}: "
+              f"{i['judge_why']}</details>", "", "---", ""]
+    (out_dir / "judge_spotcheck_to_grade.md").write_text("\n".join(L), encoding="utf-8")
+
+
+def cohens_kappa(pairs):
+    """Cohen's kappa for two raters' true/false labels: agreement corrected for the agreement two
+    raters would reach by chance given how often each says true (Class 2: align the judge to people
+    and track kappa, not raw agreement, which flatters a judge on a set where most answers pass).
+    None when chance agreement is total (both raters gave one label only), where kappa is undefined."""
+    n = len(pairs)
+    if not n:
+        return None
+    po = sum(1 for a, b in pairs if a == b) / n
+    pa, pb = sum(1 for a, _ in pairs if a) / n, sum(1 for _, b in pairs if b) / n
+    pe = pa * pb + (1 - pa) * (1 - pb)
+    return None if pe == 1 else (po - pe) / (1 - pe)
+
+
 def agreement(out_dir=RESULTS_DIR):
-    """Compare the judge against hand labels. Section 7 of the watch-outs: a judge is a
+    """Compare the judge against hand labels. The course watch-outs: a judge is a
     component of the system, not a source of truth, so it needs precision and recall against
     labels a person assigned -- not just an agreement percentage, which flatters any judge on
     a set where most answers are fine.
@@ -454,6 +600,8 @@ def agreement(out_dir=RESULTS_DIR):
     A judge that never flags anything scores 0 recall here, however high its agreement.
     """
     path = out_dir / "judge_spotcheck.json"
+    if not path.exists():      # the spot-check files are temporary: deleted once the grades are recorded
+        return None
     items = json.loads(path.read_text(encoding="utf-8"))
     graded = [i for i in items if isinstance(i.get("human_faithful"), bool)]
     if not graded:
@@ -467,15 +615,19 @@ def agreement(out_dir=RESULTS_DIR):
     tn = sum(1 for i in graded if i["judge_faithful"] and i["human_faithful"])
     prec = tp / (tp + fp) if (tp + fp) else None
     rec = tp / (tp + fn) if (tp + fn) else None
+    kappa = cohens_kappa([(i["judge_faithful"], i["human_faithful"]) for i in graded])
 
     def pct(x):
         return "n/a" if x is None else f"{x:.0%}"
 
     lines = ["# Judge spot-check: the judge against hand labels", "",
              f"Graded by hand: {len(graded)} of {len(items)} sampled answers. "
-             f"Raw agreement: {agree}/{len(graded)} ({agree/len(graded):.0%}).", "",
+             f"Raw agreement: {agree}/{len(graded)} ({agree/len(graded):.0%}). "
+             f"Cohen's kappa: {'undefined (one label only)' if kappa is None else f'{kappa:.2f}'}.", "",
              "Agreement alone flatters a judge on a set where most answers are fine, so what "
-             "matters is whether it catches the bad ones. Positive class = **unfaithful**.", "",
+             "matters is whether it catches the bad ones. Positive class = **unfaithful**. The sample "
+             "puts the judge's fails first on purpose (up to 4), so kappa and precision describe this "
+             "sample, not the whole run; with 10 answers, one disagreement moves kappa a lot.", "",
              "| | person says unfaithful | person says faithful |", "|---|---|---|",
              f"| **judge says unfaithful** | {tp} (caught) | {fp} (false alarm) |",
              f"| **judge says faithful** | {fn} (**missed**) | {tn} |", "",
@@ -485,11 +637,12 @@ def agreement(out_dir=RESULTS_DIR):
         lines += ["Caveat: no answer in this sample was judged unfaithful by hand, so recall is "
                   "undefined and this sample says nothing about what the judge misses. Grade more "
                   "answers, weighted towards ones you suspect, before trusting it.", ""]
-    lines += ["| id | judge | you | judge's reason |", "|---|---|---|---|"]
+    lines += ["| id | judge says faithful | I say faithful | judge's reason | my reason |", "|---|---|---|---|---|"]
     for i in graded:
-        lines.append(f"| {i['id']} | {i['judge_faithful']} | {i['human_faithful']} | {i['judge_why']} |")
+        lines.append(f"| {i['id']} | {i['judge_faithful']} | {i['human_faithful']} | {i['judge_why'] or '-'} | "
+                     f"{i.get('human_note') or '-'} |")
     (out_dir / "judge_agreement.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    return agree, len(graded)
+    return agree, len(graded), kappa
 
 
 # ---------------------------------------------------------------------------
@@ -539,7 +692,7 @@ def _strip_leaked(question, leaked_alts):
 
 
 def leakage_check(questions, idx, config=SHIPPED):
-    """Watch-outs section 6: "does the input already contain the answer? Strip it, and report
+    """The course watch-outs: "does the input already contain the answer? Strip it, and report
     the score before and after." Free (no model).
 
     Two kinds of leakage matter for a retrieval evaluation, and they fail differently:

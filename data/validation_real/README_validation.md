@@ -1,6 +1,6 @@
-# Real-world validation slices (Section 6)
+# Real-world validation slices
 
-Answers the watch-outs' Section 6 requirement: *"validate a handful of cases against
+Answers the course watch-outs' data requirement: *"validate a handful of cases against
 something real, or state plainly what your synthetic set cannot tell you."* One small
 slice per division, kept separate from the main corpus.
 
@@ -62,7 +62,7 @@ only links back to Kaggle), so this one was downloaded by you directly from Kagg
 rather than pulled programmatically.
 
 **The raw `jewelry.csv` (~13.6MB, 95,911 rows) is deliberately NOT committed to this
-repo** -- per the watch-outs' Section 6 guidance for data you can't freely redistribute:
+repo** -- per the course watch-outs' guidance for data you can't freely redistribute:
 "ship trained weights, a small sample, and a README that says exactly this." Only the
 hand-picked 8-row sample and the aggregate price-distribution table (computed from the
 full file) are committed, in `jewellery_retail_transactions.md`.
@@ -73,7 +73,7 @@ committed numbers exactly.
 **This slice is a different shape than the other two**, and that's stated explicitly in
 `jewellery_retail_transactions.md`: it's real transaction data (product, price,
 category, metal, gem), not narrative document text -- so it validates *pricing
-plausibility* (`jewellery/gold_pricing_policy.md`, `jewellery/client_quote_template.md`)
+plausibility* (`jewellery/jwl-02_gold_pricing_policy.md`, `jewellery/jwl-06_client_quote_template.md`)
 rather than whether TGMOK's jewellery SOPs read like real internal documents. One
 concrete finding worth keeping in your write-up: TGMOK's example custom quote
 ($2,029.92) sits well above the real median gold-pendant price ($136.85) -- expected

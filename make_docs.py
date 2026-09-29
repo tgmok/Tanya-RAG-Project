@@ -21,6 +21,8 @@ def facts_text(groups):
 def graded_by(q):
     if q["kind"] == "out_of_scope":
         return "abstention (code)"
+    if q["kind"] == "partially_answerable":
+        return "key facts on the answerable part (code), says the rest is missing (code), faithfulness (judge)"
     return "key facts (code), citation (code), faithfulness (judge)"
 
 
@@ -33,14 +35,18 @@ def eval_set_doc(qs):
          "`data/generation_prompts.md`. The key facts in `data/eval_key_facts.json` were added afterwards, derived from those "
          "summaries and verified against the source documents by `self_test.py`; one (CD4) was corrected "
          "when that self-test showed it demanded an id the question already gives.", "",
-         "Honest limit: the main, near-miss and breaker sets were all written by the author of the "
+         "Question types follow the A1 break-it categories: two documents needed (the cross-division "
+         "questions), vocabulary mismatch, distractor, and absent but plausible (which tests abstention), "
+         "plus two that probe invention harder: false premise, and partially answerable.", "",
+         "Honest limit: the main, false-premise, break-it and partially answerable sets were all written by the author of the "
          "documents (or by the assistant that built them). Only the `independent` set, if present, was not. "
          "Results are reported per set.", ""]
-    order = [("main", "cross_division", "Main: cross-division (11)"),
-             ("main", "single_division", "Main: single-division (9)"),
-             ("main", "out_of_scope", "Main: out of scope, one per division (3)"),
-             ("extra", "near_miss", "Near-miss: plausible-but-wrong premise"),
-             ("breaker", None, "Breakers: vocabulary mismatch, distractor, absent-but-plausible"),
+    order = [("main", "cross_division", "Main: two documents needed, across divisions (11)"),
+             ("main", "single_division", "Main: single division (9)"),
+             ("main", "out_of_scope", "Main: absent but plausible, one per division (3) -- tests abstention"),
+             ("extra", "near_miss", "False premise: the question assumes something the documents contradict (2)"),
+             ("breaker", None, "Break-it: vocabulary mismatch, distractor, absent but plausible (6)"),
+             ("partial", None, "Partially answerable: one part in the documents, one part in none (6)"),
              ("independent", None, "Independent: written by someone who has not seen the project")]
     for set_name, kind, title in order:
         rows = [q for q in qs if q["set"] == set_name and (kind is None or q["kind"] == kind)]
