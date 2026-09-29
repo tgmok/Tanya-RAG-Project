@@ -40,8 +40,8 @@ python cost_model.py                     # measured cost per successful answer
 python demo_citation_fix.py              # the bug from the screen recordings, re-run
 ```
 
-Any other retrieval setup can join the live run, roughly $0.10 to $0.20 each: for example
-`python run_eval.py --run --configs shipped tfidf_k5 follow_refs`.
+The default live run compares the app, the version before reference-following and the keyword
+baseline (about $0.31). Any other retrieval setup can join it with `--configs`, roughly $0.10 to $0.20 each.
 
 The key is read from `OPENROUTER_API_KEY`, or from an untracked `OpenRouter_api.txt` in this
 folder (it is in `.gitignore`), or asked for with a hidden prompt. It is never written anywhere.
@@ -117,7 +117,8 @@ fixed path runs for every question, so this is a workflow, not an agent.
 ```mermaid
 flowchart TD
     Q(["a question"]) --> R["retrieve the top-5 notes<br/>title-prefixed embeddings, run locally"]
-    R --> H{"best score<br/>below 0.45?"}
+    R --> FR["follow references: add up to 2 notes<br/>sharing a work-order or contract id"]
+    FR --> H{"best score<br/>below 0.45?"}
     H -->|yes| P["handed to a person<br/>no model call"]
     H -->|no| S["strip any sentence<br/>aimed at the model"]
     S --> G["gpt-4o-mini answers ONLY from the notes,<br/>cites real ids, or says 'The documents do not say.'"]
@@ -134,8 +135,9 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
 
 - **Retrieval, free:** did the retrieved notes cover every division and every document a question
   needs (recall@k), and how near the top was the first of them (MRR)? Twelve setups, including the
-  shipped one, the keyword baseline, "all documents in the prompt" and two experiments not shipped
-  (hybrid search, and following reference ids), with every miss diagnosed by rank and score.
+  shipped one (with reference-following), the version before it, the keyword baseline, "all
+  documents in the prompt" and hybrid search (measured, not shipped), with every miss diagnosed by
+  rank and score.
 - **The baseline is keyword search over the same chunks** (`tfidf_k5`), a non-AI method. A model
   with no retrieval is not the baseline: it has never seen these fictional documents, so it scores
   near zero whatever the retrieval does, and teaches nothing.
@@ -162,19 +164,16 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
 
 ## Limits we found
 
-- **Faithfulness is near the 85% target, not safely above it: 80% in the notebook run, 89% in
-  the evaluation run.** Answer correctness was 80% both times. The keyword baseline was more
-  faithful (95%, then 100%) and less correct (75%), so embeddings earn their place on coverage and
-  correctness, not on faithfulness (`results/notebook_run.md`, `results/summary.md`). The judge
-  agreed with my own grading on 10 of 10 answers (`results/judge_agreement.md`).
-- **Titling fixes the division, not the document.** The shipped retrieval covers every needed
-  division on all 11 cross-division questions (plain top-5: 91%), but document recall stays at
-  88% either way. It still misses a needed document on 5 of 37 scored questions; three are the
-  same CNC tooling spec (`cnc-01`), which for CD1 ranks #8 of 21 chunks at 0.432 against a 0.477
-  cutoff.
-- **The keyword baseline beats embeddings on document recall** (91% vs 88%). The non-AI baseline
-  is not a pushover here, and the answer-level comparison is what decides whether embeddings earn
-  their place.
+- **Faithfulness is one answer short of the 85% target: 84% in the final run.** Answer
+  correctness is 85% (73% on cross-division questions). The keyword baseline is more faithful
+  (100%) and less correct (75%, 55% cross-division), so embeddings earn their place on coverage and
+  correctness, not on faithfulness (`results/summary.md`). The judge agreed with my own grading on
+  20 of 20 answers across two checks (`results/judge_agreement.md` holds the final one).
+- **Titling fixed the division, not the document; reference-following fixed most documents.**
+  Title-prefixed chunks cover every needed division on all 11 cross-division questions (plain
+  top-5: 91%) but left document recall at 88%, below the keyword baseline's 91%. Following the
+  reference ids in the retrieved notes lifted it to 98%: the shipped retrieval misses a needed
+  document on 1 of 37 scored questions (CD12, whose `jwl-02` is two links away), against 5 before.
 - **The mitigation first proposed in the problem statement hurts.** Classifying the query by
   division before retrieving cuts cross-division recall to 45%, against 91% for the same
   retrieval without it, so it is not used.
@@ -182,19 +181,22 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
   6 unanswerable questions and wrongly hands off 1 of 37 answerable ones; answerable and
   plausible-but-absent questions overlap in score. It is a backstop, not the defence.
 - **Confabulation when retrieval misses** (NIST AI 600-1's word for confidently stated wrong
-  content). An earlier live run found the model answering anyway when the needed document was not
-  retrieved, including one invented component. The figure check catches invented numbers, dates
-  and ids, but not an invented claim with none in it; the silent-failure count is how that shape is
-  detected.
+  content). Earlier runs found the model answering anyway when the needed document was not
+  retrieved, including one invented component; reference-following cut those answers from 3 to 1
+  in the final run. The figure check catches invented numbers, dates and ids, but not an invented
+  claim with none in it; the silent-failure count is how that shape is detected.
+- **Citing a document it was not given.** With more notes, the model sometimes cites a document
+  that the notes only mention by its code (all three unfaithful answers in the final run). The
+  evaluation's citation check catches every case; it cost reference-following one faithful answer
+  (89% -> 84%).
 - **Uploads are untrusted input.** A pattern scan routes a suspicious upload to a person instead of
   the automatic classifier (OWASP LLM01:2026), with no false positives on the 18 real documents. If
   a person files it anyway, matching sentences are stripped from its notes before any prompt and
   the reader is warned. That is a tripwire, not a fix (an attacker can rephrase); what makes an
   injection survivable is that Tanya has no tools and no way to send anything out.
-- **Retrieval still misses documents that code could reach.** Following the reference ids in the
-  retrieved notes cuts the questions missing a needed document from 5 of 37 to 1, and hybrid search
-  lifts document recall from 88% to 93% (`results/retrieval_recall.md`). Neither is shipped: that
-  would change the answers the final run measured, so each waits for a live run.
+- **Hybrid search is measured, not shipped.** Fusing keyword and embedding rankings lifts
+  document recall from 88% to 93% (`results/retrieval_recall.md`); it is the next change to test on
+  answers.
 - **The corpus is synthetic and was written by an LLM.** The validation slices are small (8 records
   each), and the jewellery one checks pricing plausibility only.
 - **Not everything is independent.** The designed questions and key facts come from the same hand
@@ -208,13 +210,13 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
 |---|---|---|
 | 1 | sorting vs making; check a machine that makes | answering is making, so every answer is checked (code checks, judge, a person); routing an upload is sorting with no labelled uploads to train on, so the model suggests and a person confirms |
 | 2 | the stack, build vs buy by five factors | layer-by-layer own/rent table (`docs/TRADEOFF_ANALYSIS.md`): own data, orchestration and evaluation, rent the model |
-| 2 | RAG: chunking, top-k, hybrid search, contextual retrieval, long context | chunk sweep; top-k; title-prefixed chunks (contextual retrieval, shipped); hybrid search with reciprocal rank fusion (measured); `full_context` priced against top-5 |
+| 2 | RAG: chunking, top-k, hybrid search, contextual retrieval, long context | chunk sweep; top-k; title-prefixed chunks (contextual retrieval, shipped); hybrid search with reciprocal rank fusion (measured); `full_context` priced against the shipped retrieval |
 | 2 | evals: L1 assertions, L2 judge aligned to people, recall@k and MRR | key-fact and citation checks in code; a judge from another model family with precision, recall and kappa against hand labels; recall and MRR per config |
-| 3 | fix the eval set first, change one thing, measure again | answer key frozen before any run; every retrieval change measured on the full set, including the ones that failed (division classifier) and the ones not shipped |
+| 3 | fix the eval set first, change one thing, measure again | answer key frozen before any run; every retrieval change measured on the full set, including the one that failed (division classifier); reference-following adopted only after a same-run before/after on answers |
 | 3 | structured output: declare the schema, then verify it | the upload classifier must reply in one JSON shape; code parses and checks it, retries once, then a person chooses; the app shows the raw JSON |
 | 3 | token economics | calls x tokens x price from the real prompts (`results/cost_estimate.md`) |
-| 4 | agent or workflow; the ground-truth test | a workflow on purpose: fixed steps, one call, no tools; the one variable step (search again after a miss) is measured as code (`follow_refs`) |
-| 5 | cost per successful task, break-even, fixed costs, kill condition | `cost_model.py`: 20% break-even against answering by hand, measured 80%, $181/month layer 3, written kill condition |
+| 4 | agent or workflow; the ground-truth test | a workflow on purpose: fixed steps, one call, no tools; the one variable step (search again after a miss) is a fixed code rule, reference-following |
+| 5 | cost per successful task, break-even, fixed costs, kill condition | `cost_model.py`: 20% break-even against answering by hand, measured 85%, $181/month layer 3, written kill condition |
 | 6 | the 2x2 (visible? undoable?), human in the loop as window, evidence and authority | retrieval and generation monitored and verified; the one write gated; the app shows the evidence under every answer |
 | 6 | OWASP 2026 red-team categories, confabulation, the lethal trifecta, PDPA | `results/guardrails.md`: 39 cases and every category; two legs of the trifecta, not three; PDPA named as the binding floor |
 
@@ -239,13 +241,13 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
 - [x] RAG over 18 synthetic documents in three divisions; answers cite real document ids, and say
   "The documents do not say." when the notes do not
 - [x] Keyword search over the same chunks as the baseline; 200-word chunks chosen by a sweep from 25 to 300
-- [x] Correctness and faithfulness on the same 20 questions, two runs: 80% correct both times (baseline
-  75%); faithful 80%, then 89% (baseline 95%, then 100%)
-- [x] The judge checked against my own grading: 10 of 10 agree (`results/judge_agreement.md`)
+- [x] Correctness and faithfulness on the same 20 questions, final run: 85% correct (baseline 75%),
+  84% faithful (baseline 100%)
+- [x] The judge checked against my own grading twice: 20 of 20 agree (`results/judge_agreement.md`)
 - [x] 43 questions in five sets, including 6 partially answerable: none invented the missing half
 - [x] Guardrails in code, 39 of 39 cases, every Class 6 red-team category addressed
-- [x] Cost per successful answer $4.00 at 80%, break-even 20% against answering by hand, a kill condition
-- [x] Two retrieval fixes measured and not shipped: reference-following (misses 5 of 37 -> 1), hybrid
-  search (document recall 88% -> 93%)
+- [x] Cost per successful answer $3.50 at 85%, break-even 20% against answering by hand, a kill condition
+- [x] Reference-following adopted after a same-run before/after: misses 5 of 37 -> 1, correctness
+  80% -> 85%; hybrid search measured, not adopted (document recall 88% -> 93%)
 - [x] Trade-off analysis in `docs/TRADEOFF_ANALYSIS.md`, under 1,200 words
 - [ ] Demo video and NTULearn submission

@@ -9,8 +9,9 @@ Reads the fixed, hand-verified corpus in data/<division>/ and writes only to dat
 which the evaluation never reads. Settings come from config.py; the code-side mitigations
 (citation checks, confidence hand-off, token cap, injection scan and strip) live in guardrails.py.
 
-This is a workflow, not an agent (Class 4): the code fixes every step, the model is called once
-per question, and it has no tools, so it can write text for a person and nothing else.
+This is a workflow, not an agent (Class 4): the code fixes every step, including the one that
+searches a second time (follow_references), the model is called once per question, and it has no
+tools, so it can write text for a person and nothing else.
 
 Upload classification asks for JSON defensively: an explicit schema, a generous token budget
 (reasoning models can silently truncate), regex extraction rather than trusting the whole reply
@@ -21,8 +22,8 @@ import re
 
 import numpy as np
 
-from config import (ABSTAIN_BELOW, CHUNK_WORDS, DATA_DIR, DIVISIONS, EMBED_MODEL, GEN_MODEL,
-                    OVERLAP, PATH_TO_DOC_ID, ROOT, TITLED_EMBEDDING, TOP_K, UPLOADS_DIR)
+from config import (ABSTAIN_BELOW, CHUNK_WORDS, DATA_DIR, DIVISIONS, EMBED_MODEL, FOLLOW_REFERENCES,
+                    GEN_MODEL, OVERLAP, PATH_TO_DOC_ID, ROOT, TITLED_EMBEDDING, TOP_K, UPLOADS_DIR)
 from guardrails import handoff_message, strip_instructions
 
 GROUNDED = (
@@ -192,17 +193,40 @@ class Embedder:
         return m / np.where(n == 0, 1, n)
 
 
-def retrieve(question, chunks, matrix, embedder, k=TOP_K, divisions=None):
+def retrieve(question, chunks, matrix, embedder, k=TOP_K, divisions=None, follow=0):
     q = embedder.embed([question])[0]
     scores = matrix @ q
     if divisions is not None:
         mask = np.array([0.0 if c["division"] in divisions else -np.inf for c in chunks])
         scores = scores + mask
     order = np.argsort(-scores)[:k]
-    return [
-        {**chunks[i], "score": float(scores[i])}
-        for i in order
-    ]
+    hits = [{**chunks[i], "score": float(scores[i])} for i in order]
+    return follow_references(hits, chunks, scores, follow) if follow else hits
+
+
+# A reference id as the documents write them: CNC-WO-0442, CNC-TR-01, AB-2231, C-4471, MS-07.
+REFERENCE_ID = re.compile(r"\b[A-Z]{1,5}(?:-[A-Z0-9]+)+\b")
+
+
+def follow_references(hits, chunks, scores, extra):
+    """A fixed second retrieval step: collect the reference ids the retrieved notes mention, then add
+    up to `extra` chunks not yet retrieved that share the most of those ids (ties broken by
+    similarity to the question). Code decides, not the model, so the path is the same for every
+    question and can be tested; an agent would instead ask the model whether its evidence is
+    complete, which is the judgement that failed when it answered without the documents it needed."""
+    have = {(h["doc_id"], h["text"]) for h in hits}
+    ids = {m for h in hits for m in REFERENCE_ID.findall(h["text"])}
+    if not ids:
+        return hits
+    shared = []
+    for i, c in enumerate(chunks):
+        if (c["doc_id"], c["text"]) in have or not np.isfinite(scores[i]):
+            continue
+        n = len(ids & set(REFERENCE_ID.findall(c["text"])))
+        if n:
+            shared.append((n, float(scores[i]), i))
+    shared.sort(key=lambda t: (-t[0], -t[1]))
+    return hits + [{**chunks[i], "score": sc, "followed": n} for n, sc, i in shared[:extra]]
 
 
 # ---------------------------------------------------------------------------
@@ -243,7 +267,7 @@ def format_notes(hits, start=1):
 
 def answer_question(client, question, chunks, matrix, embedder, k=TOP_K, divisions=None,
                     abstain_below=ABSTAIN_BELOW):
-    hits = retrieve(question, chunks, matrix, embedder, k=k, divisions=divisions)
+    hits = retrieve(question, chunks, matrix, embedder, k=k, divisions=divisions, follow=FOLLOW_REFERENCES)
     if abstain_below is not None and hits and hits[0]["score"] < abstain_below:
         return handoff_message(hits[0]["score"], abstain_below), hits, {"in": 0, "out": 0}
     context = format_notes(hits)

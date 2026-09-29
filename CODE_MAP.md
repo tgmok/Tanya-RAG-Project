@@ -8,11 +8,11 @@ question sets and the checker that validates them), `docs/` describes the instru
 | file | lines | what it does |
 |---|---|---|
 | `config.py` | 105 | The only place to change a setting: models, chunking, top-k, titled embedding, the hand-off threshold, the token cap, prices, cost-model assumptions (checking and redo minutes, fixed monthly costs), and the corpus manifest (`DOC_ID_TO_PATH`). Standard library only. |
-| `rag_core.py` | 370 | The pipeline, shared by the app, the evaluation and the demo: load corpus -> chunk -> `build_index` (embed) -> `retrieve` -> `format_notes` (the one prompt builder, strip included) -> `answer_question`; `classify_document` -> `format_upload_content` -> `generate_impact_snapshot` for uploads. The prompts (`GROUNDED`, `CLASSIFY_SYSTEM`, `IMPACT_SYSTEM`) are here. A workflow, not an agent: fixed steps, one call, no tools. |
+| `rag_core.py` | 370 | The pipeline, shared by the app, the evaluation and the demo: load corpus -> chunk -> `build_index` (embed) -> `retrieve` (top-k, then `follow_references`) -> `format_notes` (the one prompt builder, strip included) -> `answer_question`; `classify_document` -> `format_upload_content` -> `generate_impact_snapshot` for uploads. The prompts (`GROUNDED`, `CLASSIFY_SYSTEM`, `IMPACT_SYSTEM`) are here. A workflow, not an agent: fixed steps, one call, no tools. |
 | `guardrails.py` | 180 | Every risk mitigation that is code, not prompt: token cap, injection scan, the strip of instructions from notes before a prompt, confidence hand-off, exact abstention, the figure check, the malformed-citation check. No model calls. |
 | `app.py` | 340 | Streamlit interface: upload -> injection scan -> classify -> a person confirms -> impact brief -> chat. The only code that writes (to `data/uploads/`). |
 | `doc_parser.py` | 30 | PDF/DOCX/TXT to text. No model calls. |
-| `harness.py` | 725 | The evaluation: question sets, 12 retrieval configs (`shipped` and the `tfidf_k5` baseline first; `hybrid_k5` and `follow_refs` measured, not shipped), recall and MRR, code checks, the judge call, aggregation (correctness, faithfulness, the two abstention numbers, silent failures), the judge's precision, recall and Cohen's kappa against hand labels, the leakage check. |
+| `harness.py` | 725 | The evaluation: question sets, 12 retrieval configs (`shipped`, `previous_shipped` and the `tfidf_k5` baseline first; `hybrid_k5` measured, not shipped), recall and MRR, code checks, the judge call, aggregation (correctness, faithfulness, the two abstention numbers, silent failures), the judge's precision, recall and Cohen's kappa against hand labels, the leakage check. |
 | `run_eval.py` | 480 | The entry point a marker runs: `--retrieval-only`, `--chunk-sweep`, `--leakage`, `--dry-run`, `--run`, `--agreement`. |
 | `run_guardrails.py` | 245 | Guardrail checklist: 39 named cases against every guardrail, including an attack document filed into the index, and where Tanya stands on each Class 6 red-team category -> `results/guardrails.md`. Exits non-zero on a failure. |
 | `self_test.py` | 160 | Checks the instruments, not the system: every key fact appears in its source documents, the checkers reject wrong answers and abstentions, kappa and MRR match hand-worked values, and the break-even formula reproduces the Class 5 calculator's own answer. |
@@ -36,6 +36,7 @@ question sets and the checker that validates them), `docs/` describes the instru
 ```
 question
   -> embed (title-prefixed chunks, all-MiniLM-L6-v2, local)  -> top-5 chunks, each tagged with document id + division
+  -> follow references: add up to 2 chunks that share a work-order, form or contract id with those five
   -> best score below 0.45?  yes: "The documents do not say." + hand to a person, NO model call
   -> session token cap reached?  yes: stop loudly
   -> format_notes: strip any sentence addressed to the model from each note (warn the reader if one was)
@@ -55,7 +56,8 @@ evaluation only:
 - **Uploads cannot move a reported number.** The app writes only to `data/uploads/`; git ignores
   it and the evaluation reads only the fixed corpus in `data/fnb`, `data/cnc`, `data/jewellery`.
 - **One index recipe.** The app and the demo build their index through `rag_core.build_index`;
-  the evaluation's `shipped` config uses the same chunking, titling and top-k from `config.py`.
+  the evaluation's `shipped` config uses the same chunking, titling, top-k and reference-following
+  from `config.py`.
 - **One id scheme.** Documents are `fnb-01` ... `jwl-06` in the app, the answer key, the notebook
   and every results file; uploads are `upload-<division>-<file>`.
 - **The key is read in one place per entry point** (`run_eval.load_key`, the app's sidebar) and
@@ -74,31 +76,34 @@ evaluation only:
 | cost per successful answer, break-even, time to deploy | `python cost_model.py --estimate` | no |
 | the whole live path with a fake model | `python run_eval.py --dry-run --yes` | no |
 | the app (retrieval works without a key) | `streamlit run app.py` | for answers |
-| **the answer-level evaluation** (about $0.20) | `python run_eval.py --run` | yes |
+| **the answer-level evaluation**: the app, the version before, the baseline (about $0.31) | `python run_eval.py --run` | yes |
 | the judge against your hand labels (precision, recall, kappa) | `python run_eval.py --agreement` | no |
 | measured cost per successful answer | `python cost_model.py` | no (after `--run`) |
 | the recorded citation bug, re-run | `python demo_citation_fix.py` | yes |
 
 ## Current results
 
-| | shipped (what the app runs) | keyword baseline | source |
-|---|---|---|---|
-| **answer correctness**, same 20 questions (notebook run; evaluation run) | 80%; 80% | 75%; 75% | `results/notebook_run.md`, `results/summary.md` |
-| **faithfulness** (target 85%), same 20 questions | 80%; 89% | 95%; 100% | same |
-| the judge against my own grading of 10 answers | agreed on 10 of 10 (kappa 1.00) | | `results/judge_agreement.md` |
-| declines that were right | 4 of 4; 4 of 5 | | notebook; summary |
-| silent failures (answered without the needed documents) | 3, 1 of them wrong (both runs) | | same |
-| partially answerable: invented the missing half | 0 of 6 (4 said it was missing) | | `results/summary.md` |
-| cross-division recall (a chunk from every division needed) | 100% | 91% | `results/retrieval_recall.md` |
-| document recall (every document needed) | 88% | 91% | same |
-| document recall, experiments not shipped | hybrid search 93%; following reference ids 98% (misses 5 of 37 -> 1) | | same |
-| words of notes sent per question | 837 | 865 | same |
-| unanswerable questions caught by the 0.45 threshold | 2 of 6 (and 1 of 37 answerable wrongly handed off) | n/a | same, abstention table |
-| guardrail cases behaving as designed | 39 of 39 | | `results/guardrails.md` |
-| model cost per question (measured) | $0.00024 | $0.00027 | `results/cost_model.md` |
-| cost per successful answer, with a person checking each (3 min) | $4.00 at 80% | | same |
-| break-even success rate against answering by hand | 20% | | same |
+The final run (`results/summary.md`): the same 20 questions through the app, the version before
+reference-following and the keyword baseline, in one run.
 
-Two runs of the same 20 questions: the notebook run uses the app's retrieval and prompt without its 0.45
-hand-off; the evaluation run (`python run_eval.py --run`) is exactly the app, hand-off included, and adds
-the other question sets. The difference in faithfulness between them is run-to-run variation.
+| | shipped (what the app runs) | before reference-following | keyword baseline | source |
+|---|---|---|---|---|
+| **answer correctness** | 85% | 80% | 75% | `results/summary.md` |
+| correctness, cross-division questions | 73% | 64% | 55% | same |
+| **faithfulness** (target 85%) | 84% | 89% | 100% | same |
+| silent failures (answered without the needed documents) | 1, wrong | 3, 1 wrong | 4, all wrong | same |
+| partially answerable: invented the missing half | 0 of 6 (4 said it was missing) | | | same |
+| the judge against my own grading | 10 of 10 agree (kappa 1.00); 10 of 10 on the version before | | | `results/judge_agreement.md` |
+| cross-division recall (a chunk from every division needed) | 100% | 100% | 91% | `results/retrieval_recall.md` |
+| document recall (every document needed) | 98% | 88% | 91% | same |
+| questions missing a needed document | 1 of 37 | 5 of 37 | 5 of 37 | same |
+| hybrid search, measured and not shipped | document recall 93% | | | same |
+| words of notes sent per question | 1,188 | 837 | 865 | same |
+| unanswerable questions caught by the 0.45 threshold | 2 of 6 (1 of 37 answerable wrongly handed off) | | n/a | same, abstention table |
+| guardrail cases behaving as designed | 39 of 39 | | | `results/guardrails.md` |
+| model cost per question (measured) | $0.00033 | $0.00024 | $0.00028 | `results/cost_model.md` |
+| cost per successful answer, with a person checking each (3 min) | $3.50 | $4.00 | $4.50 | same |
+| break-even success rate against answering by hand | 20% | 20% | 20% | same |
+
+An earlier notebook run (`results/notebook_run.md`) used the version before reference-following
+without its 0.45 hand-off: 80% correct and 80% faithful, against the baseline's 75% and 95%.

@@ -31,6 +31,10 @@ EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"  # runs locally, no per-c
 CHUNK_WORDS = 200   # cross-division recall 82% -> 91% vs the earlier 60/15, at ~3x the words
 OVERLAP = 50        # sent per query (286 -> 823). 200 and 250 tie; 200 is the cheaper of the two.
 TOP_K = 5           # top-3 misses a needed division on 36% of cross-division questions; top-5 on 9%.
+FOLLOW_REFERENCES = 2  # after the top-k, add up to this many chunks that share a reference id
+                       # (work order, form, contract) with them; 0 switches it off. Measured free:
+                       # questions missing a needed document 5 of 37 -> 1, against 3 for seven
+                       # chunks without following (results/retrieval_recall.md).
 TITLED_EMBEDDING = True  # prepend each chunk's document title before embedding (what the app
                          # ships): division recall 91% -> 100%, doc recall unchanged at 88%, and
                          # zero extra generation tokens -- only the embedding input changes.
@@ -68,10 +72,9 @@ MANUAL_CYCLE_DAYS = 4          # midpoint of "3-5 business days" in the problem 
 HOURS_PER_DAY = 8
 CYCLES_PER_MONTH = 4.33        # weekly reports
 VOLUMES = [200, 2000]          # questions per month
-# Answer correctness measured in the final notebook run (results/notebook_run.md, the same 20
-# questions). The free cost estimate uses these; `python cost_model.py` after a live run uses
-# results/summary.json instead.
-NOTEBOOK_CORRECTNESS = {"shipped": 0.80, "tfidf_k5": 0.75}
+# Answer correctness measured in the final evaluation run (results/summary.md, the same 20
+# questions). The free cost estimate uses these; `python cost_model.py` reads results/summary.json.
+MEASURED_CORRECTNESS = {"shipped": 0.85, "tfidf_k5": 0.75}
 EST_ANSWER_TOKENS = 90         # output length used by the no-key cost ESTIMATE only; the live run
                                # replaces it with measured completion tokens
 CHARS_PER_TOKEN = 4            # the estimate's prompt-token rule of thumb; live runs use API usage

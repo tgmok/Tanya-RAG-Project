@@ -10,26 +10,28 @@ generation (RAG): it retrieves the relevant notes, answers only from them and ci
 briefs leaders on what a newly filed document connects to.
 
 I measured it against a non-AI baseline, keyword (TF-IDF) search over the same chunks, on 20
-questions fixed before anything ran, in two runs (`results/notebook_run.md`, `results/summary.md`):
+questions fixed before anything ran (`results/summary.md`, final run):
 
 | measure | Tanya | keyword baseline | target |
 |---|---|---|---|
-| answer correctness (every key fact present) | 80%, both runs | 75% | |
-| faithfulness (every claim supported by the notes) | 80%, then 89% | 95%, then 100% | 85% |
+| answer correctness (every key fact present) | 85% | 75% | |
+| correctness, cross-division questions | 73% | 55% | |
+| faithfulness (every claim supported by the notes) | 84% | 100% | 85% |
 | cross-division recall (every needed division retrieved) | 100% | 91% | 80% |
 
-Embeddings win on finding the right information and on correctness; the simpler baseline is more
-faithful. I graded ten of the judge's verdicts myself and agreed with all ten, including both
-answers it flagged (`results/judge_agreement.md`).
+Tanya wins on retrieval and correctness; the baseline is more faithful, and Tanya is one answer
+short of the target. In two checks I graded 20 of the judge's
+verdicts myself and agreed with all 20, including every answer it flagged
+(`results/judge_agreement.md`).
 
-**Why retrieval, not the whole corpus in the prompt?** All 18 documents fit in one prompt at 3.5
+**Why retrieval, not the whole corpus in the prompt?** All 18 documents fit in one prompt at 2.6
 times the tokens, but years of documents will not, and retrieval is where access control belongs.
 
 **Why not an agent?** An agent earns its place when the steps vary with the input and objective
-feedback corrects each step (Class 4). Every Tanya question takes the same two steps: retrieve,
-then answer. The one step that could vary, searching again after a miss, would rely on the model
-judging its own evidence complete, exactly what fails when it answers without the documents it
-needed. So Tanya is a fixed workflow, and a person checks its output.
+feedback corrects each step (Class 4). Every Tanya question takes the same steps. Searching again
+after a miss is a fixed rule in code, not the model's judgement, which fails exactly when it answers
+without the documents it needed. So Tanya is a workflow, and a person checks
+its output.
 
 ## 2. Build or rent, and what it costs
 
@@ -38,19 +40,19 @@ needed. So Tanya is a fixed workflow, and a person checks its output.
 | interface | rent Streamlit | no front end to maintain |
 | orchestration | own | the grounding and hand-off logic is the product |
 | retrieval, vector store | own | numpy in memory: 21 chunks need no database |
-| embeddings | rent `all-MiniLM-L6-v2`, run locally | no per-call price; no document leaves the laptop |
+| embeddings | rent `all-MiniLM-L6-v2`, run locally | no per-call price; documents stay local |
 | generation | rent `gpt-4o-mini` via OpenRouter | $0.15/$0.60 per million tokens |
 | evaluation, guardrails | own | only I know what a right answer from these documents is |
 
 Of Class 2's five build-or-buy factors, data gravity and control decided it. I skipped no-code RAG
 builders: they hide the retrieval step I measure.
 
-**Cost per successful answer** (`results/cost_estimate.md`). A question is one model call of about
-1,700 tokens: $0.0003. People cost the rest (assumed in `config.py`): a 3-minute check of every
+**Cost per successful answer** (`results/cost_model.md`). A question is one model call of about
+1,900 tokens: $0.0003. People cost the rest (assumed in `config.py`): a 3-minute check of every
 answer ($2.00) and a 15-minute redo of each wrong one ($10, the same as answering by hand). By the
 course's break-even formula, Tanya beats answering by hand once over 20% of answers are right; at
-80% it costs $4.00 per answer against $10. With $181 a month of fixed costs, 200 questions cost
-$981 against $2,000. Checking time, not token price, moves the break-even, so every answer shows
+85% it costs $3.50 per answer against $10. With $181 a month of fixed costs, 200 questions cost
+$881 against $2,000. Checking time, not token price, moves the break-even, so every answer shows
 its citations and notes. **Kill condition:** below the keyword baseline, use keyword search; below
 the break-even, stop.
 
@@ -63,26 +65,27 @@ the break-even, stop.
 | 25-word chunks cut procedure steps and table rows in half | reviewer feedback; a 25-300 word sweep | 200-word chunks, 50 overlap: the cheapest point on the plateau | cross-division recall 55% → 91% |
 | a model with no retrieval was a rigged baseline | reviewer feedback | keyword search over the same chunks | a fair baseline, more faithful than Tanya |
 | my own proposed fix, classifying the question by division first, hurt | retrieval report | dropped it | recall kept at 91%, not 45% |
-| answers cited a note's bracket number or the prompt's placeholder, and declined questions the notes answered | my screen recordings | the prompt says which text is the id; code flags fake citations | every decline right (4 of 4), no fake citations |
-| the injection filter flagged "act as an auditor" | guardrail checklist | fixed the pattern | no false alarms on the 18 documents |
+| answers cited a note's bracket number or the prompt's placeholder, and declined questions the notes answered | my screen recordings | the prompt says which text is the id; code flags fake citations | every decline right (4 of 4) |
+| retrieval missed a needed document on 5 of 37 questions, and Tanya answered anyway | retrieval report; answering-without-evidence count | reference-following: add up to two chunks sharing a work-order or contract id; tested on answers first | misses 5 → 1; correctness 80% → 85%; unsupported answers 3 → 1 |
+
+Reference-following is an agent's benefit as a fixed step. In the same run as the previous version,
+it cost 40% more input tokens and one faithful answer (89% → 84%); the synthetic documents share ids
+by design, which flatters it.
 
 ## 4. Where it still fails
 
-**Confabulation**, NIST's word for a fluent, confident, wrong answer. The citation fix made Tanya
-answer more, even when retrieval missed a needed document: three times in each run, once wrongly. The figure check catches invented numbers, dates and ids, not an invented
-claim without them, and a retrieval-score threshold cannot separate these (at 0.45 it catches 2 of
-6 unanswerable questions), so it is only a backstop. Six partially answerable questions, each
-asking for one fact the documents hold and one they provably do not, test invention directly: none
-of the six answers invented the missing half, and four said plainly that it was missing.
+**Confabulation**, NIST's word for a fluent, confident, wrong answer. One final-run answer still came
+without its needed documents, and it was wrong. The figure check catches invented numbers, dates and
+ids, not an invented claim without them; a retrieval-score threshold is only a backstop (at 0.45 it
+catches 2 of 6 unanswerable questions).
 
-**Two fixes, measured free, not yet shipped**, since shipping one would change the answers I
-measured (`results/retrieval_recall.md`):
+**Citing a document it was not given** is the new failure: the extra notes mention other documents'
+codes, and the model cites those documents. All three unfaithful answers did this; the
+evaluation's citation check catches every one.
 
-- *Following reference ids* (code adds up to two chunks sharing a work-order or contract id with
-  the top five): questions missing a needed document fell from 5 of 37 to 1, against 3 for seven
-  chunks without following. That is an agent's benefit as a fixed step, though the synthetic
-  documents share ids by design.
-- *Hybrid search* (keyword and embedding rankings fused): document recall 88% to 93%.
+Six partially answerable questions test invention directly: no answer invented the missing half,
+and four said plainly that it was missing. **Hybrid search**, measured free and not adopted, lifts document
+recall from 88% to 93%; it is the next change to test.
 
 ## 5. Risks and their built mitigations
 

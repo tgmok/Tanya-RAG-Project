@@ -28,7 +28,7 @@ from datetime import date
 
 from config import (ANALYST_USD_PER_HOUR, CHARS_PER_TOKEN, CHECK_MINUTES, CYCLES_PER_MONTH, DATA_DIR,
                     EST_ANSWER_TOKENS, FIXED_MONTHLY_USD, GEN_MODEL, HOURS_PER_DAY, HUMAN_REVIEW_MINUTES,
-                    MANUAL_CYCLE_DAYS, NOTEBOOK_CORRECTNESS, PRICES, PRICES_DATED, RESULTS_DIR, VOLUMES)
+                    MANUAL_CYCLE_DAYS, MEASURED_CORRECTNESS, PRICES, PRICES_DATED, RESULTS_DIR, VOLUMES)
 
 
 def variable_cost(model, tokens_in, tokens_out):
@@ -233,13 +233,13 @@ def run_estimate():
          "**zero** model calls. Embedding is local and free per call.", "",
          f"**Retrieval against long context.** At 18 documents the whole corpus fits in one prompt, which is "
          f"Class 2's rule for skipping retrieval, and it costs only {ask['full_context'] / ask[H.SHIPPED]:.1f}x "
-         "the tokens of the shipped top-5. That is the honest case for long context here. Retrieval is chosen "
+         "the tokens of the shipped retrieval. That is the honest case for long context here. Retrieval is chosen "
          "for what the pilot stands for: every division's documents over years will not fit, the long-context "
-         "cost grows with the corpus while top-5 does not, and retrieval is where a real deployment would "
+         "cost grows with the corpus while retrieval does not, and retrieval is where a real deployment would "
          "enforce which division's documents a reader may see.", ""]
-    L += economics_section(per_q[H.SHIPPED], NOTEBOOK_CORRECTNESS.get(H.SHIPPED),
-                           NOTEBOOK_CORRECTNESS.get(H.BASELINE),
-                           "answer correctness in the final notebook run, `results/notebook_run.md`")
+    L += economics_section(per_q[H.SHIPPED], MEASURED_CORRECTNESS.get(H.SHIPPED),
+                           MEASURED_CORRECTNESS.get(H.BASELINE),
+                           "answer correctness in the final evaluation run, `results/summary.md`")
     L += ["", "## Context: the weekly report", "",
           f"The problem statement puts cross-division synthesis at 3-5 business days per weekly cycle, about "
           f"${manual_monthly_usd():,.0f}/month of analyst time at these assumptions. That is context, not a "

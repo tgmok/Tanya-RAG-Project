@@ -37,7 +37,7 @@ flowchart TD
     SHOW --> CHAT
 
     CHOICE -->|ask directly| CHAT["Chat box: a question"]
-    CHAT --> RETRIEVE["rag_core.retrieve()<br/>top-5, title-prefixed embedding,<br/>over the current corpus"]
+    CHAT --> RETRIEVE["rag_core.retrieve()<br/>top-5, title-prefixed embedding, then up to 2<br/>chunks sharing a reference id (fixed code)"]
     RETRIEVE --> HAND(["G3 best score below 0.45?"])
     HAND -->|yes| PERSON["'The documents do not say.' +<br/>handed to a person -- NO model call"]
     HAND -->|no| CAP2(["G1 session token cap"])
@@ -102,6 +102,7 @@ flowchart LR
 
 A question that only retrieves from one division in a hook pair will always be incomplete --
 this is what the context-recall metric measures. The shipped retrieval covers every
-needed division on all 11 cross-division questions, but still misses a needed *document* on 5 of
-37 scored questions; three of those are the same CNC tooling spec, `cnc-01`, diagnosed in the
-notebook's "break it" section (`results/retrieval_recall.md` lists every miss).
+needed division on all 11 cross-division questions and misses a needed *document* on 1 of 37 scored
+questions (CD12, whose `jwl-02` is two links away). Before reference-following it missed 5, three of
+them the same CNC tooling spec, `cnc-01`, which the notebook's "break it" section diagnoses
+(`results/retrieval_recall.md` lists every miss).

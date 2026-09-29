@@ -9,24 +9,24 @@ Generation model `openai/gpt-4o-mini` at $0.15/1M in, $0.6/1M out (prices dated 
 
 | user action | model calls | input tokens (est.) | output tokens (assumed) | $ per action |
 |---|---|---|---|---|
-| ask a question: `shipped` (what the app ships) | 1 | 1,679 | 90 | $0.00031 |
+| ask a question: `shipped` (what the app ships) | 1 | 2,271 | 90 | $0.00039 |
 | ask a question: `tfidf_k5` (the keyword baseline) | 1 | 1,731 | 90 | $0.00031 |
 | ask a question: `full_context` (all 18 documents in the prompt, no retrieval) | 1 | 5,870 | 90 | $0.00093 |
-| file an upload (classify + impact brief) | 2 | 2,033 | 310 | $0.00049 |
+| file an upload (classify + impact brief) | 2 | 2,056 | 310 | $0.00049 |
 
 A question the shipped system hands to a person below the confidence threshold makes **zero** model calls. Embedding is local and free per call.
 
-**Retrieval against long context.** At 18 documents the whole corpus fits in one prompt, which is Class 2's rule for skipping retrieval, and it costs only 3.5x the tokens of the shipped top-5. That is the honest case for long context here. Retrieval is chosen for what the pilot stands for: every division's documents over years will not fit, the long-context cost grows with the corpus while top-5 does not, and retrieval is where a real deployment would enforce which division's documents a reader may see.
+**Retrieval against long context.** At 18 documents the whole corpus fits in one prompt, which is Class 2's rule for skipping retrieval, and it costs only 2.6x the tokens of the shipped retrieval. That is the honest case for long context here. Retrieval is chosen for what the pilot stands for: every division's documents over years will not fit, the long-context cost grows with the corpus while retrieval does not, and retrieval is where a real deployment would enforce which division's documents a reader may see.
 
 ## Layer 1, continued: a person checks every answer
 
-Every answer is a draft that a person reads against its cited notes before using it: 3 minutes at $40/h = $2.00 (an ASSUMPTION in config.py), about 6,539x the model cost of the question. This is the human-in-the-loop gate, priced: it is paid on right answers too.
+Every answer is a draft that a person reads against its cited notes before using it: 3 minutes at $40/h = $2.00 (an ASSUMPTION in config.py), about 5,067x the model cost of the question. This is the human-in-the-loop gate, priced: it is paid on right answers too.
 
 ## Layer 2 and the break-even against answering by hand
 
 A wrong or declined answer is redone by hand: 15 minutes = $10.00, the same work as answering the question without Tanya, the no-AI alternative. The course's break-even, p = 1 - (manual - layer 1) / redo, puts it at **20%**: Tanya is cheaper than answering by hand whenever more than 20% of its answers are right.
 
-Measured: 80% (answer correctness in the final notebook run, `results/notebook_run.md`), 4 times the break-even, so the decision is robust rather than a knife-edge. At 80%, checking an answer could take up to 12 minutes before answering by hand became cheaper.
+Measured: 85% (answer correctness in the final evaluation run, `results/summary.md`), 4 times the break-even, so the decision is robust rather than a knife-edge. At 85%, checking an answer could take up to 13 minutes before answering by hand became cheaper.
 
 The break-even moves with the minutes the check takes, far more than with anything the model costs, which is why every answer carries its citations and the notes it drew on: they are what keep the check short.
 
@@ -51,12 +51,12 @@ The break-even moves with the minutes the check takes, far more than with anythi
 |---|---|---|---|
 | 100% | $2.00 | $581 | $4,182 |
 | 90% | $3.00 | $781 | $6,182 |
-| 80% (measured) | $4.00 | $981 | $8,182 |
+| 85% (measured) | $3.50 | $881 | $7,182 |
 | 70% | $5.00 | $1,181 | $10,182 |
 | 50% | $7.00 | $1,581 | $14,182 |
 | answering every question by hand | $10.00 | $2,000 | $20,000 |
 
-Layer 3 is spread over more questions as volume grows, so the case for Tanya strengthens with volume; the check and the redo never amortise. Below about 30 questions a month, the fixed cost alone makes answering by hand cheaper.
+Layer 3 is spread over more questions as volume grows, so the case for Tanya strengthens with volume; the check and the redo never amortise. Below about 28 questions a month, the fixed cost alone makes answering by hand cheaper.
 
 ## Kill condition, written before a pilot
 
@@ -77,8 +77,8 @@ Embedder: local embeddings (all-MiniLM-L6-v2) -- matches MEANING.
 |---|---|---|
 | `pip install -r requirements.txt` | minutes | one-off; dominated by torch (CPU build) |
 | first embedding-model download | one-off, ~90 MB | cached by sentence-transformers after that |
-| import the embedding stack | 8.4 s | measured |
-| load the model and index 18 documents (3 indexes: plain, titled, keyword) | 9.4 s | measured; the app builds 1 index, once per session |
+| import the embedding stack | 6.2 s | measured |
+| load the model and index 18 documents (3 indexes: plain, titled, keyword) | 8.4 s | measured; the app builds 1 index, once per session |
 | add one document through the app | about 2 model calls + one re-index | measured index time above |
 
 What it would take for real (an estimate, not measured): connecting each division's document store and its access control, which this project deliberately does not do (fictional corpus). Code-wise the retrieval is domain-agnostic: point `config.DOC_ID_TO_PATH` at other documents and re-run `python data/check_my_data.py`.

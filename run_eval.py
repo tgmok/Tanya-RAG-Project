@@ -68,20 +68,19 @@ def write_retrieval_report(out_dir, questions, idx):
         d = per_config[c]
         return (d["main"]["avg_doc_recall"], sum(1 for r in d["records"] if r["doc_recall"] is not None
                                                  and r["doc_recall"] < 1), d["all"]["n_scored"], d["main"]["avg_words"])
-    if all(c in per_config for c in (H.SHIPPED, "titled_k7", "follow_refs", "hybrid_k5")):
-        s, k7, fr, hy = (row(c) for c in (H.SHIPPED, "titled_k7", "follow_refs", "hybrid_k5"))
-        L += ["", "## Three retrieval experiments, measured here and not shipped", "",
-              "Each changes one thing from `shipped`. None is in the app: adopting one would change the answers the "
-              "final notebook run measured, and re-measuring them needs a live run. They are reported so the "
-              "next step is chosen on evidence.", "",
-              f"- **`follow_refs`** (a fixed code step: follow the reference ids the retrieved notes mention): "
-              f"document recall {fmt(s[0])} -> {fmt(fr[0])}, questions missing a needed document {s[1]} -> {fr[1]} "
-              f"of {s[2]}, words sent {s[3]:.0f} -> {fr[3]:.0f}.",
-              f"- **`titled_k7`**, its control: the same 7-chunk budget with no reference-following: document recall "
-              f"{fmt(k7[0])}, misses {k7[1]} of {k7[2]}, words {k7[3]:.0f}. What `follow_refs` gains over this row is "
+    if all(c in per_config for c in (H.SHIPPED, H.PREVIOUS, "titled_k7", "hybrid_k5")):
+        s_, pv, k7, hy = (row(c) for c in (H.SHIPPED, H.PREVIOUS, "titled_k7", "hybrid_k5"))
+        L += ["", "## Reference-following, adopted, and the alternatives", "",
+              "Each row changes one thing from `previous_shipped`, the retrieval before reference-following.", "",
+              f"- **`shipped`** adds a fixed code step: follow the reference ids the retrieved notes mention. "
+              f"Document recall {fmt(pv[0])} -> {fmt(s_[0])}, questions missing a needed document {pv[1]} -> "
+              f"{s_[1]} of {pv[2]}, words sent {pv[3]:.0f} -> {s_[3]:.0f}. Its effect on the answers is in "
+              "`results/summary.md`.",
+              f"- **`titled_k7`**, its control: the same 7-chunk budget with no following: document recall "
+              f"{fmt(k7[0])}, misses {k7[1]} of {k7[2]}, words {k7[3]:.0f}. What `shipped` gains over this row is "
               "the reference-following itself, not the two extra chunks.",
-              f"- **`hybrid_k5`** (embeddings and keyword search fused by rank, Class 2's hybrid search): document "
-              f"recall {fmt(hy[0])}, misses {hy[1]} of {hy[2]}, words {hy[3]:.0f}.", "",
+              f"- **`hybrid_k5`** (embeddings and keyword search fused by rank, Class 2's hybrid search), not "
+              f"adopted: document recall {fmt(hy[0])}, misses {hy[1]} of {hy[2]}, words {hy[3]:.0f}.", "",
               "Caveat: the synthetic documents were written with shared reference ids across each cross-division "
               "hook, which flatters reference-following. Real documents cite each other less consistently.", ""]
 
@@ -269,6 +268,27 @@ def write_eval_report(out_dir, summary, results):
               "the numbers the brief asks for: how often it declines, and whether the declines were the "
               "questions it would have got wrong.", ""]
 
+    # ---- before and after reference-following, same run, same questions ------------------------
+    prev = H.PREVIOUS
+    if ship in summary["configs"] and prev in summary["configs"]:
+        S, P = main_of(ship), main_of(prev)
+
+        def change(k):
+            return "n/a" if S.get(k) is None or P.get(k) is None else f"{(S[k] - P[k]) * 100:+.0f} pts"
+
+        L += ["## Before and after reference-following", "",
+              f"The same run and the same questions through `{prev}` (the retrieval before) and `{ship}` (with "
+              "reference-following). Adopted only if the answers improve, not only the retrieval.", "",
+              "| measure | before | after | change |", "|---|---|---|---|",
+              f"| answer correctness | {fmt(P['key_fact_pass'])} | {fmt(S['key_fact_pass'])} | {change('key_fact_pass')} |",
+              f"| correctness, cross-division only | {fmt(P['key_fact_pass_cross'])} | {fmt(S['key_fact_pass_cross'])} | "
+              f"{change('key_fact_pass_cross')} |",
+              f"| faithfulness (judge) | {fmt(P['judge_faithful'])} (n={P['judge_n']}) | {fmt(S['judge_faithful'])} "
+              f"(n={S['judge_n']}) | {change('judge_faithful')} |",
+              f"| silent failures | {P['answered_without_evidence_n']} ({P['answered_without_evidence_wrong']} wrong) | "
+              f"{S['answered_without_evidence_n']} ({S['answered_without_evidence_wrong']} wrong) | |",
+              f"| input tokens per question | {P['avg_tokens_in']:.0f} | {S['avg_tokens_in']:.0f} | |", ""]
+
     # ---- every config -------------------------------------------------------------------------
     L += ["## Every configuration, main set", "",
           "| system | answer correctness | cross-division | faithfulness (judge) | declined | declines right | "
@@ -276,7 +296,8 @@ def write_eval_report(out_dir, summary, results):
           "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     rows = []
     for c in summary["configs"]:
-        tag = " (what the app ships)" if c == ship else " (THE baseline)" if c == base else ""
+        tag = (" (what the app ships)" if c == ship else " (THE baseline)" if c == base
+               else " (before reference-following)" if c == H.PREVIOUS else "")
         rows.append((f"`{c}`{tag}", main_of(c)))
     if summary.get("no_retrieval_floor"):
         rows.append(("no retrieval (a floor, NOT the baseline)", summary["no_retrieval_floor"]))

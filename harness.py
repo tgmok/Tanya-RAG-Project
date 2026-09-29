@@ -34,10 +34,14 @@ GEN_MODEL_DEFAULT = cfg.GEN_MODEL
 JUDGE_MODEL_DEFAULT = cfg.JUDGE_MODEL
 
 CONFIGS = {
-    "shipped": {"kind": "naive", "k": cfg.TOP_K, "titled": cfg.TITLED_EMBEDDING,
+    "shipped": {"kind": "follow", "k": cfg.TOP_K, "extra": cfg.FOLLOW_REFERENCES, "titled": cfg.TITLED_EMBEDDING,
                 "abstain_below": cfg.ABSTAIN_BELOW,
-                "label": f"WHAT THE APP SHIPS: top-{cfg.TOP_K}, title-prefixed embedding, "
-                         f"handed to a person below {cfg.ABSTAIN_BELOW}"},
+                "label": f"WHAT THE APP SHIPS: top-{cfg.TOP_K}, title-prefixed embedding, then up to "
+                         f"{cfg.FOLLOW_REFERENCES} chunks that share a reference id with them; handed to a "
+                         f"person below {cfg.ABSTAIN_BELOW}"},
+    "previous_shipped": {"kind": "naive", "k": cfg.TOP_K, "titled": True, "abstain_below": cfg.ABSTAIN_BELOW,
+                         "label": f"THE PREVIOUS VERSION, before reference-following: top-{cfg.TOP_K}, "
+                                  f"title-prefixed embedding, handed to a person below {cfg.ABSTAIN_BELOW}"},
     "naive_k3": {"kind": "naive", "k": 3, "label": "top-3 by similarity (the notebook default)"},
     "naive_k5": {"kind": "naive", "k": 5, "label": "top-5 by similarity"},
     "titled_k5": {"kind": "naive", "k": 5, "titled": True,
@@ -52,27 +56,25 @@ CONFIGS = {
                      "label": "top-2 from EACH division (6 chunks); division recall 100% by construction"},
     "full_context": {"kind": "full",
                      "label": "all 18 documents in every prompt, no retrieval; recall 100% by construction"},
-    # Three retrieval experiments, measured free and NOT shipped: adopting one would change the answers
-    # the final notebook run measured, and re-measuring them costs a live run. Each changes ONE thing.
+    # Retrieval alternatives, measured free and not shipped. Each changes ONE thing.
     "hybrid_k5": {"kind": "hybrid", "k": 5,
                   "label": "EXPERIMENT: hybrid search, the shipped embeddings and the keyword baseline "
                            "fused by reciprocal rank, top-5"},
     "titled_k7": {"kind": "naive", "k": 7, "titled": True, "abstain_below": cfg.ABSTAIN_BELOW,
-                  "label": "CONTROL for follow_refs: the shipped retrieval with the same budget of 7 chunks"},
-    "follow_refs": {"kind": "follow", "k": 5, "extra": 2, "abstain_below": cfg.ABSTAIN_BELOW,
-                    "label": "EXPERIMENT: the shipped top-5, then up to 2 more chunks that share a reference id "
-                             "(a work order, form, contract) with them; a fixed step, the workflow "
-                             "alternative to an agent that searches again"},
+                  "label": "CONTROL for reference-following: the previous version with the same budget of "
+                           "7 chunks, and no following"},
 }
 SHIPPED = "shipped"
+PREVIOUS = "previous_shipped"
 BASELINE = "tfidf_k5"
-# The live run: the shipped system and THE baseline, the comparison every headline number is about
-# (about $0.21 with the judge). Any other config is opt-in with --configs, each about $0.10-0.20 more.
-DEFAULT_RAG_CONFIGS = [SHIPPED, BASELINE]
+# The live run: the shipped system against THE baseline, the comparison every headline number is about,
+# plus the previous version on the same questions, so adopting reference-following is judged on
+# answers, not only on retrieval. Any other config is opt-in with --configs.
+DEFAULT_RAG_CONFIGS = [SHIPPED, PREVIOUS, BASELINE]
 ALTERNATIVE_RAG_CONFIGS = ["naive_k5", "titled_k5", "naive_k3", "parent_d3", "full_context"]
 RRF_K = 60   # the usual reciprocal-rank-fusion constant; it damps the influence of rank 1
-# A reference id as the documents write them: CNC-WO-0442, CNC-TR-01, AB-2231, C-4471, MS-07.
-REFERENCE_ID = re.compile(r"\b[A-Z]{1,5}(?:-[A-Z0-9]+)+\b")
+REFERENCE_ID = rag_core.REFERENCE_ID
+follow_references = rag_core.follow_references   # the app's own step: one implementation, not two
 
 BASELINE_SYSTEM = "Answer in one or two short sentences."
 # A partially answerable question should get its answerable half AND a plain statement that the rest
@@ -202,27 +204,6 @@ def _scores_and_chunks(config, question, idx):
     # "follow" ranks exactly as the shipped retrieval does; its extra step is in retrieve_config
     base = idx["titled"] if (spec.get("titled") or spec["kind"] == "follow") else idx["plain"]
     return base["chunks"], base["matrix"] @ base["embedder"].embed([question])[0]
-
-
-def follow_references(hits, chunks, scores, extra):
-    """The fixed second step of `follow_refs`: collect the reference ids the retrieved notes mention,
-    then add up to `extra` chunks that are not yet retrieved and share the most of those ids (ties
-    broken by similarity to the question). No model decides anything, so the path is the same for
-    every question and can be tested; an agent would instead ask the model whether its evidence is
-    complete, which is the judgement that failed in the silent failures."""
-    have = {(h["doc_id"], h["text"]) for h in hits}
-    ids = {m for h in hits for m in REFERENCE_ID.findall(h["text"])}
-    if not ids:
-        return hits
-    shared = []
-    for i, c in enumerate(chunks):
-        if (c["doc_id"], c["text"]) in have:
-            continue
-        n = len(ids & set(REFERENCE_ID.findall(c["text"])))
-        if n:
-            shared.append((n, float(scores[i]), i))
-    shared.sort(key=lambda t: (-t[0], -t[1]))
-    return hits + [{**chunks[i], "score": sc, "followed": n} for n, sc, i in shared[:extra]]
 
 
 def retrieve_config(config, question, idx):

@@ -322,7 +322,7 @@ if question:
         if st.session_state.client is None:
             hits = rag_core.retrieve(
                 question, st.session_state.chunks, st.session_state.matrix,
-                st.session_state.embedder,
+                st.session_state.embedder, follow=config.FOLLOW_REFERENCES,
             )
             answer = ("*(No API key set -- showing retrieved notes only, no "
                       "generated answer.)*")

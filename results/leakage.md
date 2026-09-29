@@ -4,15 +4,15 @@ Does the question already contain the answer it is graded on? Two kinds are chec
 
 Config: `shipped`. Scored questions examined: 37. With at least one leaked key fact: **5** (14%).
 
-On the leaky questions only, document recall 100% before stripping -> 90% after; division recall 100% -> 100%.
-Across all scored questions, document recall 91% -> 90%.
+On the leaky questions only, document recall 100% before stripping -> 100% after; division recall 100% -> 100%.
+Across all scored questions, document recall 99% -> 99%.
 
 | id | set | leaked groups / total | leaked phrases | doc recall before -> after | division recall before -> after |
 |---|---|---|---|---|---|
 | S3 | main | 2/2 | `lockout`, `urgent`, `waive` | 100% -> 100% | True -> True |
 | CD7 | main | 1/2 | `rush` | 100% -> 100% | True -> True |
 | S2 | main | 1/2 | `concentration` | 100% -> 100% | True -> True |
-| S4 | main | 1/2 | `calibration` | 100% -> 50% | True -> True |
+| S4 | main | 1/2 | `calibration` | 100% -> 100% | True -> True |
 | IND1 | independent | 1/2 | `new tooling` | 100% -> 100% | True -> True |
 
 Stripped questions, for inspection:
