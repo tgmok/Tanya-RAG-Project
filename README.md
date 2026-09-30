@@ -23,7 +23,7 @@ pip install -r requirements.txt          # read the torch note inside first
 python data/check_my_data.py             # corpus, answer key and key facts hang together
 python self_test.py                      # the evaluation instruments themselves are sound
 python run_guardrails.py                 # every built guardrail against 39 named cases
-python run_eval.py --retrieval-only      # recall and MRR of 12 retrieval setups, every miss diagnosed
+python run_eval.py --retrieval-only      # recall and MRR of 13 retrieval setups, every miss diagnosed
 python run_eval.py --chunk-sweep         # why 200-word chunks
 python run_eval.py --leakage             # does a question already contain its own answer?
 python cost_model.py --estimate          # cost per successful answer, break-even, time to deploy
@@ -65,7 +65,7 @@ app.py                     Streamlit interface: upload -> scan -> classify -> co
 doc_parser.py              PDF/DOCX to text, no model calls
 
 run_eval.py                the evaluation entry point                      <- what a marker runs
-harness.py                 question sets, 12 retrieval configs, code checks, judge, aggregation
+harness.py                 question sets, 13 retrieval configs, code checks, judge, aggregation
 run_guardrails.py          guardrail checklist             -> results/guardrails.md
 self_test.py               checks the instruments, not the system
 cost_model.py              cost per query, per success, break-even, time to deploy -> results/cost_*.md
@@ -97,7 +97,7 @@ docs/
     BLIND_QUESTION_PACK.md     the documents-only pack used to write the independent questions
 
 results/                   every number in the write-up comes from a file here
-    retrieval_recall.md        12 configs, every miss diagnosed, two experiments, the threshold curve
+    retrieval_recall.md        13 configs, every miss diagnosed, the before/after, the threshold curve
     chunk_sweep.md             why 200/50 chunks
     leakage.md                 which questions contain their own answer, before/after stripping
     notebook_run.md            answer-level results of the final notebook run, copied verbatim
@@ -134,10 +134,10 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
 ## What is measured
 
 - **Retrieval, free:** did the retrieved notes cover every division and every document a question
-  needs (recall@k), and how near the top was the first of them (MRR)? Twelve setups, including the
+  needs (recall@k), and how near the top was the first of them (MRR)? Thirteen setups, including the
   shipped one (with reference-following), the version before it, the keyword baseline, "all
-  documents in the prompt" and hybrid search (measured, not shipped), with every miss diagnosed by
-  rank and score.
+  documents in the prompt" and hybrid search (alone and with reference-following), with every miss
+  diagnosed by rank and score.
 - **The baseline is keyword search over the same chunks** (`tfidf_k5`), a non-AI method. A model
   with no retrieval is not the baseline: it has never seen these fictional documents, so it scores
   near zero whatever the retrieval does, and teaches nothing.
@@ -194,9 +194,10 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
   a person files it anyway, matching sentences are stripped from its notes before any prompt and
   the reader is warned. That is a tripwire, not a fix (an attacker can rephrase); what makes an
   injection survivable is that Tanya has no tools and no way to send anything out.
-- **Hybrid search is measured, not shipped.** Fusing keyword and embedding rankings lifts
-  document recall from 88% to 93% (`results/retrieval_recall.md`); it is the next change to test on
-  answers.
+- **Hybrid search adds nothing on top of reference-following.** Fusing keyword and embedding
+  rankings lifts document recall from 88% to 93% on its own, but with reference-following it reaches
+  the same 98% and the same one miss as the shipped retrieval (`results/retrieval_recall.md`), so it
+  is not adopted.
 - **The corpus is synthetic and was written by an LLM.** The validation slices are small (8 records
   each), and the jewellery one checks pricing plausibility only.
 - **Not everything is independent.** The designed questions and key facts come from the same hand
@@ -210,7 +211,7 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
 |---|---|---|
 | 1 | sorting vs making; check a machine that makes | answering is making, so every answer is checked (code checks, judge, a person); routing an upload is sorting with no labelled uploads to train on, so the model suggests and a person confirms |
 | 2 | the stack, build vs buy by five factors | layer-by-layer own/rent table (`docs/TRADEOFF_ANALYSIS.md`): own data, orchestration and evaluation, rent the model |
-| 2 | RAG: chunking, top-k, hybrid search, contextual retrieval, long context | chunk sweep; top-k; title-prefixed chunks (contextual retrieval, shipped); hybrid search with reciprocal rank fusion (measured); `full_context` priced against the shipped retrieval |
+| 2 | RAG: chunking, top-k, hybrid search, contextual retrieval, long context | chunk sweep; top-k; title-prefixed chunks (contextual retrieval, shipped); hybrid search with reciprocal rank fusion (measured, adds nothing on top of reference-following); `full_context` priced against the shipped retrieval |
 | 2 | evals: L1 assertions, L2 judge aligned to people, recall@k and MRR | key-fact and citation checks in code; a judge from another model family with precision, recall and kappa against hand labels; recall and MRR per config |
 | 3 | fix the eval set first, change one thing, measure again | answer key frozen before any run; every retrieval change measured on the full set, including the one that failed (division classifier); reference-following adopted only after a same-run before/after on answers |
 | 3 | structured output: declare the schema, then verify it | the upload classifier must reply in one JSON shape; code parses and checks it, retries once, then a person chooses; the app shows the raw JSON |
@@ -248,6 +249,6 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
 - [x] Guardrails in code, 39 of 39 cases, every Class 6 red-team category addressed
 - [x] Cost per successful answer $3.50 at 85%, break-even 20% against answering by hand, a kill condition
 - [x] Reference-following adopted after a same-run before/after: misses 5 of 37 -> 1, correctness
-  80% -> 85%; hybrid search measured, not adopted (document recall 88% -> 93%)
+  80% -> 85%; hybrid search measured and not adopted: it adds nothing on top of reference-following
 - [x] Trade-off analysis in `docs/TRADEOFF_ANALYSIS.md`, under 1,200 words
 - [ ] Demo video and NTULearn submission

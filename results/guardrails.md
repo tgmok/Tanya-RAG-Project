@@ -1,6 +1,6 @@
 # Guardrail checklist: every built mitigation, against named cases
 
-`python run_guardrails.py`, 2026-09-29. Free: no model, no key. Embedder: local embeddings (all-MiniLM-L6-v2) -- matches MEANING.
+`python run_guardrails.py`, 2026-09-30. Free: no model, no key. Embedder: local embeddings (all-MiniLM-L6-v2) -- matches MEANING.
 
 **39/39 cases behave as designed.** Each row runs the real function the app and the evaluation call, on a real input. Human confirmation before an upload is filed is interface flow in `app.py` (nothing is written until a person picks the divisions) and is shown in the demo rather than tested here.
 

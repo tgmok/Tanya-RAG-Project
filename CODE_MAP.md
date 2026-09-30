@@ -12,7 +12,7 @@ question sets and the checker that validates them), `docs/` describes the instru
 | `guardrails.py` | 180 | Every risk mitigation that is code, not prompt: token cap, injection scan, the strip of instructions from notes before a prompt, confidence hand-off, exact abstention, the figure check, the malformed-citation check. No model calls. |
 | `app.py` | 340 | Streamlit interface: upload -> injection scan -> classify -> a person confirms -> impact brief -> chat. The only code that writes (to `data/uploads/`). |
 | `doc_parser.py` | 30 | PDF/DOCX/TXT to text. No model calls. |
-| `harness.py` | 725 | The evaluation: question sets, 12 retrieval configs (`shipped`, `previous_shipped` and the `tfidf_k5` baseline first; `hybrid_k5` measured, not shipped), recall and MRR, code checks, the judge call, aggregation (correctness, faithfulness, the two abstention numbers, silent failures), the judge's precision, recall and Cohen's kappa against hand labels, the leakage check. |
+| `harness.py` | 725 | The evaluation: question sets, 13 retrieval configs (`shipped`, `previous_shipped` and the `tfidf_k5` baseline first; hybrid search measured on its own and on top of reference-following, not shipped), recall and MRR, code checks, the judge call, aggregation (correctness, faithfulness, the two abstention numbers, silent failures), the judge's precision, recall and Cohen's kappa against hand labels, the leakage check. |
 | `run_eval.py` | 480 | The entry point a marker runs: `--retrieval-only`, `--chunk-sweep`, `--leakage`, `--dry-run`, `--run`, `--agreement`. |
 | `run_guardrails.py` | 245 | Guardrail checklist: 39 named cases against every guardrail, including an attack document filed into the index, and where Tanya stands on each Class 6 red-team category -> `results/guardrails.md`. Exits non-zero on a failure. |
 | `self_test.py` | 160 | Checks the instruments, not the system: every key fact appears in its source documents, the checkers reject wrong answers and abstentions, kappa and MRR match hand-worked values, and the break-even formula reproduces the Class 5 calculator's own answer. |
@@ -70,7 +70,7 @@ evaluation only:
 | data hangs together | `python data/check_my_data.py` | no |
 | the instruments are sound | `python self_test.py` | no |
 | guardrail checklist, 39 cases | `python run_guardrails.py` | no |
-| retrieval recall and MRR, 12 configs, every miss diagnosed | `python run_eval.py --retrieval-only` | no |
+| retrieval recall and MRR, 13 configs, every miss diagnosed | `python run_eval.py --retrieval-only` | no |
 | why 200-word chunks | `python run_eval.py --chunk-sweep` | no |
 | does a question contain its own answer? | `python run_eval.py --leakage` | no |
 | cost per successful answer, break-even, time to deploy | `python cost_model.py --estimate` | no |
@@ -97,7 +97,7 @@ reference-following and the keyword baseline, in one run.
 | cross-division recall (a chunk from every division needed) | 100% | 100% | 91% | `results/retrieval_recall.md` |
 | document recall (every document needed) | 98% | 88% | 91% | same |
 | questions missing a needed document | 1 of 37 | 5 of 37 | 5 of 37 | same |
-| hybrid search, measured and not shipped | document recall 93% | | | same |
+| hybrid search, not adopted | 93% alone; 98% with reference-following, the same as shipped | | | same |
 | words of notes sent per question | 1,188 | 837 | 865 | same |
 | unanswerable questions caught by the 0.45 threshold | 2 of 6 (1 of 37 answerable wrongly handed off) | | n/a | same, abstention table |
 | guardrail cases behaving as designed | 39 of 39 | | | `results/guardrails.md` |

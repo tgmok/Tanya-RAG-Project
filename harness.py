@@ -60,6 +60,9 @@ CONFIGS = {
     "hybrid_k5": {"kind": "hybrid", "k": 5,
                   "label": "EXPERIMENT: hybrid search, the shipped embeddings and the keyword baseline "
                            "fused by reciprocal rank, top-5"},
+    "hybrid_follow": {"kind": "hybrid", "k": 5, "extra": cfg.FOLLOW_REFERENCES,
+                      "label": "EXPERIMENT: hybrid search, then the shipped reference-following step: does hybrid "
+                               "add anything on top of what ships?"},
     "titled_k7": {"kind": "naive", "k": 7, "titled": True, "abstain_below": cfg.ABSTAIN_BELOW,
                   "label": "CONTROL for reference-following: the previous version with the same budget of "
                            "7 chunks, and no following"},
@@ -222,7 +225,7 @@ def retrieve_config(config, question, idx):
     chunks, scores = _scores_and_chunks(config, question, idx)
     order = np.argsort(-scores)[:spec["k"]]
     hits = [{**chunks[i], "score": float(scores[i])} for i in order]
-    if kind == "follow":
+    if spec.get("extra"):      # the reference-following step, on whichever ranking came first
         return follow_references(hits, chunks, scores, spec["extra"])
     if kind == "parent":
         best = {}

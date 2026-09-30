@@ -21,8 +21,7 @@ questions fixed before anything ran (`results/summary.md`, final run):
 
 Tanya wins on retrieval and correctness; the baseline is more faithful, and Tanya is one answer
 short of the target. In two checks I graded 20 of the judge's
-verdicts myself and agreed with all 20, including every answer it flagged
-(`results/judge_agreement.md`).
+verdicts myself and agreed with all 20 (`results/judge_agreement.md`).
 
 **Why retrieval, not the whole corpus in the prompt?** All 18 documents fit in one prompt at 2.6
 times the tokens, but years of documents will not, and retrieval is where access control belongs.
@@ -68,8 +67,7 @@ the break-even, stop.
 | answers cited a note's bracket number or the prompt's placeholder, and declined questions the notes answered | my screen recordings | the prompt says which text is the id; code flags fake citations | every decline right (4 of 4) |
 | retrieval missed a needed document on 5 of 37 questions, and Tanya answered anyway | retrieval report; answering-without-evidence count | reference-following: add up to two chunks sharing a work-order or contract id; tested on answers first | misses 5 → 1; correctness 80% → 85%; unsupported answers 3 → 1 |
 
-Reference-following is an agent's benefit as a fixed step. In the same run as the previous version,
-it cost 40% more input tokens and one faithful answer (89% → 84%); the synthetic documents share ids
+Reference-following is an agent's benefit as a fixed step. Against the previous version, it cost 40% more input tokens and one faithful answer (89% → 84%); the synthetic documents share ids
 by design, which flatters it.
 
 ## 4. Where it still fails
@@ -80,12 +78,11 @@ ids, not an invented claim without them; a retrieval-score threshold is only a b
 catches 2 of 6 unanswerable questions).
 
 **Citing a document it was not given** is the new failure: the extra notes mention other documents'
-codes, and the model cites those documents. All three unfaithful answers did this; the
-evaluation's citation check catches every one.
+codes, and the model cites those documents. All three unfaithful answers did this.
+The evaluation's citation check catches every one; flagging it in the app is the next step.
 
 Six partially answerable questions test invention directly: no answer invented the missing half,
-and four said plainly that it was missing. **Hybrid search**, measured free and not adopted, lifts document
-recall from 88% to 93%; it is the next change to test.
+and four said plainly that it was missing. **Hybrid search** lifts document recall from 88% to 93% alone, but adds nothing to reference-following (98% either way), so it was not adopted.
 
 ## 5. Risks and their built mitigations
 

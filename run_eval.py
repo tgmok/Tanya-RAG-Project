@@ -68,8 +68,8 @@ def write_retrieval_report(out_dir, questions, idx):
         d = per_config[c]
         return (d["main"]["avg_doc_recall"], sum(1 for r in d["records"] if r["doc_recall"] is not None
                                                  and r["doc_recall"] < 1), d["all"]["n_scored"], d["main"]["avg_words"])
-    if all(c in per_config for c in (H.SHIPPED, H.PREVIOUS, "titled_k7", "hybrid_k5")):
-        s_, pv, k7, hy = (row(c) for c in (H.SHIPPED, H.PREVIOUS, "titled_k7", "hybrid_k5"))
+    if all(c in per_config for c in (H.SHIPPED, H.PREVIOUS, "titled_k7", "hybrid_k5", "hybrid_follow")):
+        s_, pv, k7, hy, hf = (row(c) for c in (H.SHIPPED, H.PREVIOUS, "titled_k7", "hybrid_k5", "hybrid_follow"))
         L += ["", "## Reference-following, adopted, and the alternatives", "",
               "Each row changes one thing from `previous_shipped`, the retrieval before reference-following.", "",
               f"- **`shipped`** adds a fixed code step: follow the reference ids the retrieved notes mention. "
@@ -79,8 +79,15 @@ def write_retrieval_report(out_dir, questions, idx):
               f"- **`titled_k7`**, its control: the same 7-chunk budget with no following: document recall "
               f"{fmt(k7[0])}, misses {k7[1]} of {k7[2]}, words {k7[3]:.0f}. What `shipped` gains over this row is "
               "the reference-following itself, not the two extra chunks.",
-              f"- **`hybrid_k5`** (embeddings and keyword search fused by rank, Class 2's hybrid search), not "
-              f"adopted: document recall {fmt(hy[0])}, misses {hy[1]} of {hy[2]}, words {hy[3]:.0f}.", "",
+              f"- **`hybrid_k5`** (embeddings and keyword search fused by rank, Class 2's hybrid search): document "
+              f"recall {fmt(hy[0])}, misses {hy[1]} of {hy[2]}, words {hy[3]:.0f}. Better than the retrieval before "
+              "reference-following, on its own.",
+              f"- **`hybrid_follow`**, hybrid search with the shipped reference-following step on top: document "
+              f"recall {fmt(hf[0])}, misses {hf[1]} of {hf[2]}, words {hf[3]:.0f}, against {fmt(s_[0])} and "
+              f"{s_[1]} for `shipped`. "
+              + ("It adds nothing on top of what ships, so hybrid search is not adopted."
+                 if (hf[0], hf[1]) == (s_[0], s_[1]) else
+                 "It changes retrieval on top of what ships; test it on answers before adopting."), "",
               "Caveat: the synthetic documents were written with shared reference ids across each cross-division "
               "hook, which flatters reference-following. Real documents cite each other less consistently.", ""]
 

@@ -23,6 +23,7 @@ MRR = mean reciprocal rank of the first chunk from a needed document (1.0 = alwa
 | `balanced_2x3`: top-2 from EACH division (6 chunks); division recall 100% by construction | 100% | 100% | 88% | 0.92 | 5/37 | 6.0 | 1004 |
 | `full_context`: all 18 documents in every prompt, no retrieval; recall 100% by construction | 100% | 100% | 100% | n/a | 0/37 | 18.0 | 3228 |
 | `hybrid_k5`: EXPERIMENT: hybrid search, the shipped embeddings and the keyword baseline fused by reciprocal rank, top-5 | 100% | 100% | 93% | 0.90 | 3/37 | 5.0 | 853 |
+| `hybrid_follow`: EXPERIMENT: hybrid search, then the shipped reference-following step: does hybrid add anything on top of what ships? | 100% | 100% | 98% | 0.90 | 1/37 | 7.0 | 1204 |
 | `titled_k7`: CONTROL for reference-following: the previous version with the same budget of 7 chunks, and no following | 100% | 100% | 93% | 0.92 | 3/37 | 7.0 | 1154 |
 
 ## Reference-following, adopted, and the alternatives
@@ -31,7 +32,8 @@ Each row changes one thing from `previous_shipped`, the retrieval before referen
 
 - **`shipped`** adds a fixed code step: follow the reference ids the retrieved notes mention. Document recall 88% -> 98%, questions missing a needed document 5 -> 1 of 37, words sent 837 -> 1188. Its effect on the answers is in `results/summary.md`.
 - **`titled_k7`**, its control: the same 7-chunk budget with no following: document recall 93%, misses 3 of 37, words 1154. What `shipped` gains over this row is the reference-following itself, not the two extra chunks.
-- **`hybrid_k5`** (embeddings and keyword search fused by rank, Class 2's hybrid search), not adopted: document recall 93%, misses 3 of 37, words 853.
+- **`hybrid_k5`** (embeddings and keyword search fused by rank, Class 2's hybrid search): document recall 93%, misses 3 of 37, words 853. Better than the retrieval before reference-following, on its own.
+- **`hybrid_follow`**, hybrid search with the shipped reference-following step on top: document recall 98%, misses 1 of 37, words 1204, against 98% and 1 for `shipped`. It adds nothing on top of what ships, so hybrid search is not adopted.
 
 Caveat: the synthetic documents were written with shared reference ids across each cross-division hook, which flatters reference-following. Real documents cite each other less consistently.
 
@@ -196,6 +198,11 @@ None.
   - `cnc-01`: best chunk ranked #7 of 21 at score 0.03, versus a retrieval cutoff of 0.03
 - **CD12** (cross_division, main); retrieved [('jwl-01', 0.032), ('fnb-01', 0.032), ('jwl-04', 0.031), ('cnc-06', 0.031), ('cnc-02', 0.03)]
   - `jwl-02`: best chunk ranked #16 of 21 at score 0.027, versus a retrieval cutoff of 0.03
+
+## Misses under `hybrid_follow` (1 questions missing at least one needed document)
+
+- **CD12** (cross_division, main); retrieved [('jwl-01', 0.032), ('fnb-01', 0.032), ('jwl-04', 0.031), ('cnc-06', 0.031), ('cnc-02', 0.03), ('cnc-01', 0.029), ('fnb-04', 0.027)]
+  - `jwl-02`: best chunk ranked #16 of 21 at score 0.027, versus a retrieval cutoff of 0.027
 
 ## Misses under `titled_k7` (3 questions missing at least one needed document)
 
