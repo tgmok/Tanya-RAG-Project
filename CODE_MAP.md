@@ -9,12 +9,12 @@ question sets and the checker that validates them), `docs/` describes the instru
 |---|---|---|
 | `config.py` | 105 | The only place to change a setting: models, chunking, top-k, titled embedding, the hand-off threshold, the token cap, prices, cost-model assumptions (checking and redo minutes, fixed monthly costs), and the corpus manifest (`DOC_ID_TO_PATH`). Standard library only. |
 | `rag_core.py` | 370 | The pipeline, shared by the app, the evaluation and the demo: load corpus -> chunk -> `build_index` (embed) -> `retrieve` (top-k, then `follow_references`) -> `format_notes` (the one prompt builder, strip included) -> `answer_question`; `classify_document` -> `format_upload_content` -> `generate_impact_snapshot` for uploads. The prompts (`GROUNDED`, `CLASSIFY_SYSTEM`, `IMPACT_SYSTEM`) are here. A workflow, not an agent: fixed steps, one call, no tools. |
-| `guardrails.py` | 180 | Every risk mitigation that is code, not prompt: token cap, injection scan, the strip of instructions from notes before a prompt, confidence hand-off, exact abstention, the figure check, the malformed-citation check. No model calls. |
+| `guardrails.py` | 180 | Every risk mitigation that is code, not prompt: token cap, injection scan, the strip of instructions from notes before a prompt, confidence hand-off, exact abstention, the figure check, the malformed-citation check, and the check that every citation was among the notes given. No model calls. |
 | `app.py` | 340 | Streamlit interface: upload -> injection scan -> classify -> a person confirms -> impact brief -> chat. The only code that writes (to `data/uploads/`). |
 | `doc_parser.py` | 30 | PDF/DOCX/TXT to text. No model calls. |
 | `harness.py` | 725 | The evaluation: question sets, 13 retrieval configs (`shipped`, `previous_shipped` and the `tfidf_k5` baseline first; hybrid search measured on its own and on top of reference-following, not shipped), recall and MRR, code checks, the judge call, aggregation (correctness, faithfulness, the two abstention numbers, silent failures), the judge's precision, recall and Cohen's kappa against hand labels, the leakage check. |
 | `run_eval.py` | 480 | The entry point a marker runs: `--retrieval-only`, `--chunk-sweep`, `--leakage`, `--dry-run`, `--run`, `--agreement`. |
-| `run_guardrails.py` | 245 | Guardrail checklist: 39 named cases against every guardrail, including an attack document filed into the index, and where Tanya stands on each Class 6 red-team category -> `results/guardrails.md`. Exits non-zero on a failure. |
+| `run_guardrails.py` | 270 | Guardrail checklist: 45 named cases against every guardrail, including an attack document filed into the index, and where Tanya stands on each Class 6 red-team category -> `results/guardrails.md`. Exits non-zero on a failure. |
 | `self_test.py` | 160 | Checks the instruments, not the system: every key fact appears in its source documents, the checkers reject wrong answers and abstentions, kappa and MRR match hand-worked values, and the break-even formula reproduces the Class 5 calculator's own answer. |
 | `cost_model.py` | 330 | The course's three layers: calls x tokens x price plus a person checking every answer; the expected redo; fixed monthly costs. The break-even against answering by hand and a written kill condition. `--estimate` (free, the real prompts, time-to-deploy) -> `results/cost_estimate.md`; after a live run -> `results/cost_model.md`. |
 | `demo_citation_fix.py` | 120 | The failure found in the screen recordings (fake citations), re-run live -> `results/citation_fix.md`. |
@@ -43,6 +43,7 @@ question
   -> GROUNDED prompt: answer ONLY from the numbered notes, cite the real ids, or say "The documents do not say."
   -> answer
   -> figure check: every number, date and id in the answer appears in a cited document (warn if not)
+  -> citation check: every cited document was among the notes given (warn if not)
 evaluation only:
   -> correctness (key facts, code) · citation validity (code) · faithfulness (judge, a different model family)
   -> declined? right or wrong (was the evidence retrieved?) · answered without the evidence? (silent failure)
@@ -69,7 +70,7 @@ evaluation only:
 |---|---|---|
 | data hangs together | `python data/check_my_data.py` | no |
 | the instruments are sound | `python self_test.py` | no |
-| guardrail checklist, 39 cases | `python run_guardrails.py` | no |
+| guardrail checklist, 45 cases | `python run_guardrails.py` | no |
 | retrieval recall and MRR, 13 configs, every miss diagnosed | `python run_eval.py --retrieval-only` | no |
 | why 200-word chunks | `python run_eval.py --chunk-sweep` | no |
 | does a question contain its own answer? | `python run_eval.py --leakage` | no |
@@ -100,7 +101,7 @@ reference-following and the keyword baseline, in one run.
 | hybrid search, not adopted | 93% alone; 98% with reference-following, the same as shipped | | | same |
 | words of notes sent per question | 1,188 | 837 | 865 | same |
 | unanswerable questions caught by the 0.45 threshold | 2 of 6 (1 of 37 answerable wrongly handed off) | | n/a | same, abstention table |
-| guardrail cases behaving as designed | 39 of 39 | | | `results/guardrails.md` |
+| guardrail cases behaving as designed | 45 of 45 | | | `results/guardrails.md` |
 | model cost per question (measured) | $0.00033 | $0.00024 | $0.00028 | `results/cost_model.md` |
 | cost per successful answer, with a person checking each (3 min) | $3.50 | $4.00 | $4.50 | same |
 | break-even success rate against answering by hand | 20% | 20% | 20% | same |

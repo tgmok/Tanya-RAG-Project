@@ -79,18 +79,18 @@ catches 2 of 6 unanswerable questions).
 
 **Citing a document it was not given** is the new failure: the extra notes mention other documents'
 codes, and the model cites those documents. All three unfaithful answers did this.
-The evaluation's citation check catches every one; flagging it in the app is the next step.
+The evaluation's citation check catches every one, and the app now warns when an answer does it.
 
 Six partially answerable questions test invention directly: no answer invented the missing half,
 and four said plainly that it was missing. **Hybrid search** lifts document recall from 88% to 93% alone, but adds nothing to reference-following (98% either way), so it was not adopted.
 
 ## 5. Risks and their built mitigations
 
-All 39 cases pass in `results/guardrails.md`. OWASP numbers are the 2026 edition's, as taught.
+All 45 cases pass in `results/guardrails.md`. OWASP numbers are the 2026 edition's, as taught.
 
 | risk | mitigation in code |
 |---|---|
-| confabulation, fake citations | figure check; malformed-citation check; answering-without-evidence count |
+| confabulation, fake citations | figure check; citation checks; answering-without-evidence count |
 | unanswerable questions | hand-off to a person below 0.45, no model call |
 | injection in an upload (LLM01) | pattern scan sends it to a person, not the model |
 | injection through a filed upload (LLM01, LLM09) | matching sentences stripped from every note before a prompt; the reader is warned |

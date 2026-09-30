@@ -86,6 +86,16 @@ def show_notes(hits, label="Retrieved notes"):
                         f"{h['score']:.3f}): {h['text'][:200]}...")
 
 
+def warn_citations_not_given(text, given_ids):
+    """The final evaluation's one new failure, made visible: an answer citing a document it was never
+    given (guardrails.citations_not_given). The answer is not changed; the reader is told which
+    citation to distrust."""
+    missing = guardrails.citations_not_given(text, given_ids)
+    if missing:
+        st.warning("Cites a document it was not given: " + ", ".join(missing) + ". Treat that citation, "
+                   "and anything it supports, as unverified; check it against the notes below.")
+
+
 init_state()
 if st.session_state.docs is None:
     with st.spinner("Loading TGMOK Holdings' document corpus..."):
@@ -287,6 +297,7 @@ if st.session_state.pending_upload is not None:
             elif unsupported is None and not guardrails.is_abstention(snapshot):
                 st.warning("This snapshot cites no existing document, so its figures could not be checked "
                            "against the corpus (it may only be describing the new upload itself).")
+            warn_citations_not_given(snapshot, set(new_doc_ids) | {h["doc_id"] for h in hits})
             show_notes(hits, "Notes this snapshot drew on")
             st.caption(
                 "This snapshot is a demo aid for a human to read and judge -- it is not "
@@ -346,6 +357,7 @@ if question:
                            + ". Check these against the source before relying on this answer.")
             elif unsupported is None and not guardrails.is_abstention(answer):
                 st.warning("This answer cites no document, so its figures could not be checked.")
+            warn_citations_not_given(answer, {h["doc_id"] for h in hits})
             st.caption("A draft for you to check against the notes below. Tanya takes no action on it.")
             show_notes(hits)
 

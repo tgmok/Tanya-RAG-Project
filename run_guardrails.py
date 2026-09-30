@@ -206,6 +206,31 @@ def main():
     case("G10 output shown as text", r, "app.py ever turns off Streamlit's HTML escaping", False,
          "unsafe_allow_html" in app_src)
 
+    # ---- G11 citing a document the model was not given (the final evaluation's new failure) ---------
+    r = "citing a document the model was not given (the final run's new failure)"
+    given = {"fnb-01", "fnb-04", "cnc-01"}
+    case("G11 citation given", r, "every cited document was given", [],
+         G.citations_not_given("Installed on 2026-05-16. Cited: fnb-01, cnc-01", given))
+    case("G11 citation given", r, "cites a document the notes only name by its code (CD2's pattern)", ["fnb-03"],
+         G.citations_not_given("Inspected per QC-FNB-002. Cited: fnb-01, fnb-03", given))
+    case("G11 citation given", r, "cites a document that does not exist (CD12's pattern)", ["cnc-07"],
+         G.citations_not_given("The die is due on 2026-07-10. Cited: cnc-07", given))
+    case("G11 citation given", r, "cites an upload it was given", [],
+         G.citations_not_given("Cited: upload-fnb-meadowfield_snacks_onboarding",
+                               {"upload-fnb-meadowfield_snacks_onboarding"}))
+    case("G11 citation given", r, "an honest decline with an empty citation", [],
+         G.citations_not_given("The documents do not say.\nCited:", given))
+    final = config.RESULTS_DIR / "answers.json"
+    if final.exists():
+        import json
+        main = [a for a in json.loads(final.read_text(encoding="utf-8"))["shipped"] if a["set"] == "main"]
+        flagged = sorted(a["id"] for a in main if G.citations_not_given(a["answer"], a["retrieved"]))
+        case("G11 citation given", r, "the final run's main-set answers that it flags", ["CD11", "CD12", "CD2", "S4"],
+             flagged)
+        ROWS[-1]["note"] = ("exactly the four answers the evaluation's citation check failed; CD2, CD11 and S4 are the "
+                            "three the judge and my own grading found unfaithful, and CD12 cites a document id that "
+                            "does not exist")
+
     # ---- report ---------------------------------------------------------------------------------
     n_ok = sum(r["pass"] for r in ROWS)
     L = ["# Guardrail checklist: every built mitigation, against named cases", "",

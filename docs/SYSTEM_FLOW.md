@@ -33,7 +33,8 @@ flowchart TD
     FILE --> REBUILD["rag_core.build_index()<br/>re-chunk + re-embed"]
     REBUILD --> SNAPSHOT["generate_impact_snapshot()<br/>retrieve from OTHER divisions using<br/>the new document's own text as the query;<br/>every note stripped as in G8"]
     SNAPSHOT --> FIG1(["G5 unsupported_figures()<br/>confabulation check"])
-    FIG1 --> SHOW["Brief + cited notes + a warning if any figure<br/>is not in a cited document (read by a person,<br/>not a scored case)"]
+    FIG1 --> GIVEN1(["G11 citations_not_given()<br/>warn if it cites a document it was not given"])
+    GIVEN1 --> SHOW["Brief + cited notes + a warning if any figure<br/>is not in a cited document (read by a person,<br/>not a scored case)"]
     SHOW --> CHAT
 
     CHOICE -->|ask directly| CHAT["Chat box: a question"]
@@ -47,7 +48,8 @@ flowchart TD
     ABSTAIN -->|no| DECLINE["'The documents do not say.'"]
     ABSTAIN -->|yes| CITE["Answer + 'Cited: fnb-01, cnc-01'<br/>(real ids, never bracket numbers),<br/>shown with the notes it drew on"]
     CITE --> FIG2(["G5 unsupported_figures()"])
-    FIG2 --> CHAT
+    FIG2 --> GIVEN2(["G11 citations_not_given()"])
+    GIVEN2 --> CHAT
     DECLINE --> CHAT
     PERSON --> CHAT
 ```

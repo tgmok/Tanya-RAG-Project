@@ -22,7 +22,7 @@ cd Tanya-RAG-Project
 pip install -r requirements.txt          # read the torch note inside first
 python data/check_my_data.py             # corpus, answer key and key facts hang together
 python self_test.py                      # the evaluation instruments themselves are sound
-python run_guardrails.py                 # every built guardrail against 39 named cases
+python run_guardrails.py                 # every built guardrail against 45 named cases
 python run_eval.py --retrieval-only      # recall and MRR of 13 retrieval setups, every miss diagnosed
 python run_eval.py --chunk-sweep         # why 200-word chunks
 python run_eval.py --leakage             # does a question already contain its own answer?
@@ -60,7 +60,7 @@ config.py                  THE one place to change a setting: models, chunking, 
 rag_core.py                the pipeline: load, chunk, embed, retrieve, grounded answer,
                            upload classification, impact brief. Shared by app, eval and demo.
 guardrails.py              every risk mitigation that is code: token cap, injection scan and
-                           strip, confidence hand-off, exact abstention, figure check, fake-citation check
+                           strip, confidence hand-off, exact abstention, figure check, citation checks
 app.py                     Streamlit interface: upload -> scan -> classify -> confirm -> brief -> chat
 doc_parser.py              PDF/DOCX to text, no model calls
 
@@ -123,7 +123,8 @@ flowchart TD
     H -->|no| S["strip any sentence<br/>aimed at the model"]
     S --> G["gpt-4o-mini answers ONLY from the notes,<br/>cites real ids, or says 'The documents do not say.'"]
     G --> F["figure check: every number, date and id<br/>must appear in a cited document"]
-    F --> A(["an answer, with the notes it used, for a person to check"])
+    F --> C["citation check: warn if it cites<br/>a document it was not given"]
+    C --> A(["an answer, with the notes it used, for a person to check"])
 ```
 
 A new document takes the other entry: an injection scan, one model call that must return JSON
@@ -187,8 +188,8 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
   claim with none in it; the silent-failure count is how that shape is detected.
 - **Citing a document it was not given.** With more notes, the model sometimes cites a document
   that the notes only mention by its code (all three unfaithful answers in the final run). The
-  evaluation's citation check catches every case. It is why reference-following brought one more
-  unfaithful answer (89% -> 84%).
+  evaluation's citation check catches every case, and the app now warns the reader whenever an answer
+  does it. It is why reference-following brought one more unfaithful answer (89% -> 84%).
 - **Uploads are untrusted input.** A pattern scan routes a suspicious upload to a person instead of
   the automatic classifier (OWASP LLM01:2026), with no false positives on the 18 real documents. If
   a person files it anyway, matching sentences are stripped from its notes before any prompt and
@@ -219,7 +220,7 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
 | 4 | agent or workflow; the ground-truth test | a workflow on purpose: fixed steps, one call, no tools; the one variable step (search again after a miss) is a fixed code rule, reference-following |
 | 5 | cost per successful task, break-even, fixed costs, kill condition | `cost_model.py`: 20% break-even against answering by hand, measured 85%, $181/month layer 3, written kill condition |
 | 6 | the 2x2 (visible? undoable?), human in the loop as window, evidence and authority | retrieval and generation monitored and verified; the one write gated; the app shows the evidence under every answer |
-| 6 | OWASP 2026 red-team categories, confabulation, the lethal trifecta, PDPA | `results/guardrails.md`: 39 cases and every category; two legs of the trifecta, not three; PDPA named as the binding floor |
+| 6 | OWASP 2026 red-team categories, confabulation, the lethal trifecta, PDPA | `results/guardrails.md`: 45 cases and every category; two legs of the trifecta, not three; PDPA named as the binding floor |
 
 ## Extending the evaluation set
 
@@ -246,7 +247,8 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
   84% faithful (baseline 100%)
 - [x] The judge checked against my own grading twice: 20 of 20 agree (`results/judge_agreement.md`)
 - [x] 43 questions in five sets, including 6 partially answerable: none invented the missing half
-- [x] Guardrails in code, 39 of 39 cases, every Class 6 red-team category addressed
+- [x] Guardrails in code, 45 of 45 cases, every Class 6 red-team category addressed; the final run's new
+  failure (citing a document not given) flagged in the app
 - [x] Cost per successful answer $3.50 at 85%, break-even 20% against answering by hand, a kill condition
 - [x] Reference-following adopted after a same-run before/after: misses 5 of 37 -> 1, correctness
   80% -> 85%; hybrid search measured and not adopted: it adds nothing on top of reference-following

@@ -14,6 +14,8 @@ confabulation: confidently stated erroneous content.
     figure, date or id (NIST AI 600-1)                                             evaluation, every answer
   fake citation dressed up as grounding (the bug in     malformed_citation()       evaluation; regression demo
     the screen recordings)
+  citing a document the model was not given (the new   citations_not_given()      app, every answer and
+    failure in the final evaluation)                                               upload brief
   answering when retrieval found nothing relevant       handoff_message() via      app + evaluation, before
                                                         rag_core.answer_question   any model call
   unbounded spend in one session                        session_tokens_exceeded()  app, before every model call
@@ -134,6 +136,27 @@ def cited_doc_ids(answer, known_ids):
         return set()
     tail = m.group(1).lower()
     return {d for d in known_ids if d.lower() in tail}
+
+
+_CITED_ID = re.compile(r"upload-[a-z]+-[\w-]+|\b[a-z]{3}-\d{2}\b")
+
+
+def citations_not_given(answer, given_ids):
+    """The ids in an answer's 'Cited:' line that were NOT among the notes the model was given, in the
+    order cited. Catches the failure the final evaluation found: the notes mention another document by
+    its code (QC-FNB-002, POL-CNC-005), and the model cites that document as if it had read it (CD2,
+    CD11, S4), or cites an id that does not exist at all (CD12's 'cnc-07'). [] when every citation was
+    given, or when nothing is cited (an honest decline). The app shows a warning, so the reader knows
+    which citation, and anything it supports, is unverified."""
+    m = re.search(r"cited:\s*(.+)$", answer or "", re.I | re.S)
+    if not m:
+        return []
+    given = {g.lower() for g in given_ids}
+    out = []
+    for cid in _CITED_ID.findall(m.group(1).lower()):
+        if cid not in given and cid not in out:
+            out.append(cid)
+    return out
 
 
 def malformed_citation(answer, known_ids):
