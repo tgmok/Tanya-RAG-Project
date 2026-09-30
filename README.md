@@ -187,8 +187,8 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
   claim with none in it; the silent-failure count is how that shape is detected.
 - **Citing a document it was not given.** With more notes, the model sometimes cites a document
   that the notes only mention by its code (all three unfaithful answers in the final run). The
-  evaluation's citation check catches every case; it cost reference-following one faithful answer
-  (89% -> 84%).
+  evaluation's citation check catches every case. It is why reference-following brought one more
+  unfaithful answer (89% -> 84%).
 - **Uploads are untrusted input.** A pattern scan routes a suspicious upload to a person instead of
   the automatic classifier (OWASP LLM01:2026), with no false positives on the 18 real documents. If
   a person files it anyway, matching sentences are stripped from its notes before any prompt and

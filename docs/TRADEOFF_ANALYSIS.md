@@ -67,7 +67,7 @@ the break-even, stop.
 | answers cited a note's bracket number or the prompt's placeholder, and declined questions the notes answered | my screen recordings | the prompt says which text is the id; code flags fake citations | every decline right (4 of 4) |
 | retrieval missed a needed document on 5 of 37 questions, and Tanya answered anyway | retrieval report; answering-without-evidence count | reference-following: add up to two chunks sharing a work-order or contract id; tested on answers first | misses 5 → 1; correctness 80% → 85%; unsupported answers 3 → 1 |
 
-Reference-following is an agent's benefit as a fixed step. Against the previous version, it cost 40% more input tokens and one faithful answer (89% → 84%); the synthetic documents share ids
+Reference-following is an agent's benefit as a fixed step. Against the previous version, it cost 40% more input tokens and one more unfaithful answer (89% → 84%); the synthetic documents share ids
 by design, which flatters it.
 
 ## 4. Where it still fails
