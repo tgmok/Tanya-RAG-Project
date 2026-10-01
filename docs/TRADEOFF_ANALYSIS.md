@@ -9,6 +9,10 @@ divisions' private, changing documents, which no model has seen. Tanya is retrie
 generation (RAG): it retrieves the relevant notes, answers only from them and cites them. It also
 briefs leaders on what a newly filed document connects to.
 
+**What changes:** today a cross-division link surfaces at the weekly report, compiled by hand;
+with Tanya a leader gets a cited answer in seconds, and a new document is linked to the other
+divisions when it is filed.
+
 I measured it against a non-AI baseline, keyword (TF-IDF) search over the same chunks, on 20
 questions fixed before anything ran (`results/summary.md`, final run):
 
@@ -84,6 +88,10 @@ The evaluation's citation check catches every one, and the app now warns when an
 Six partially answerable questions test invention directly: no answer invented the missing half,
 and four said plainly that it was missing. **Hybrid search** lifts document recall from 88% to 93% alone, but adds nothing to reference-following (98% either way), so it was not adopted.
 
+**The evaluation has limits too.** With 20 questions, one answer is five points, so 84% against
+the 85% target is within noise, and so is 85% against 80%. The documents, questions and key facts
+come from one hand; only five questions came from another model.
+
 ## 5. Risks and their built mitigations
 
 All 45 cases pass in `results/guardrails.md`. OWASP numbers are the 2026 edition's, as taught.
@@ -106,3 +114,9 @@ Intended use: briefing leaders on a fictional conglomerate; not live client data
 decisions, or judgements about people. Singapore's IMDA framework is voluntary; the PDPA is the
 binding floor, which real documents would engage. The corpus is synthetic, so these numbers show
 the method works, not that it transfers unchanged.
+
+## 6. What next
+
+Real documents under each division's access control; a larger question set written by the leaders
+themselves; and a check for an invented claim that carries no figure, the one failure no guardrail
+sees.

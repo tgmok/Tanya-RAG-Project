@@ -11,6 +11,66 @@ connects to in the other divisions.
 
 The business and technical trade-off analysis is `docs/TRADEOFF_ANALYSIS.md`.
 
+## Product documentation
+
+| item | description |
+|---|---|
+| **Persona** | Executive leadership and headquarters executives of TGMOK Holdings, a fictional conglomerate with three divisions: F&B contract manufacturing, CNC machine parts and gold jewellery. Today they learn how a change in one division affects another only from weekly reports compiled by hand in each unit. |
+| **Input** | 1. A question typed into the chat box. 2. A new document uploaded as PDF, DOCX, TXT or MD. Behind both are 18 internal documents, 6 per division (`data/`). |
+| **Output** | 1. A short answer that cites the documents it used, shown with the notes it drew on; or exactly "The documents do not say."; or a hand-off to a person when retrieval is too weak to answer. A warning appears when a figure or a citation fails a code check. 2. For an upload: the divisions it affects, for a person to confirm, then a brief on what it connects to in the other divisions, with citations. |
+| **External intelligence** | One rented language model, `gpt-4o-mini` through OpenRouter: one call per question, two per upload. It has no tools, so it can only return text. The embedding model (`all-MiniLM-L6-v2`) runs locally. Everything else is code in this repository. |
+
+### Architecture: how an input becomes an output
+
+A question goes in, one model call comes out, and every step around that call is code. The same
+fixed path runs for every question, so this is a workflow, not an agent.
+
+```mermaid
+flowchart TD
+    Q(["a question"]) --> R["retrieve the top-5 notes<br/>title-prefixed embeddings, run locally"]
+    R --> FR["follow references: add up to 2 notes<br/>sharing a work-order or contract id"]
+    FR --> H{"best score<br/>below 0.45?"}
+    H -->|yes| P["handed to a person<br/>no model call"]
+    H -->|no| S["strip any sentence<br/>aimed at the model"]
+    S --> G["gpt-4o-mini answers ONLY from the notes,<br/>cites real ids, or says 'The documents do not say.'"]
+    G --> F["figure check: every number, date and id<br/>must appear in a cited document"]
+    F --> C["citation check: warn if it cites<br/>a document it was not given"]
+    C --> A(["an answer, with the notes it used, for a person to check"])
+    style G fill:#fde68a,stroke:#b45309,color:#000
+```
+
+The highlighted box is the rented model, the only external intelligence; every other box is code in
+this repository.
+
+A new document takes the other entry: an injection scan, one model call that must return JSON
+(divisions, reasoning, summary), a person confirming the divisions, filing and re-indexing, then a
+brief built from the other divisions' notes. Every guardrail on both paths is in
+`docs/SYSTEM_FLOW.md`.
+
+### Metrics: targeted and reached
+
+Final run, 2026-09-29, on 20 scored questions fixed before anything ran (`results/summary.md`).
+
+| metric | target | reached | keyword baseline |
+|---|---|---|---|
+| cross-division context recall: the notes cover every division a question needs | at least 80% | **100%** | 91% |
+| faithfulness: every claim is supported by the notes (judged by a different model family) | at least 85% | **84%**, one answer short | 100% |
+| answer correctness: every key fact is present | beat the keyword baseline | **85%** | 75% |
+| correctness on cross-division questions | beat the keyword baseline | **73%** | 55% |
+| questions where retrieval misses a needed document | fewer than before reference-following (5 of 37) | **1 of 37** | 5 of 37 |
+| cost per correct answer, with a person checking every answer | below $10, the cost of answering by hand (break-even: 20% correct) | **$3.50** at 85% correct | |
+| guardrail cases behaving as designed | all | **45 of 45** | |
+| the judge's agreement with my own grading | checked, not assumed | **20 of 20** answers across two checks | |
+
+The critique of these numbers is in `docs/TRADEOFF_ANALYSIS.md` and under "Limits we found" below.
+
+### Where to read more
+
+- The data, explained: `data/README.md`
+- The evals, explained: `EVALS.md`
+- What each code file does: `CODE_MAP.md`
+- The report (trade-offs and critique): `docs/TRADEOFF_ANALYSIS.md`
+
 ## Clone to a reproduced run
 
 Everything in the first block runs with **no API key** (and no network after a one-off ~90 MB
@@ -53,6 +113,7 @@ folder (it is in `.gitignore`), or asked for with a hidden prompt. It is never w
 ```
 README.md                  this file
 CODE_MAP.md                what each file does, reading order, commands, current results
+EVALS.md                   the evals, explained: what is tested, what grades it, where results land
 requirements.txt           pinned; read the torch note inside before installing
 config.py                  THE one place to change a setting: models, chunking, top-k, thresholds,
                            prices, cost assumptions, the corpus manifest
@@ -74,6 +135,7 @@ make_docs.py               regenerates docs/EVALUATION_SET.md and the blind ques
 Tanya_RAG_Notebook.ipynb   the smallest first version, and the evaluation as a narrative
 
 data/
+    README.md                  the data, explained
     fnb/ cnc/ jewellery/       the graded corpus: 18 synthetic documents, 6 per division
     generation_prompts.md      the prompts that produced the corpus, so it can be regenerated
     data_dictionary.md         every document, its division, and the hook facts it carries
@@ -108,29 +170,6 @@ results/                   every number in the write-up comes from a file here
     judge_agreement.md         the judge against my own grading: precision, recall, Cohen's kappa
     citation_fix.md            the recorded bug, re-run (after demo_citation_fix.py)
 ```
-
-## How a question works
-
-A question goes in, one model call comes out, and every step around that call is code. The same
-fixed path runs for every question, so this is a workflow, not an agent.
-
-```mermaid
-flowchart TD
-    Q(["a question"]) --> R["retrieve the top-5 notes<br/>title-prefixed embeddings, run locally"]
-    R --> FR["follow references: add up to 2 notes<br/>sharing a work-order or contract id"]
-    FR --> H{"best score<br/>below 0.45?"}
-    H -->|yes| P["handed to a person<br/>no model call"]
-    H -->|no| S["strip any sentence<br/>aimed at the model"]
-    S --> G["gpt-4o-mini answers ONLY from the notes,<br/>cites real ids, or says 'The documents do not say.'"]
-    G --> F["figure check: every number, date and id<br/>must appear in a cited document"]
-    F --> C["citation check: warn if it cites<br/>a document it was not given"]
-    C --> A(["an answer, with the notes it used, for a person to check"])
-```
-
-A new document takes the other entry: an injection scan, one model call that must return JSON
-(divisions, reasoning, summary), a person confirming the divisions, filing and re-indexing, then a
-brief built from the other divisions' notes. Every guardrail on both paths is in
-`docs/SYSTEM_FLOW.md`.
 
 ## What is measured
 
@@ -238,7 +277,7 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
 - Claude (Anthropic) wrote the corpus and much of the code with the author. ChatGPT wrote the
   independent questions IND1 to IND5 from the blind pack.
 
-## Status (2026-09-29)
+## Status (2026-10-01)
 
 - [x] RAG over 18 synthetic documents in three divisions; answers cite real document ids, and say
   "The documents do not say." when the notes do not
@@ -252,5 +291,7 @@ brief built from the other divisions' notes. Every guardrail on both paths is in
 - [x] Cost per successful answer $3.50 at 85%, break-even 20% against answering by hand, a kill condition
 - [x] Reference-following adopted after a same-run before/after: misses 5 of 37 -> 1, correctness
   80% -> 85%; hybrid search measured and not adopted: it adds nothing on top of reference-following
-- [x] Trade-off analysis in `docs/TRADEOFF_ANALYSIS.md`, under 1,200 words
+- [x] Report (trade-offs and critique) in `docs/TRADEOFF_ANALYSIS.md`, about 1,300 words
+- [x] Product documentation at the top of this file; explainers for the data (`data/README.md`) and
+  the evals (`EVALS.md`)
 - [ ] Demo video and NTULearn submission

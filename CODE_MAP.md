@@ -4,6 +4,7 @@ Flat, single-purpose Python modules at the repository root; no packages. `data/`
 everything about the data (the corpus, the prompts that generated it, the answer key, the
 question sets and the checker that validates them), `docs/` describes the instruments, and
 `results/` holds every number the write-up quotes. Settings live in one file, `config.py`.
+Two explainers sit beside this one: `data/README.md` (the data) and `EVALS.md` (the evals).
 
 | file | lines | what it does |
 |---|---|---|
