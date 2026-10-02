@@ -258,7 +258,7 @@ results/                   every number in the write-up comes from a file here
 | 3 | token economics | calls x tokens x price from the real prompts (`results/cost_estimate.md`) |
 | 4 | agent or workflow; the ground-truth test | a workflow on purpose: fixed steps, one call, no tools; the one variable step (search again after a miss) is a fixed code rule, reference-following |
 | 5 | cost per successful task, break-even, fixed costs, kill condition | `cost_model.py`: 20% break-even against answering by hand, measured 85%, $181/month layer 3, written kill condition |
-| 6 | the 2x2 (visible? undoable?), human in the loop as window, evidence and authority | retrieval and generation monitored and verified; the one write gated; the app shows the evidence under every answer |
+| 6 | can a failure be seen, and can it be undone? Human review needs a window to act, the evidence to judge and the authority to stop | retrieval and generation monitored and verified; the one write gated; the app shows the evidence under every answer |
 | 6 | OWASP 2026 red-team categories, confabulation, the lethal trifecta, PDPA | `results/guardrails.md`: 45 cases and every category; two legs of the trifecta, not three; PDPA named as the binding floor |
 
 ## Extending the evaluation set
@@ -276,22 +276,3 @@ results/                   every number in the write-up comes from a file here
   in `Tanya_RAG_Notebook.ipynb`.
 - Claude (Anthropic) wrote the corpus and much of the code with the author. ChatGPT wrote the
   independent questions IND1 to IND5 from the blind pack.
-
-## Status (2026-10-01)
-
-- [x] RAG over 18 synthetic documents in three divisions; answers cite real document ids, and say
-  "The documents do not say." when the notes do not
-- [x] Keyword search over the same chunks as the baseline; 200-word chunks chosen by a sweep from 25 to 300
-- [x] Correctness and faithfulness on the same 20 questions, final run: 85% correct (baseline 75%),
-  84% faithful (baseline 100%)
-- [x] The judge checked against my own grading twice: 20 of 20 agree (`results/judge_agreement.md`)
-- [x] 43 questions in five sets, including 6 partially answerable: none invented the missing half
-- [x] Guardrails in code, 45 of 45 cases, every Class 6 red-team category addressed; the final run's new
-  failure (citing a document not given) flagged in the app
-- [x] Cost per successful answer $3.50 at 85%, break-even 20% against answering by hand, a kill condition
-- [x] Reference-following adopted after a same-run before/after: misses 5 of 37 -> 1, correctness
-  80% -> 85%; hybrid search measured and not adopted: it adds nothing on top of reference-following
-- [x] Report (trade-offs and critique) in `docs/TRADEOFF_ANALYSIS.md`, about 1,300 words
-- [x] Product documentation at the top of this file; explainers for the data (`data/README.md`) and
-  the evals (`EVALS.md`)
-- [ ] Demo video and NTULearn submission
